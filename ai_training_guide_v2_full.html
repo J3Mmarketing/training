@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>職業訓練承辦人員 AI 工具實務應用</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:#f5f4f0;padding:1.5rem;color:#1a1a18}
+:root{
+  --color-background-primary:#fff;
+  --color-background-secondary:#f1efe8;
+  --color-background-info:#e6f1fb;
+  --color-background-success:#e1f5ee;
+  --color-background-warning:#faeeda;
+  --color-text-primary:#1a1a18;
+  --color-text-secondary:#5f5e5a;
+  --color-text-tertiary:#888780;
+  --color-text-info:#185fa5;
+  --color-text-success:#0f6e56;
+  --color-text-warning:#ba7517;
+  --color-border-tertiary:rgba(26,26,24,0.15);
+  --color-border-secondary:rgba(26,26,24,0.3);
+  --color-border-info:rgba(24,95,165,0.4);
+  --color-border-success:rgba(15,110,86,0.4);
+  --color-border-warning:rgba(186,117,23,0.4);
+  --border-radius-md:8px;
+  --border-radius-lg:12px;
+  --font-sans:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --color-background-primary:#2c2c2a;
+    --color-background-secondary:#3d3d3a;
+    --color-background-info:#042c53;
+    --color-background-success:#04342c;
+    --color-background-warning:#412402;
+    --color-text-primary:#e8e6df;
+    --color-text-secondary:#b4b2a9;
+    --color-text-tertiary:#888780;
+    --color-text-info:#85b7eb;
+    --color-text-success:#5dcaa5;
+    --color-text-warning:#ef9f27;
+    --color-border-tertiary:rgba(232,230,223,0.15);
+    --color-border-secondary:rgba(232,230,223,0.3);
+  }
+  body{background:#1a1a18}
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 0 2rem}
+.hero{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem 1.5rem;margin-bottom:1.25rem}
+.hero-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px}
+.badge-blue{background:var(--color-background-info);color:var(--color-text-info)}
+.badge-green{background:var(--color-background-success);color:var(--color-text-success)}
+.badge-amber{background:var(--color-background-warning);color:var(--color-text-warning)}
+.hero h1{font-size:19px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.hero p{font-size:13px;color:var(--color-text-secondary);line-height:1.6}
+.tabs{display:flex;gap:5px;margin-bottom:1rem;flex-wrap:wrap}
+.tab{font-size:12px;font-weight:400;padding:6px 13px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .18s;white-space:nowrap}
+.tab:hover{background:var(--color-background-secondary)}
+.tab.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:transparent}
+.panel{display:none}
+.panel.active{display:block}
+.sec-label{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-tertiary);margin:1.25rem 0 .6rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:.75rem}
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:.5rem}
+.snum{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+.nb{background:var(--color-background-info);color:var(--color-text-info)}
+.nt{background:var(--color-background-success);color:var(--color-text-success)}
+.na{background:var(--color-background-warning);color:var(--color-text-warning)}
+.np{background:#EEEDFE;color:#534AB7}
+.card h3{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.card p{font-size:13px;color:var(--color-text-secondary);line-height:1.65}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:.6rem}
+.tag{font-size:11px;padding:3px 9px;border-radius:12px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+.tag.b{background:var(--color-background-info);color:var(--color-text-info);border-color:transparent}
+.tag.t{background:var(--color-background-success);color:var(--color-text-success);border-color:transparent}
+.tag.a{background:var(--color-background-warning);color:var(--color-text-warning);border-color:transparent}
+.tag.p{background:#EEEDFE;color:#534AB7;border-color:transparent}
+.flow{display:flex;align-items:stretch;gap:0;margin:.75rem 0;overflow-x:auto;padding-bottom:4px}
+.fn{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:.65rem .85rem;min-width:105px;text-align:center;flex-shrink:0}
+.fn span{font-size:11px;color:var(--color-text-secondary);display:block;margin-bottom:3px}
+.fn strong{font-size:12px;color:var(--color-text-primary);font-weight:500}
+.fa{display:flex;align-items:center;padding:0 4px;color:var(--color-text-tertiary);font-size:15px;flex-shrink:0}
+.pbox{background:var(--color-background-secondary);border-left:2.5px solid var(--color-border-info);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:.65rem 1rem;margin:.45rem 0;font-size:12.5px;color:var(--color-text-primary);line-height:1.65}
+.pbox .lbl{font-size:11px;color:var(--color-text-info);font-weight:500;margin-bottom:3px}
+.pbox-green{border-left-color:var(--color-border-success)}
+.pbox-green .lbl{color:var(--color-text-success)}
+.pbox-amber{border-left-color:var(--color-border-warning)}
+.pbox-amber .lbl{color:var(--color-text-warning)}
+.pbox-purple{border-left-color:#7F77DD}
+.pbox-purple .lbl{color:#534AB7}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:.7rem;margin-top:.5rem}
+.fc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.85rem 1rem}
+.fc h4{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:.3rem}
+.fc p{font-size:12px;color:var(--color-text-secondary);line-height:1.55}
+.expand-btn{font-size:12px;color:var(--color-text-info);background:none;border:none;cursor:pointer;padding:0;margin-top:.4rem;display:block}
+.sub-content{display:none;margin-top:.5rem;padding-top:.5rem;border-top:0.5px solid var(--color-border-tertiary)}
+.sub-content.open{display:block}
+.checklist{list-style:none;padding:0}
+.checklist li{font-size:13px;color:var(--color-text-secondary);padding:4px 0;display:flex;gap:8px;align-items:flex-start;line-height:1.55}
+.checklist li::before{content:"";display:block;width:15px;height:15px;border:0.5px solid var(--color-border-secondary);border-radius:3px;flex-shrink:0;margin-top:2px}
+.tip{background:var(--color-background-warning);border-radius:var(--border-radius-md);padding:.55rem .9rem;font-size:12px;color:var(--color-text-warning);margin-top:.5rem;line-height:1.55}
+.tip-blue{background:var(--color-background-info);color:var(--color-text-info)}
+.tip-green{background:var(--color-background-success);color:var(--color-text-success)}
+.tip-purple{background:#EEEDFE;color:#534AB7}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.doc-struct{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:.8rem 1rem;font-size:13px;line-height:2;color:var(--color-text-primary)}
+.doc-struct .ds-row{display:flex;gap:8px;align-items:baseline}
+.ds-key{font-weight:500;min-width:44px;font-size:12px}
+.ds-val{font-size:13px;color:var(--color-text-secondary)}
+.step-block{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:.7rem 1rem;margin:.4rem 0;display:flex;gap:12px;align-items:flex-start}
+.step-block .snum{margin-top:1px}
+.step-block-content h4{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.step-block-content p{font-size:12.5px;color:var(--color-text-secondary);line-height:1.55}
+.compare-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:.6rem}
+.compare-table th{font-weight:500;text-align:left;padding:6px 10px;border-bottom:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);font-size:11px}
+.compare-table td{padding:7px 10px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);line-height:1.5;vertical-align:top}
+.compare-table tr:last-child td{border-bottom:none}
+.word-layout{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:1rem;font-size:12px;color:var(--color-text-secondary);line-height:1.8}
+.word-layout .wl-h{font-size:13px;font-weight:500;color:var(--color-text-primary);text-align:center;margin-bottom:.3rem}
+.word-layout .wl-sub{text-align:center;margin-bottom:.6rem;font-size:11px}
+.word-layout .wl-sec{border-top:0.5px solid var(--color-border-tertiary);padding-top:.5rem;margin-top:.5rem}
+.word-layout .wl-label{font-weight:500;color:var(--color-text-primary);font-size:12px}
+@media(max-width:500px){.two-col{grid-template-columns:1fr}.flow{flex-direction:column;align-items:flex-start}.fa{transform:rotate(90deg);padding:4px 0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="badge badge-blue">NotebookLM</span>
+    <span class="badge badge-green">Gemini</span>
+    <span class="badge badge-amber">公文撰寫</span>
+    <span class="badge" style="background:#EEEDFE;color:#534AB7">招生簡章 · DM</span>
+  </div>
+  <h1>職業訓練承辦人員 AI 工具實務應用</h1>
+  <p>NotebookLM 知識資料庫 × Gemini 公文起草 × 招生簡章 Word 範本 × DM 製作，讓訓練業務全面提升效率。</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('notebook')">① NotebookLM 資料庫</button>
+  <button class="tab" onclick="switchTab('layered')">② 分層管理授權</button>
+  <button class="tab" onclick="switchTab('gem')">③ Gem 小幫手</button>
+  <button class="tab" onclick="switchTab('doc')">④ Gemini 公文撰寫</button>
+  <button class="tab" onclick="switchTab('brochure')">⑤ 招生簡章 Word</button>
+  <button class="tab" onclick="switchTab('dm')">⑥ DM 製作</button>
+  <button class="tab" onclick="switchTab('more')">⑦ 更多應用</button>
+</div>
+
+<!-- ① NotebookLM -->
+<div id="panel-notebook" class="panel active">
+  <p class="sec-label">資料庫建置流程</p>
+  <div class="flow">
+    <div class="fn"><span>Step 1</span><strong>匯入資料</strong></div><div class="fa">→</div>
+    <div class="fn"><span>Step 2</span><strong>檢核差異</strong></div><div class="fa">→</div>
+    <div class="fn"><span>Step 3</span><strong>測試問答</strong></div><div class="fa">→</div>
+    <div class="fn"><span>完成</span><strong>上線使用</strong></div>
+  </div>
+  <p class="sec-label">Step 1 — 五大資料來源</p>
+  <div class="card">
+    <div class="card-head"><div class="snum nb">1</div><h3>法規與作業手冊</h3></div>
+    <p>上傳最新版職訓法規、作業手冊 PDF。確認版本日期，避免匯入過期版本造成誤判。</p>
+    <div class="tag-row"><span class="tag b">PDF / Word</span><span class="tag">職訓法規</span><span class="tag">作業手冊</span></div>
+    <button class="expand-btn" onclick="toggle(this)">展開注意事項 ▾</button>
+    <div class="sub-content">
+      <ul class="checklist">
+        <li>確認上傳文件為最新版（含修正日期）</li>
+        <li>大型法規可拆分章節分批上傳，提升搜尋精確度</li>
+        <li>若有新舊版差異，另建「歷史版本」Notebook 做對照</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="snum nb">2</div><h3>分署市府小叮嚀 ＋ 前輩傳承</h3></div>
+    <p>整理各分署、市府補充說明及歷年操作眉角，先整理成 Word 或 Google Docs，再匯入。</p>
+    <div class="tag-row"><span class="tag t">內部知識</span><span class="tag">分署補充</span><span class="tag">眉角整理</span></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="snum nb">3</div><h3>LINE 客服對話篩選整理</h3></div>
+    <p>從 LINE 匯出對話，篩選「高頻問題 + 標準回覆」整理成 Q&amp;A 文件後匯入。</p>
+    <div class="pbox"><div class="lbl">Q&amp;A 格式範例</div>Q：學員出勤率未達標，何時會被退訓？<br>A：依規定出勤率未達 2/3 者，經書面通知後辦理退訓…</div>
+    <div class="tag-row"><span class="tag a">Q&amp;A 格式</span><span class="tag">高頻問題</span><span class="tag">標準回覆</span></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="snum nb">4</div><h3>歷年開班常見問題彙整</h3></div>
+    <p>整理歷年辦訓過程中遇到的爭議案例、特殊狀況處理方式，讓資料庫具備實務經驗。</p>
+    <div class="tag-row"><span class="tag p">案例紀錄</span><span class="tag">爭議處理</span><span class="tag">特殊情況</span></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="snum nb">5</div><h3>公文與函釋範例</h3></div>
+    <p>上傳常用公文範本、機關函釋，讓 NotebookLM 在回答時能引用正確行文格式。</p>
+    <div class="tag-row"><span class="tag b">公文範本</span><span class="tag">機關函釋</span><span class="tag">行文格式</span></div>
+  </div>
+  <p class="sec-label">Step 2 — 檢核差異</p>
+  <div class="card">
+    <p>上傳完成後，使用提示詞交叉比對，確認無矛盾或缺漏：</p>
+    <div class="pbox"><div class="lbl">矛盾檢核</div>請比較法規第X條與作業手冊第Y章，是否有說法不一致的地方？</div>
+    <div class="pbox"><div class="lbl">缺漏檢查</div>根據以上資料，哪些常見問題目前尚未有對應說明？請列出清單。</div>
+    <div class="tip">💡 發現矛盾時，標記來源、確認正確版本後更新資料，再重新測試。</div>
+  </div>
+  <p class="sec-label">Step 3 — 情境測試</p>
+  <div class="card">
+    <div class="pbox"><div class="lbl">測試案例 1 — 日期計算</div>我開的開班日是 2026 年 8 月 1 日，請列出本訓練期間所有重要日期（報到、結訓、抽查等）。</div>
+    <div class="pbox"><div class="lbl">測試案例 2 — 退訓條件</div>我的課程總共有 360 小時，學員請假多久會被退訓？有無例外情況？</div>
+    <div class="pbox"><div class="lbl">測試案例 3 — 補助申請</div>訓練單位申請補助款時，須備齊哪些文件？截止時間為何？</div>
+  </div>
+</div>
+
+<!-- ② 分層管理 -->
+<div id="panel-layered" class="panel">
+  <p class="sec-label">三層資料庫架構</p>
+  <div class="card">
+    <div class="card-head"><div class="snum nt" style="font-size:11px">總</div><h3>總資料庫（管理層）</h3></div>
+    <p>主管或資深人員維護，含完整法規、作業手冊、政策解釋函。設為<strong style="font-weight:500">唯讀分享</strong>，下層人員可查詢不可修改。</p>
+    <div class="tag-row"><span class="tag t">完整法規</span><span class="tag t">政策解釋</span><span class="tag">管理員維護</span></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="snum nb" style="font-size:11px">組</div><h3>組別 / 業務別資料庫</h3></div>
+    <p>依業務類別各建 Notebook，匯入對應作業流程與 Q&amp;A。</p>
+    <div class="tag-row"><span class="tag b">班班有AI</span><span class="tag b">自辦訓練</span><span class="tag b">委辦訓練</span></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="snum na" style="font-size:11px">個</div><h3>個人工作資料庫</h3></div>
+    <p>承辦人員維護個人課程資料、問題紀錄、個人眉角，可設為私人不強制分享。</p>
+    <div class="tag-row"><span class="tag a">個人課程</span><span class="tag a">開班紀錄</span><span class="tag">私人使用</span></div>
+  </div>
+  <p class="sec-label">授權管理原則</p>
+  <div class="grid2">
+    <div class="fc"><h4>🔒 讀取限制</h4><p>法規資料庫設為唯讀分享，避免誤刪或錯誤修改法規內容。</p></div>
+    <div class="fc"><h4>🔄 定期更新</h4><p>指定專人每季檢核法規異動，更新後通知全組重新測試問答。</p></div>
+    <div class="fc"><h4>📋 版本標記</h4><p>文件命名加日期，如「作業手冊_20260101」，避免版本混淆。</p></div>
+    <div class="fc"><h4>👥 新人接軌</h4><p>新進人員直接開通組別資料庫權限，降低學習曲線與交接成本。</p></div>
+  </div>
+</div>
+
+<!-- ③ Gem -->
+<div id="panel-gem" class="panel">
+  <div class="card">
+    <p>Gem 是 Gemini Advanced 的自訂 AI 助理功能，可預設角色、語氣與常用任務，省去重複輸入指令的時間。</p>
+    <div class="tip tip-blue">💡 需 Google One AI Premium 方案（Gemini Advanced）才能使用 Gem 功能。</div>
+  </div>
+  <p class="sec-label">建議建立的 Gem 類型</p>
+  <div class="card"><div class="card-head"><div class="snum nb">1</div><h3>訓練業務問答小幫手</h3></div>
+    <p>整合法規，快速回答承辦人員日常疑問，引用具體條文依據。</p>
+    <div class="pbox"><div class="lbl">系統提示詞</div>你是熟悉勞動部職業訓練相關法規的業務助理。回答時請引用具體條文依據，語氣親切專業。若有模糊之處，請提醒使用者向主管確認。</div>
+  </div>
+  <div class="card"><div class="card-head"><div class="snum nb">2</div><h3>公文起草小幫手</h3></div>
+    <p>依政府公文格式自動起草，主旨、說明、辦法三段式，大幅節省撰寫時間。</p>
+    <div class="pbox"><div class="lbl">系統提示詞</div>你是熟悉政府機關行文格式的文書助理。依照「主旨、說明、辦法」三段式起草公文，語氣正式，條列清晰，並於主旨末加「請　鑒核」或「請　查照」。</div>
+  </div>
+  <div class="card"><div class="card-head"><div class="snum nt">3</div><h3>LINE 客服回覆草稿</h3></div>
+    <p>輸入學員問題，自動生成標準友善的回覆草稿，承辦人確認後直接使用。</p>
+    <div class="pbox pbox-green"><div class="lbl">系統提示詞</div>你是職訓中心的客服助理。用簡潔友善語氣回答學員問題，100 字以內，必要時附上下一步行動建議。</div>
+  </div>
+  <div class="card"><div class="card-head"><div class="snum na">4</div><h3>課程規劃試算小幫手</h3></div>
+    <p>輸入課程時數、開班日期，自動計算出席門檻、退訓日期、各截止時間。</p>
+    <div class="pbox pbox-amber"><div class="lbl">使用範例</div>課程 360 小時，開班日 2026/8/1，每週 5 天，請計算出席率門檻、最晚可請假天數及預計結訓日。</div>
+  </div>
+</div>
+
+<!-- ④ 公文撰寫 -->
+<div id="panel-doc" class="panel">
+  <p class="sec-label">政府公文基本結構</p>
+  <div class="card">
+    <div class="word-layout">
+      <div class="wl-h">○○機關 函</div>
+      <div class="wl-sub">地址／電話／傳真</div>
+      <div class="wl-sec"><span class="wl-label">受文者：</span> ○○機關</div>
+      <div class="wl-sec"><span class="wl-label">發文日期：</span> 中華民國○年○月○日</div>
+      <div class="wl-sec"><span class="wl-label">發文字號：</span> ○○字第○○號</div>
+      <div class="wl-sec"><span class="wl-label">速別：</span> 最速件 / 速件 / 普通件</div>
+      <div class="wl-sec"><span class="wl-label">密等：</span> 密 / 普通</div>
+      <div class="wl-sec"><span class="wl-label">附件：</span> ○○件</div>
+      <div class="wl-sec"><span class="wl-label">主旨：</span> ──一段話說清楚目的，末加「請　鑒核」或「請　查照」。</div>
+      <div class="wl-sec"><span class="wl-label">說明：</span> 一、背景說明。 二、具體內容。</div>
+      <div class="wl-sec"><span class="wl-label">辦法：</span> 一、請辦事項。 二、期限說明。</div>
+    </div>
+    <div class="tip tip-blue" style="margin-top:.7rem">💡 「主旨」只有一段，不分條列。「說明」「辦法」各項用一、二、三分條列，每條另起一行。</div>
+  </div>
+  <p class="sec-label">Gemini 公文撰寫 SOP</p>
+  <div class="step-block"><div class="snum nb">1</div><div class="step-block-content"><h4>給定情境與關鍵資訊</h4><p>告訴 Gemini：受文者、行文目的、重要日期、附件清單。</p></div></div>
+  <div class="step-block"><div class="snum nb">2</div><div class="step-block-content"><h4>指定文種與格式</h4><p>明確說明文種（函、簽、通知等），及速別、密等需求。</p></div></div>
+  <div class="step-block"><div class="snum nb">3</div><div class="step-block-content"><h4>要求輸出草稿</h4><p>請 Gemini 產出完整三段式草稿，並標示需人工填入的欄位。</p></div></div>
+  <div class="step-block"><div class="snum nb">4</div><div class="step-block-content"><h4>人工審閱 + 修改</h4><p>確認法規依據、數字、日期是否正確，再送主管核稿。</p></div></div>
+  <p class="sec-label">常用公文場景提示詞範本</p>
+  <div class="card">
+    <div class="card-head"><div class="snum nb" style="font-size:10px">函</div><h3>開班通知函</h3></div>
+    <div class="pbox"><div class="lbl">Gemini 提示詞</div>請以「○○機關 函」格式，起草一份開班通知函。<br>受文者：各訓練機構<br>主旨：通知「○○職業訓練課程」將於 2026 年 8 月 1 日開班，請各機構完成學員報名作業。<br>說明：課程名稱、訓練時數 360 小時、地點、報名截止日 7/15。<br>辦法：說明報名方式、所需文件及聯絡窗口。末加「請　查照」。</div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="snum nt" style="font-size:10px">簽</div><h3>辦理開訓簽呈</h3></div>
+    <div class="pbox pbox-green"><div class="lbl">Gemini 提示詞</div>請起草一份簽呈，說明本單位擬辦理「○○職業訓練」，共 360 小時，預計 2026/8/1 至 10/31，招生對象為在職勞工，預計招訓人數 25 人，補助金額估計○○元。請依「主旨、說明、擬辦」三段撰寫，末加「敬請　鑒核」。</div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="snum na" style="font-size:10px">函</div><h3>退訓通知函</h3></div>
+    <div class="pbox pbox-amber"><div class="lbl">Gemini 提示詞</div>請起草一份退訓通知函，受文者為學員○○○。說明：因出勤率未達課程時數三分之二（應出席○小時，實際出席○小時），依相關規定辦理退訓。列明退訓生效日期，並告知申訴管道。末加「請　查照」。</div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="snum np" style="font-size:10px">函</div><h3>補助款請撥函</h3></div>
+    <div class="pbox pbox-purple"><div class="lbl">Gemini 提示詞</div>請起草補助款請撥函，受文者為勞動部勞動力發展署。說明：本單位已完成「○○職業訓練」課程（○年○月○日至○年○月○日），實際訓練人次○人，依核定計畫請撥補助款共新台幣○○元整。附件：結訓名冊、出勤紀錄、領據。末加「請　鑒核」。</div>
+  </div>
+  <p class="sec-label">公文常見錯誤與 AI 輔助修正</p>
+  <table class="compare-table">
+    <tr><th>常見錯誤</th><th>正確作法</th><th>Gemini 協助方式</th></tr>
+    <tr><td>主旨超過兩行、過於冗長</td><td>主旨一段話、簡潔有力</td><td>「請將以下主旨精簡為 50 字以內」</td></tr>
+    <tr><td>說明與辦法混用</td><td>說明交代背景、辦法列請辦事項</td><td>「請重新分段，說明只寫背景，辦法只寫請辦事項」</td></tr>
+    <tr><td>敬語錯誤（鑒核 vs 查照）</td><td>上行用鑒核，平行/下行用查照</td><td>「受文者是○○，請確認結尾敬語是否正確」</td></tr>
+    <tr><td>條號格式不一致</td><td>統一用一、二、三，子項用（一）（二）</td><td>「請統一條號格式」</td></tr>
+  </table>
+</div>
+
+<!-- ⑤ 招生簡章 Word -->
+<div id="panel-brochure" class="panel">
+  <p class="sec-label">招生簡章公版架構</p>
+  <div class="card">
+    <div class="word-layout">
+      <div class="wl-h">○○職業訓練班 招生簡章</div>
+      <div class="wl-sub">○○機關辦理 ／ 中華民國○年○月</div>
+      <div class="wl-sec"><span class="wl-label">一、訓練目的</span><br><span style="color:var(--color-text-secondary)">說明本課程設立宗旨、培訓方向。</span></div>
+      <div class="wl-sec"><span class="wl-label">二、招訓對象及名額</span><br><span style="color:var(--color-text-secondary)">資格條件、招生人數上限。</span></div>
+      <div class="wl-sec"><span class="wl-label">三、訓練期程及地點</span><br><span style="color:var(--color-text-secondary)">開訓日、結訓日、每週上課時間、訓練地點。</span></div>
+      <div class="wl-sec"><span class="wl-label">四、課程內容及時數</span><br><span style="color:var(--color-text-secondary)">各科目名稱、時數表格。</span></div>
+      <div class="wl-sec"><span class="wl-label">五、師資</span><br><span style="color:var(--color-text-secondary)">授課師資資格說明。</span></div>
+      <div class="wl-sec"><span class="wl-label">六、費用</span><br><span style="color:var(--color-text-secondary)">訓練費用、補助說明、繳費期限。</span></div>
+      <div class="wl-sec"><span class="wl-label">七、報名方式</span><br><span style="color:var(--color-text-secondary)">線上 / 書面報名、所需附件、截止日期。</span></div>
+      <div class="wl-sec"><span class="wl-label">八、注意事項</span><br><span style="color:var(--color-text-secondary)">出席規定、退訓條件、保險、其他重要說明。</span></div>
+      <div class="wl-sec"><span class="wl-label">九、聯絡資訊</span><br><span style="color:var(--color-text-secondary)">聯絡人、電話、Email、地址。</span></div>
+    </div>
+  </div>
+  <p class="sec-label">Gemini 生成招生簡章 SOP</p>
+  <div class="step-block"><div class="snum nb">1</div><div class="step-block-content"><h4>準備資料清單</h4><p>開班申請書內容、法規規定的必要記載事項、歷年簡章參考版本。</p></div></div>
+  <div class="step-block"><div class="snum nb">2</div><div class="step-block-content"><h4>用提示詞生成初稿</h4><p>一次性餵入所有關鍵數據，請 Gemini 依標準架構產出完整草稿。</p></div></div>
+  <div class="step-block"><div class="snum nb">3</div><div class="step-block-content"><h4>逐節審閱補充</h4><p>確認法規用語正確、費用與補助規定無誤、聯絡資訊完整。</p></div></div>
+  <div class="step-block"><div class="snum nt">4</div><div class="step-block-content"><h4>轉成 Word 格式</h4><p>複製到 Word，套用公版樣式（標題樣式、表格、頁首頁尾）後存檔。</p></div></div>
+  <p class="sec-label">完整提示詞範本</p>
+  <div class="card">
+    <div class="pbox" style="white-space:pre-line;font-size:12px">
+      <div class="lbl">招生簡章生成提示詞（完整版）</div>
+請依照政府職業訓練班的招生簡章格式，生成一份完整的招生簡章 Word 文件內容。
+
+【基本資訊】
+訓練班名稱：○○職業訓練班
+主辦機關：○○機關
+訓練期間：2026 年 8 月 1 日 至 10 月 31 日
+每週上課：週一至週五，09:00–17:00
+訓練時數：360 小時
+訓練地點：○○市○○區○○路○號
+
+【招訓對象】
+具○○資格者，名額 25 人，以○○身分優先。
+
+【費用】
+訓練費用：新台幣○○元
+補助說明：依補助辦法可申請補助○○元，自付額○○元
+
+【請依以下架構產出完整內容：】
+一、訓練目的 二、招訓對象及名額 三、訓練期程及地點
+四、課程內容及時數（含表格）五、師資 六、費用
+七、報名方式 八、注意事項（含出席規定、退訓條件）九、聯絡資訊
+
+請使用正式公文語氣，數字部分保留【請填入】供人工補充。
+    </div>
+  </div>
+  <p class="sec-label">Word 格式設定建議</p>
+  <div class="grid2">
+    <div class="fc"><h4>📄 樣式設定</h4><p>標題 1 套用到各大節（一、二、三…），內文使用「內文」樣式，統一字型為新細明體或標楷體。</p></div>
+    <div class="fc"><h4>📊 課程表格</h4><p>插入表格列出科目名稱、時數、授課方式，套用「表格格線」樣式，首行加網底。</p></div>
+    <div class="fc"><h4>🔢 頁首頁尾</h4><p>頁首放機關名稱與簡章標題，頁尾放頁碼與「共○頁 第○頁」。</p></div>
+    <div class="fc"><h4>💾 版本命名</h4><p>檔名：「○○職訓班招生簡章_v1.0_20260601.docx」，修改時更新版號。</p></div>
+  </div>
+  <div class="tip" style="margin-top:.75rem">💡 建立一份「公版 Word 範本檔（.dotx）」，將樣式、頁首頁尾、機關標誌預設好，每次新班直接套用，只需填入班別資訊，省去重複排版時間。</div>
+</div>
+
+<!-- ⑥ DM 製作 -->
+<div id="panel-dm" class="panel">
+  <p class="sec-label">DM 製作流程</p>
+  <div class="flow">
+    <div class="fn"><span>Step 1</span><strong>確認受眾</strong></div><div class="fa">→</div>
+    <div class="fn"><span>Step 2</span><strong>Gemini 文案</strong></div><div class="fa">→</div>
+    <div class="fn"><span>Step 3</span><strong>選版型設計</strong></div><div class="fa">→</div>
+    <div class="fn"><span>Step 4</span><strong>輸出發布</strong></div>
+  </div>
+  <p class="sec-label">Step 1 — 釐清受眾與訴求</p>
+  <div class="card">
+    <p>不同招募對象，DM 的訴求重點不同：</p>
+    <table class="compare-table" style="margin-top:.6rem">
+      <tr><th>受眾</th><th>主要訴求</th><th>關鍵資訊</th></tr>
+      <tr><td>在職勞工</td><td>技能升級 / 加薪機會</td><td>時間彈性、補助金額、證照</td></tr>
+      <tr><td>失業求職者</td><td>快速就業 / 免費資源</td><td>免費或低自費、就業率、媒合</td></tr>
+      <tr><td>企業人資</td><td>員工培訓解決方案</td><td>課程品質、認證、包班諮詢</td></tr>
+      <tr><td>應屆畢業生</td><td>職涯起點 / 實務技能</td><td>就業導向、師資、結訓出路</td></tr>
+    </table>
+  </div>
+  <p class="sec-label">Step 2 — Gemini 生成文案</p>
+  <div class="card">
+    <div class="pbox"><div class="lbl">DM 文案提示詞（失業求職者版）</div>請為一個職業訓練課程製作招生 DM 文案。<br>課程名稱：○○職業技能訓練班<br>受眾：正在求職的失業者<br>核心訴求：免費學習、快速就業、有政府補助<br>請產出：①主標題（10 字內，吸睛有力）②副標題（20 字內）③3 個重點 bullet ④行動呼籲（報名截止日）<br>語氣：溫暖積極，避免制式官方語氣。</div>
+    <div class="pbox pbox-green"><div class="lbl">DM 文案提示詞（在職勞工版）</div>同上格式，受眾改為：在職勞工、想轉職或升職者。<br>核心訴求：下班進修、政府補助學費、考取證照。<br>強調：不影響工作、補助最高○○元。</div>
+    <div class="pbox pbox-amber"><div class="lbl">社群貼文版（Facebook / LINE 社群）</div>請將以上 DM 文案改寫為 Facebook 貼文格式，加上適當的 emoji 和段落，控制在 150 字以內，結尾加 hashtag。</div>
+  </div>
+  <p class="sec-label">Step 3 — 設計工具建議</p>
+  <div class="grid2">
+    <div class="fc">
+      <h4>🎨 Canva（免費版可用）</h4>
+      <p>直接搜尋「職業訓練」「招生簡章」範本，替換文字與顏色。輸出 A4 PDF 或 1080×1080 社群圖。</p>
+      <button class="expand-btn" onclick="toggle(this)">Canva 快速操作步驟 ▾</button>
+      <div class="sub-content">
+        <ul class="checklist">
+          <li>開啟 Canva → 搜尋「招生海報」或「課程簡介」</li>
+          <li>選擇符合政府機關風格的範本（藍色、正式感）</li>
+          <li>貼入 Gemini 生成的文案，調整字型大小</li>
+          <li>上傳機關 Logo，替換範本既有圖案</li>
+          <li>輸出 PDF 列印版（300 dpi）及 PNG 數位版</li>
+        </ul>
+      </div>
+    </div>
+    <div class="fc">
+      <h4>📄 Word / PowerPoint</h4>
+      <p>適合需要保留 .docx/.pptx 可編輯格式的 DM。使用 SmartArt 排版，方便下次修改。</p>
+      <button class="expand-btn" onclick="toggle(this)">Word DM 快速排版 ▾</button>
+      <div class="sub-content">
+        <ul class="checklist">
+          <li>設定版面：A4 橫向或直向，邊界 1.5cm</li>
+          <li>插入文字方塊：主標、副標、重點區塊分開管理</li>
+          <li>用「頁面色彩」設定底色，避免印刷色差</li>
+          <li>存成 PDF 前先預覽「列印版面」</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <p class="sec-label">Step 4 — 輸出與發布格式</p>
+  <table class="compare-table">
+    <tr><th>發布管道</th><th>建議格式</th><th>尺寸</th></tr>
+    <tr><td>張貼公告欄 / 列印</td><td>PDF（300 dpi）</td><td>A4 直向</td></tr>
+    <tr><td>Facebook / Instagram</td><td>PNG 或 JPG</td><td>1080×1080 或 1080×1350</td></tr>
+    <tr><td>LINE 官方帳號 / 社群</td><td>PNG（壓縮）</td><td>1040×1040</td></tr>
+    <tr><td>電子郵件夾檔</td><td>PDF（低壓縮）</td><td>A4，檔案 &lt;5MB</td></tr>
+    <tr><td>網站活動頁</td><td>JPG + 超連結</td><td>寬 1200px，高自訂</td></tr>
+  </table>
+  <div class="tip tip-green" style="margin-top:.7rem">💡 建議同一份 DM 一次輸出「印刷版 PDF」和「數位版 PNG」兩份，分別用於線下張貼與線上推廣，不用再重新設計。</div>
+</div>
+
+<!-- ⑦ 更多應用 -->
+<div id="panel-more" class="panel">
+  <p class="sec-label">NotebookLM 進階應用</p>
+  <div class="grid2">
+    <div class="fc"><h4>🎙️ Audio Overview</h4><p>將法規或手冊轉成 Podcast 形式，讓新進人員通勤時也能學習重點。</p></div>
+    <div class="fc"><h4>🗂️ FAQ 快速生成</h4><p>上傳整本手冊後，請 NotebookLM 自動整理成結構化 FAQ 清單。</p></div>
+    <div class="fc"><h4>📊 年度差異比對</h4><p>同時上傳新舊版規定，詢問「今年新增哪些變更？」快速掌握修訂重點。</p></div>
+    <div class="fc"><h4>📝 訓練教材製作</h4><p>選取關鍵段落，請 NotebookLM 整理成新人訓練的重點講義。</p></div>
+  </div>
+  <p class="sec-label">Gemini 其他業務應用</p>
+  <div class="two-col">
+    <div>
+      <div class="pbox" style="margin-bottom:.6rem"><div class="lbl">📋 訪視報告</div>整理訪視紀錄要點，生成結構化報告初稿，主管審閱更有效率。</div>
+      <div class="pbox" style="margin-bottom:.6rem"><div class="lbl">📅 會議摘要</div>上傳逐字稿，自動整理決議事項與待辦清單。</div>
+      <div class="pbox"><div class="lbl">🔍 資料彙整</div>整合多份報表，快速摘要重點並提供數字比較分析。</div>
+    </div>
+    <div>
+      <div class="pbox" style="margin-bottom:.6rem"><div class="lbl">🎯 簡報大綱</div>依業務說明需求，快速生成簡報架構與各頁重點。</div>
+      <div class="pbox" style="margin-bottom:.6rem"><div class="lbl">📧 信件草稿</div>輸入情境要點，快速產出正式信件或通知函。</div>
+      <div class="pbox"><div class="lbl">❓ 情境模擬</div>設定情境讓 Gemini 扮演學員提問，演練客服標準回答。</div>
+    </div>
+  </div>
+  <p class="sec-label">建議導入順序</p>
+  <div class="flow">
+    <div class="fn" style="min-width:115px"><span>第 1 個月</span><strong>建基礎資料庫</strong></div><div class="fa">→</div>
+    <div class="fn" style="min-width:115px"><span>第 2 個月</span><strong>公文 / 簡章範本</strong></div><div class="fa">→</div>
+    <div class="fn" style="min-width:115px"><span>第 3 個月</span><strong>建立 Gem + DM</strong></div><div class="fa">→</div>
+    <div class="fn" style="min-width:115px"><span>持續</span><strong>分層管理優化</strong></div>
+  </div>
+  <div class="tip" style="margin-top:.5rem">💡 從「最常被問的 10 個問題」＋「一份公文」開始，快速驗證效益後再全面推展。</div>
+</div>
+
+</div>
+
+<script>
+function switchTab(id){
+  const ids=['notebook','layered','gem','doc','brochure','dm','more'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',ids[i]===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+id));
+}
+function toggle(btn){
+  const sub=btn.nextElementSibling;
+  sub.classList.toggle('open');
+  btn.textContent=sub.classList.contains('open')?btn.textContent.replace('▾','▴'):btn.textContent.replace('▴','▾');
+}
+</script>
+</body>
+</html>
