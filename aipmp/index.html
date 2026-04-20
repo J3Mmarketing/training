@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 專案管理 — 課堂學習補充資料</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --navy: #1A2B5E;
+    --blue: #2D5BE3;
+    --blue-light: #EAF0FD;
+    --blue-mid: #B5D0F7;
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --amber: #BA7517;
+    --amber-light: #FAEEDA;
+    --coral: #993C1D;
+    --coral-light: #FAECE7;
+    --gray-50: #F7F6F3;
+    --gray-100: #EEECEA;
+    --gray-300: #C8C5BE;
+    --gray-500: #888780;
+    --gray-700: #444441;
+    --gray-900: #1A1A18;
+    --text-primary: #1A1A18;
+    --text-secondary: #5F5E5A;
+    --border: #D3D1C7;
+    --code-bg: #F0EEE8;
+    --white: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text-primary);
+    background: var(--white);
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 40px 100px;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    border-bottom: 2px solid var(--navy);
+    padding-bottom: 28px;
+    margin-bottom: 40px;
+  }
+  .course-tag {
+    display: inline-block;
+    background: var(--blue-light);
+    color: var(--navy);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+  }
+  .page-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+  .page-meta {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .page-meta span { display: flex; align-items: center; gap: 5px; }
+
+  /* ── Section ── */
+  .section { margin-bottom: 48px; }
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    border-left: 4px solid var(--blue);
+    padding-left: 12px;
+    margin-bottom: 20px;
+  }
+  .subsection-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+
+  /* ── Cards ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .card-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .card-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .card-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .card.blue { border-left: 3px solid var(--blue); }
+  .card.teal { border-left: 3px solid var(--teal); }
+  .card.amber { border-left: 3px solid var(--amber); }
+  .card.coral { border-left: 3px solid var(--coral); }
+
+  .card.blue .card-label { color: var(--blue); }
+  .card.teal .card-label { color: var(--teal); }
+  .card.amber .card-label { color: var(--amber); }
+  .card.coral .card-label { color: var(--coral); }
+
+  /* ── Prompt Box ── */
+  .prompt-box {
+    background: var(--gray-900);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  .prompt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: #2C2C2A;
+    border-bottom: 1px solid #444441;
+  }
+  .prompt-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #9FE1CB;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  .copy-btn {
+    background: transparent;
+    border: 1px solid #5F5E5A;
+    border-radius: 4px;
+    color: #B4B2A9;
+    font-size: 11px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { border-color: #9FE1CB; color: #9FE1CB; }
+  .prompt-body {
+    padding: 18px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #D3D1C7;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .prompt-body .comment { color: #888780; }
+  .prompt-body .key { color: #85B7EB; }
+  .prompt-body .value { color: #9FE1CB; }
+  .prompt-body .symbol { color: #FAC775; }
+
+  /* ── Steps ── */
+  .step-list { list-style: none; padding: 0; }
+  .step-item {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+  .step-content { flex: 1; }
+  .step-title { font-weight: 700; font-size: 14px; margin-bottom: 3px; color: var(--navy); }
+  .step-desc { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; }
+
+  /* ── Demo Block ── */
+  .demo-block {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .demo-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .demo-num {
+    background: rgba(255,255,255,0.18);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 9px;
+    letter-spacing: 0.04em;
+  }
+  .demo-title { font-size: 16px; font-weight: 700; }
+  .demo-subtitle { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+  .demo-body { padding: 20px 22px; background: var(--white); }
+
+  /* ── Callout ── */
+  .callout {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    line-height: 1.65;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .callout.info { background: var(--blue-light); color: var(--navy); }
+  .callout.tip { background: var(--teal-light); color: var(--teal); }
+  .callout.warn { background: var(--amber-light); color: var(--amber); }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; margin: 14px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th {
+    background: var(--navy);
+    color: var(--white);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--gray-100); color: var(--text-primary); }
+  tr:hover td { background: var(--gray-50); }
+
+  /* ── Tag ── */
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-right: 4px;
+  }
+  .tag.blue { background: var(--blue-light); color: var(--navy); }
+  .tag.teal { background: var(--teal-light); color: var(--teal); }
+  .tag.amber { background: var(--amber-light); color: var(--amber); }
+
+  /* ── Divider ── */
+  hr { border: none; border-top: 1px solid var(--gray-100); margin: 36px 0; }
+
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 20px; margin-bottom: 10px; }
+  li { margin-bottom: 5px; font-size: 14px; color: var(--text-secondary); }
+  li strong { color: var(--text-primary); }
+
+  /* ── Highlight inline ── */
+  code {
+    background: var(--code-bg);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--coral);
+  }
+
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .badge {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+  .badge.navy { background: var(--navy); color: var(--white); border-color: var(--navy); }
+  .badge.outline { background: transparent; color: var(--navy); border-color: var(--navy); }
+
+  .framework-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .fw-card {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-100);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .fw-letter {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--blue);
+    line-height: 1.1;
+  }
+  .fw-word {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 4px 0 6px;
+    letter-spacing: 0.03em;
+  }
+  .fw-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  @media (max-width: 600px) {
+    body { padding: 28px 18px 80px; }
+    .framework-grid { grid-template-columns: repeat(2, 1fr); }
+    .card-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="course-tag">J3M 數學行銷人 · 課堂學習補充</div>
+  <h1 class="page-title">AI 專案管理<br>有效規劃、執行與監控專案</h1>
+  <div class="page-meta">
+    <span>📅 2026/04/20</span>
+    <span>🛠 工具：Gemini · Gem · Google Sheets · NotebookLM</span>
+    <span>📋 主題：PM 流程自動化</span>
+  </div>
+</div>
+
+<!-- SECTION 1: AI 角色框架 -->
+<div class="section">
+  <h2 class="section-title">AI 在專案管理的三種角色</h2>
+  <p style="font-size:14px; color:var(--text-secondary); margin-bottom:16px;">
+    根據 PMI《AI Essentials for Project Professionals》，AI 介入專案管理的方式分三層，任務複雜度越高，人類主導的比重也越大。
+  </p>
+  <div class="card-grid">
+    <div class="card blue">
+      <div class="card-label">自動化 Automating</div>
+      <div class="card-title">機器主導</div>
+      <div class="card-desc">低複雜任務，AI 獨立完成。<br>例：會議記錄摘要、逐字稿生成</div>
+    </div>
+    <div class="card teal">
+      <div class="card-label">輔助 Assisting</div>
+      <div class="card-title">人機協作</div>
+      <div class="card-desc">中高複雜任務，人機共同完成。<br>例：風險分析、成本與時程估算</div>
+    </div>
+    <div class="card amber">
+      <div class="card-label">增強 Augmenting</div>
+      <div class="card-title">人類主導</div>
+      <div class="card-desc">高決策任務，AI 提供支援。<br>例：專案決策、商業案例創建</div>
+    </div>
+  </div>
+  <div class="callout info">
+    <span class="callout-icon">⚡</span>
+    <div>核心原則：<strong>Garbage in, Garbage out</strong>——輸入品質決定輸出品質。提示詞的精準程度，直接影響 AI 產出的可用性。</div>
+  </div>
+</div>
+
+<hr>
+
+<!-- SECTION 2: CREATE 框架 -->
+<div class="section">
+  <h2 class="section-title">提示詞框架：CREATE</h2>
+  <p style="font-size:14px; color:var(--text-secondary); margin-bottom:20px;">
+    結構化提示語設計框架，適用於所有 AI 工具指令撰寫。六個維度缺一不可。
+  </p>
+  <div class="framework-grid">
+    <div class="fw-card">
+      <div class="fw-letter">C</div>
+      <div class="fw-word">Character</div>
+      <div class="fw-desc">界定 AI 的專業角色（例：資深系統分析師）</div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-letter">R</div>
+      <div class="fw-word">Request</div>
+      <div class="fw-desc">明確表達要 AI 完成的任務內容與目標</div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-letter">E</div>
+      <div class="fw-word">Example</div>
+      <div class="fw-desc">提供參考範例或輸出樣本，降低模糊性</div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-letter">A</div>
+      <div class="fw-word">Adjustment</div>
+      <div class="fw-desc">定義邊界限制與調整條件（例：排除法）</div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-letter">T</div>
+      <div class="fw-word">Type</div>
+      <div class="fw-desc">指定輸出格式（例：Markdown、Table、JSON）</div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-letter">E</div>
+      <div class="fw-word">Evaluation</div>
+      <div class="fw-desc">提供驗證步驟，確保產出符合專業標準</div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- SECTION 3: WBS AI 輔助對照表 -->
+<div class="section">
+  <h2 class="section-title">HR 系統 WBS 結構展開（AI 輔助對照）</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:60px;">編號</th>
+          <th>工作項目</th>
+          <th>負責角色</th>
+          <th>AI 輔助應用</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1.1</td>
+          <td>HR 核心數據庫 schema 設計</td>
+          <td>SA</td>
+          <td>資料庫欄位正規化與 SQL 生成</td>
+        </tr>
+        <tr>
+          <td>1.2</td>
+          <td>薪資結算公式邏輯開發</td>
+          <td>工程師</td>
+          <td>法規邏輯轉換為程式偽代碼</td>
+        </tr>
+        <tr>
+          <td>2.1</td>
+          <td>前端員工門戶 (Portal)</td>
+          <td>工程師</td>
+          <td>UI/UX 組件程式碼自動轉換</td>
+        </tr>
+        <tr>
+          <td>3.1</td>
+          <td>整合測試 (SIT) 案例編寫</td>
+          <td>測試</td>
+          <td>根據需求文件自動產出邊界值案例</td>
+        </tr>
+        <tr>
+          <td>4.1</td>
+          <td>專案進度自動化報表</td>
+          <td>PM</td>
+          <td>Sheets 數據自動生成視覺化 Dashboard</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr>
+
+<!-- SECTION 4: GEM 設定 -->
+<div class="section">
+  <h2 class="section-title">Demo 0 — 製作 Gem 專案管理小幫手</h2>
+  <p style="font-size:14px; color:var(--text-secondary); margin-bottom:6px;">
+    Gem 是 Gemini 的自訂 AI 角色功能，可事先植入角色設定與規則，讓 AI 在每次對話中自動套用。以下為完整提示詞，可直接貼入 Gem 設定介面。
+  </p>
+
+  <div class="callout info">
+    <span class="callout-icon">ℹ</span>
+    <div>操作路徑：Gemini 主頁 → 左側欄「Gems」→「建立新 Gem」→ 貼上以下提示詞 → 儲存並測試。</div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <span class="prompt-lang">GEM SYSTEM PROMPT · 可直接複製使用</span>
+      <button class="copy-btn" onclick="
+        const text = document.getElementById('gem-prompt').innerText;
+        navigator.clipboard.writeText(text).then(()=>{this.textContent='已複製 ✓';setTimeout(()=>{this.textContent='複製'},1800)});
+      ">複製</button>
+    </div>
+    <pre class="prompt-body" id="gem-prompt">Purpose and Goals:
+
+* 擔任使用者的「AI 專案管理幫手」，協助進行專案的時程控管與會議通知管理。
+* 根據使用者提供的 WBS（工作分解結構），分析各項任務的優先級、工期與相依性。
+* 監控專案進度，主動提醒潛在的延遲風險並提供調整建議。
+* 自動化生成專業的會議通知，確保團隊溝通效率。
+
+Behaviors and Rules:
+
+1) WBS 分析與時程規劃：
+   a) 請使用者輸入 WBS 內容或上傳相關文件。
+   b) 根據 WBS 建立甘特圖邏輯或關鍵路徑分析。
+   c) 定期詢問任務完成進度（0%-100%）並更新時程表。
+
+2) 任務提醒與風險控管：
+   a) 若任務接近截止日期，發出溫馨提醒。
+   b) 若任務已逾期，分析對後續任務的影響，並建議修正方案。
+
+3) 會議通知生成：
+   a) 根據專案里程碑或特定需求，生成包含會議主題、時間、
+      地點、議程及參與人員的通知草稿。
+   b) 確保通知格式簡潔專業，並包含回覆確認連結或截止日期。
+
+4) 交談規則：
+   a) 每次對話保持專業且高效的風格，回答不超過 3 個重點段落。
+   b) 在提供具體建議後，總是以一個確認問題結尾，
+      例如：「您是否需要我為這項延遲重新計算關鍵路徑？」
+
+Overall Tone:
+* 使用專業、嚴謹且有條理的語言。
+* 展現出高度的組織能力與邏輯思維。
+* 讓使用者感到專案處於受控狀態，增加管理信心。</pre>
+  </div>
+
+  <div class="subsection-title">建議上傳的參考資料</div>
+  <ul>
+    <li><strong>WBS 表格</strong>（Google Sheets 或 Excel）：讓 AI 掌握專案結構與任務關係</li>
+    <li><strong>專案章程或 SRS 文件</strong>：提供背景知識，避免 AI 憑空推測</li>
+    <li><strong>前次會議記錄</strong>：建立對話的延續性脈絡</li>
+  </ul>
+</div>
+
+<hr>
+
+<!-- SECTION 5: DEMO 1 -->
+<div class="section">
+  <h2 class="section-title">實作 Demo 流程</h2>
+
+  <div class="demo-block">
+    <div class="demo-header">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="demo-num">DEMO 1</span>
+          <span class="demo-title">語音檔案 → 自動化會議記錄</span>
+        </div>
+        <div class="demo-subtitle">工具組合：手機錄音 → Google AI Studio → NotebookLM → Google Tasks</div>
+      </div>
+    </div>
+    <div class="demo-body">
+      <ul class="step-list">
+        <li class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">語音紀錄</div>
+            <div class="step-desc">會議中以手機錄音或會議軟體（如 Google Meet、Zoom）內建錄製音檔。建議格式：MP3 / M4A，長度不限。</div>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">逐字稿生成</div>
+            <div class="step-desc">將音檔上傳至 <strong>Google AI Studio</strong>，使用 Gemini 快速轉錄為文本逐字稿。可加入語言提示提升中文辨識準確率。</div>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">NotebookLM 提煉摘要</div>
+            <div class="step-desc">將多份逐字稿上傳至 <strong>NotebookLM</strong>，AI 自動交叉比對，提煉決策摘要、待確認事項與關鍵討論點。</div>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Action Items 分類</div>
+            <div class="step-desc">AI 自動分類代辦事項並標記負責人，輸出為結構化清單，格式可指定為 Markdown 或表格。</div>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-title">同步工作行事曆</div>
+            <div class="step-desc">一鍵串接 <strong>Google Tasks</strong> 與日曆提醒，設定截止日前 48 小時自動推播通知。</div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="subsection-title" style="margin-top:18px;">可用提示詞範例</div>
+      <div class="prompt-box">
+        <div class="prompt-header">
+          <span class="prompt-lang">PROMPT · 逐字稿 → 會議記錄</span>
+          <button class="copy-btn" onclick="
+            const text = document.getElementById('p-meeting').innerText;
+            navigator.clipboard.writeText(text).then(()=>{this.textContent='已複製 ✓';setTimeout(()=>{this.textContent='複製'},1800)});
+          ">複製</button>
+        </div>
+        <pre class="prompt-body" id="p-meeting">你是一位專業的專案會議記錄助理。
+
+以下是本次會議的逐字稿：
+[貼上逐字稿內容]
+
+請依照以下格式整理會議記錄：
+1. 會議摘要（3 句話以內）
+2. 決策事項（條列，含決策人）
+3. Action Items（表格格式：任務 / 負責人 / 截止日期）
+4. 待確認事項（需後續跟進的問題）
+
+輸出語言：繁體中文，格式：Markdown</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO 2 -->
+  <div class="demo-block">
+    <div class="demo-header">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="demo-num">DEMO 2</span>
+          <span class="demo-title">WBS 展開 + 進度回報給 PM</span>
+        </div>
+        <div class="demo-subtitle">參考文件：HR 系統專案進度報告 PDF · 工具：Gemini + Google Sheets</div>
+      </div>
+    </div>
+    <div class="demo-body">
+      <div class="callout tip">
+        <span class="callout-icon">✦</span>
+        <div>此 Demo 使用 Gem 專案管理小幫手操作。先上傳 HR 系統 WBS 文件，再依步驟執行。</div>
+      </div>
+
+      <ul class="step-list" style="margin-top:14px;">
+        <li class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">上傳 WBS 文件</div>
+            <div class="step-desc">將專案進度報告 PDF 上傳至 Gem 對話視窗，AI 自動解析任務結構、負責人與時程。</div>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">請 AI 分析關鍵路徑</div>
+            <div class="step-desc">AI 識別 Finish-to-Start 任務依賴關係，計算 Total Float，標記零緩衝的關鍵節點。</div>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">生成 PM 進度回報</div>
+            <div class="step-desc">依照目前進度，AI 自動草擬專業進度報告，包含摘要、風險評估與下一步建議。</div>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">轉為 Google Sheets</div>
+            <div class="step-desc">將優化後的 WBS 時程轉換為 Google 試算表格式，加入任務狀態欄與時程說明欄。</div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="subsection-title" style="margin-top:18px;">可用提示詞範例</div>
+      <div class="prompt-box">
+        <div class="prompt-header">
+          <span class="prompt-lang">PROMPT · WBS 進度回報</span>
+          <button class="copy-btn" onclick="
+            const text = document.getElementById('p-wbs').innerText;
+            navigator.clipboard.writeText(text).then(()=>{this.textContent='已複製 ✓';setTimeout(()=>{this.textContent='複製'},1800)});
+          ">複製</button>
+        </div>
+        <pre class="prompt-body" id="p-wbs">@Gmail 依照我目前工作進度，回報給 PM
+
+（上傳 WBS 文件後使用）
+
+請依照以下架構整理進度報告：
+1. 進度達成摘要（目前整體狀況，100 字以內）
+2. 後續關鍵任務（列出下 2 項任務、預計完成日、負責人）
+3. 風險管理與分析（目前風險等級、潛在延遲項目）
+
+格式：條列式，語言：繁體中文，語氣：專業正式</pre>
+      </div>
+
+      <div class="prompt-box" style="margin-top:10px;">
+        <div class="prompt-header">
+          <span class="prompt-lang">PROMPT · 關鍵路徑重新計算</span>
+          <button class="copy-btn" onclick="
+            const text = document.getElementById('p-critical').innerText;
+            navigator.clipboard.writeText(text).then(()=>{this.textContent='已複製 ✓';setTimeout(()=>{this.textContent='複製'},1800)});
+          ">複製</button>
+        </div>
+        <pre class="prompt-body" id="p-critical">重新計算關鍵路徑，以確認 [月份] 開發階段的緩衝時間
+
+請提供：
+1. 目前關鍵路徑分析（任務鏈與依賴關係）
+2. 各階段緩衝時間計算（以工作天為單位）
+3. 若 [任務名稱] 延遲 N 天，對後續的影響評估
+4. 優化建議（如何創造管理緩衝）</pre>
+      </div>
+
+      <div class="prompt-box" style="margin-top:10px;">
+        <div class="prompt-header">
+          <span class="prompt-lang">PROMPT · 轉換為 Google Sheets 格式</span>
+          <button class="copy-btn" onclick="
+            const text = document.getElementById('p-sheets').innerText;
+            navigator.clipboard.writeText(text).then(()=>{this.textContent='已複製 ✓';setTimeout(()=>{this.textContent='複製'},1800)});
+          ">複製</button>
+        </div>
+        <pre class="prompt-body" id="p-sheets">改成用 Google Sheet 展開 WBS 檔案日期
+
+請將上述 WBS 時程轉換為 Google 試算表格式，欄位包含：
+- 任務編號
+- 工作項目
+- 負責角色
+- 原定開始日 / 原定結束日
+- 調整後開始日 / 調整後結束日
+- 任務狀態（待開始 / 進行中 / 完成 / 延遲）
+- 時程說明（標記與原定日期的差異）
+
+並在最後加入「風險監控重點」備註欄。</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO 3 -->
+  <div class="demo-block">
+    <div class="demo-header">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="demo-num">DEMO 3</span>
+          <span class="demo-title">法規 → 系統規格書（Spec）</span>
+        </div>
+        <div class="demo-subtitle">參考文件：缺勤系統法規檢核邏輯 PDF · 工具：Gemini</div>
+      </div>
+    </div>
+    <div class="demo-body">
+      <div class="callout warn">
+        <span class="callout-icon">▲</span>
+        <div>此 Demo 展示 AI 進行「邏輯壓力測試」——將法規條文轉換為系統可執行的驗證規則，是 WBS 中「邏輯驗證」環節的核心應用。</div>
+      </div>
+
+      <ul class="step-list" style="margin-top:14px;">
+        <li class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">上傳法規文件</div>
+            <div class="step-desc">將《勞動基準法》相關條文或內部整理的法規 PDF 上傳至 Gemini 對話。</div>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">提取檢核邏輯</div>
+            <div class="step-desc">AI 依照核心工時管控、休息例假規定、特殊身分限制等面向，結構化輸出排班檢核規則。</div>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">生成規格書初稿</div>
+            <div class="step-desc">針對百貨服務業等特定情境，AI 結合平日/假日班次設定、大小月彈性配置，產出系統規格書。</div>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">進行邊界測試</div>
+            <div class="step-desc">針對變形工時（二週、四週、八週）等邊界情境進行邏輯壓力測試，確認規格的完整覆蓋度。</div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="subsection-title" style="margin-top:18px;">可用提示詞範例</div>
+      <div class="prompt-box">
+        <div class="prompt-header">
+          <span class="prompt-lang">PROMPT · 法規 → 系統排班檢核邏輯</span>
+          <button class="copy-btn" onclick="
+            const text = document.getElementById('p-spec').innerText;
+            navigator.clipboard.writeText(text).then(()=>{this.textContent='已複製 ✓';setTimeout(()=>{this.textContent='複製'},1800)});
+          ">複製</button>
+        </div>
+        <pre class="prompt-body" id="p-spec">法規檢核
+
+我要製作出缺勤系統，依照法規列出系統排班檢核邏輯
+
+（上傳勞基法相關文件後使用）
+
+請依照以下架構輸出：
+1. 核心工時與加班上限管控（每日 / 每週 / 每月上限）
+2. 休息、例假與輪班間隔設定（一例一休規則）
+3. 特殊身分排班限制（童工、妊娠/哺乳期女性勞工）
+4. 變形工時邏輯（二週 / 四週 / 八週彈性規則）
+
+每條規則請以「條件 → 系統行為」格式說明，
+並標註對應的勞基法條文編號。
+輸出格式：Markdown 表格</pre>
+      </div>
+
+      <div class="prompt-box" style="margin-top:10px;">
+        <div class="prompt-header">
+          <span class="prompt-lang">PROMPT · 系統排班規格書（百貨業情境）</span>
+          <button class="copy-btn" onclick="
+            const text = document.getElementById('p-spec2').innerText;
+            navigator.clipboard.writeText(text).then(()=>{this.textContent='已複製 ✓';setTimeout(()=>{this.textContent='複製'},1800)});
+          ">複製</button>
+        </div>
+        <pre class="prompt-body" id="p-spec2">寫出系統排班規格書，以百貨公司服務業為例
+平日上班時間：早班 09:30，假日上班時間：10:00
+下班時間：平日/假日 22:30，共兩班
+系統彈性設定：依照大小月可自行設定早晚班排班人數
+
+請整合以下需求產出規格書：
+1. 班次設定規則（早班 / 晚班 / 平假日差異）
+2. 起訖時間自動判定邏輯
+3. 大小月人力彈性配置機制
+4. 四週變形工時合規檢核邏輯
+5. 管理員操作說明（如何調整各班別人數上限）
+
+格式：完整規格書，使用 Markdown 標題層級</pre>
+      </div>
+
+      <div class="prompt-box" style="margin-top:10px;">
+        <div class="prompt-header">
+          <span class="prompt-lang">PROMPT · RAID 風險清單生成</span>
+          <button class="copy-btn" onclick="
+            const text = document.getElementById('p-raid').innerText;
+            navigator.clipboard.writeText(text).then(()=>{this.textContent='已複製 ✓';setTimeout(()=>{this.textContent='複製'},1800)});
+          ">複製</button>
+        </div>
+        <pre class="prompt-body" id="p-raid">你是一位資深專案經理，針對 [HR 系統開發] 專案，
+請運用 RAID 框架列出潛在的：
+- 風險 (Risk)
+- 假設 (Assumption)
+- 問題 (Issue)
+- 依賴 (Dependency)
+
+並以表格輸出，欄位包含：
+項目類型 / 描述 / 影響程度（高/中/低）/ 建議對策
+
+輸出格式：Markdown 表格，語言：繁體中文</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- SECTION 6: 知識管理 -->
+<div class="section">
+  <h2 class="section-title">永續的專案知識資產建立</h2>
+  <div class="card-grid">
+    <div class="card blue">
+      <div class="card-label">經驗學習</div>
+      <div class="card-title">Lessons Learned</div>
+      <div class="card-desc">運用 AI 交叉分析多個專案結案報告，識別重複發生的錯誤與成功模式。</div>
+    </div>
+    <div class="card teal">
+      <div class="card-label">知識庫</div>
+      <div class="card-title">NotebookLM</div>
+      <div class="card-desc">將所有專案文檔導入 NotebookLM，建立專屬「專案大腦」，供團隊隨時檢索。</div>
+    </div>
+    <div class="card amber">
+      <div class="card-label">提示詞管理</div>
+      <div class="card-title">Prompt Library</div>
+      <div class="card-desc">儲存驗證有效的 CREATE 框架指令，為下一個專案建立高效率起點。</div>
+    </div>
+  </div>
+  <div class="callout info">
+    <span class="callout-icon">💡</span>
+    <div>核心觀點：<strong>「AI 不是取代 PM，而是將 PM 的經驗規模化。」</strong>——透過知識庫與提示詞模板，過往的決策邏輯得以在每個新專案中被快速複用。</div>
+  </div>
+</div>
+
+<hr>
+
+<!-- FOOTER -->
+<div style="text-align:center; padding: 20px 0; font-size:12px; color:var(--gray-500);">
+  J3M 數學行銷人 · AI 專案管理課堂補充資料 · 2026/04/20<br>
+  所有提示詞依據課堂 Demo 場景整理，建議依實際專案情境調整後使用。
+</div>
+
+</body>
+</html>
