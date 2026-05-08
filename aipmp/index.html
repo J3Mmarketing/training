@@ -409,9 +409,11 @@ body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:#f5f4
   <p class="sec-label">執行成果報告書架構總覽</p>
   <div class="flow">
     <div class="fn"><span>Step 1</span><strong>數據分析</strong></div><div class="fa">→</div>
-    <div class="fn"><span>Step 2</span><strong>Gemini 生文字段</strong></div>
+    <div class="fn"><span>Step 2</span><strong>Gemini 生文字段</strong></div><div class="fa">→</div>
+    <div class="fn"><span>Step 3</span><strong>互動式儀表板</strong></div><div class="fa">→</div>
+    <div class="fn"><span>Step 4</span><strong>Office Agent 寫報告</strong></div>
   </div>
-  <div class="tip tip-purple" style="margin-top:.3rem">💡 報告書共分十大項目，其中第六、七項需要大量計算，第九、十項需要撰文。Word + Claude 負責數據整理，Gemini 負責生成文字段落。</div>
+  <div class="tip tip-purple" style="margin-top:.3rem">💡 報告書共分十大項目，其中第六、七項需要大量計算，第九、十項需要撰文。Word + Claude 負責數據整理，Gemini Canvas 負責視覺化儀表板，Office Agent 整合輸出報告書。</div>
 
   <p class="sec-label">Step 1 — 數據分析（Word + Claude）</p>
   <div class="card">
@@ -464,6 +466,52 @@ body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:#f5f4
     <div class="rule-row"><div class="rule-key" style="color:var(--color-text-info)">中長期</div><div class="rule-val">中長期失業者（24週以上）達培訓人數 <strong style="font-weight:500">35%</strong>（限中長期計畫）</div></div>
     <div class="tip tip-green" style="margin-top:.5rem">💡 在 Sheets 中設定條件格式：不達標的格子自動標紅，讓九項檢核一目瞭然，大幅節省人工核對時間。</div>
   </div>
+
+  <p class="sec-label">Step 3 — 互動式儀表板（Gemini Canvas）</p>
+  <div class="card">
+    <p>將學員基本資料整理完成後，使用 Gemini Canvas 建立互動式儀表板，視覺化呈現性別、年齡、教育程度與就業關聯性分析，供簡報或審查會議直接使用。</p>
+    <div class="grid2">
+      <div class="fc">
+        <h4>操作方式</h4>
+        <p>➊ 開啟 Gemini，切換至 Canvas 模式。<br>➋ 貼上學員名冊數據（姓名可去識別化），說明分析需求。<br>➌ Gemini 自動生成含互動篩選功能的 HTML 儀表板，可直接於瀏覽器操作。<br>➍ 調整色系或欄位後，使用下方匯出提示詞輸出 PNG 圖片。</p>
+      </div>
+      <div class="fc">
+        <h4>分析維度說明</h4>
+        <p><strong style="font-weight:500">性別分布</strong>：男女比例圓餅圖，對應報告書七(一)。<br><strong style="font-weight:500">年齡層分布</strong>：長條圖分層呈現，對應七(二)。<br><strong style="font-weight:500">教育程度</strong>：各學歷人數比較，對應七(三)。<br><strong style="font-weight:500">就業關聯性</strong>：交叉分析就業與未就業學員在各維度的分布差異，供九項檢討使用。</p>
+      </div>
+    </div>
+    <div class="pbox pbox-purple" style="margin-top:.6rem"><div class="lbl">Gemini Canvas 儀表板生成提示詞</div>以下是本班學員執行成果數據，請在 Canvas 中建立一個互動式分析儀表板，包含以下四個圖表區塊：<br><br>① 性別分布（圓餅圖）：男性 / 女性人數與比例<br>② 年齡層分布（長條圖）：依19歲以下、20–24、25–29、30–34、35–39、40–44、45歲以上分層<br>③ 教育程度（水平長條圖）：高中職以下、專科、大學、碩士以上<br>④ 就業關聯性交叉分析（群組長條圖）：比較已就業與未就業學員在性別、年齡、學歷的分布差異<br><br>設計要求：背景使用深色、圖表配色對比清晰、各圖表附數字標籤、整體版面以 16:9 單頁呈現。</div>
+    <div class="pbox" style="margin-top:.6rem;background:var(--color-background-secondary);border:2px solid var(--color-border);cursor:not-allowed;user-select:none" title="此提示詞不可修改，請直接複製使用"><div class="lbl" style="color:var(--color-text-warning)">匯出 PNG 提示詞（不可修改，直接複製貼入 Gemini Canvas）</div><div style="font-size:11.5px;white-space:pre-line;pointer-events:none">請將當前儀表板匯出為 16:9 單頁 JPG 圖片，需求如下：
+
+1. 版面與比例（Layout &amp; Ratio）
+版面要求：
+比例：強制執行 16:9（1280×720px）畫布尺寸。
+配置：必須將所有資訊（含附註事項）完整呈現在單一頁面內，嚴禁出現垂直捲軸或切掉底部內容。
+佈局：採用頂部受理區、中間分流標示、下方雙路徑並排、底部附註區的階層式設計。
+
+2. 功能開發（Technical Features）
+技術實作：
+請使用 HTML/CSS/JS 撰寫，並引入 html2canvas 庫。
+新增一個「下載成 PNG 圖片」的懸浮按鈕。
+點擊按鈕後，自動捕捉 16:9 畫布區域並匯出高品質 PNG 檔案，下載過程中需自動隱藏下載按鈕。</div></div>
+  </div>
+
+  <p class="sec-label">Step 4 — Office Agent 寫報告</p>
+  <div class="card">
+    <p>數據分析完成後，使用 Microsoft 365 的 Office Agent 功能，直接在 Word 中將已整理的數據與 Gemini 產出的文字段落，一鍵整合為符合格式的完整報告書。</p>
+    <div class="grid2">
+      <div class="fc">
+        <h4>Office Agent 操作步驟</h4>
+        <p>➊ 開啟 Word，點選功能列「常用」→「Copilot」開啟側邊欄。<br>➋ 上傳或貼入學員數據表及 Gemini 生成的文字段落。<br>➌ 指定報告書格式與章節架構，請 Agent 自動排版填入。<br>➍ 逐項確認數字無誤後，套用公文字型輸出最終版本。</p>
+      </div>
+      <div class="fc">
+        <h4>適用情境</h4>
+        <p>適合已備妥數據與文字素材、需快速完成報告書排版的情境。Office Agent 可自動識別欄位對應關係，大幅減少人工複製貼上的錯誤率，尤其適用於第六、七、九、十項需要大量文字整合的段落。</p>
+      </div>
+    </div>
+    <div class="pbox pbox-info" style="margin-top:.6rem"><div class="lbl">Office Agent 報告書整合提示詞</div>以下是本班執行成果報告書所需素材，請依照「補助地方政府辦理職業訓練失業者職業訓練計畫執行成果報告書」十項架構，將數據與文字整合為完整報告書，並套用正式公文格式：<br><br>【附上材料】<br>① Word + Claude 產出的數據分析表（含達標判斷）<br>② Gemini 產出的第九項檢討文字<br>③ 班級基本資訊（班名、期程、訓練職類）<br><br>請保留原始數字，統一採用標楷體或新細明體，各項標題使用粗體，表格欄寬自動調整。</div>
+  </div>
+
 </div>
 
 </div>
