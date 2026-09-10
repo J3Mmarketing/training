@@ -2,10 +2,127 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=aipmp/">
-<title>J3M 課程資源</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>J3M 教學資源站</title>
+<meta name="description" content="J3M 數學行銷人的課程補充教材與實作手冊索引。">
+<meta name="author" content="J3M 數學行銷人">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap">
+<style>
+:root{
+  --paper:#F5F7FA; --surface:#FFFFFF; --surface-2:#EDF0F5;
+  --ink:#14171C; --ink-2:#3C4452; --muted:#66707F;
+  --line:#D8DEE7; --accent:#F5B800; --accent-text:#8A6400;
+  --shadow:0 1px 2px rgba(20,23,28,.06), 0 10px 28px -14px rgba(20,23,28,.22);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1116; --surface:#161A21; --surface-2:#1D222B;
+    --ink:#E9ECF1; --ink-2:#C2C9D4; --muted:#8A94A3;
+    --line:#2A313C; --accent:#F5B800; --accent-text:#F5B800;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1116; --surface:#161A21; --surface-2:#1D222B;
+  --ink:#E9ECF1; --ink-2:#C2C9D4; --muted:#8A94A3;
+  --line:#2A313C; --accent:#F5B800; --accent-text:#F5B800;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px -16px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:16px; line-height:1.8; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:840px; margin:0 auto; padding-inline:22px; padding-block:0 80px}
+header{padding-block:72px 34px; border-bottom:1px solid var(--line)}
+.eyebrow{
+  font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--muted); font-weight:700; margin:0 0 16px
+}
+h1{
+  font-family:"Noto Serif TC",Georgia,serif; font-weight:900;
+  font-size:clamp(32px,6vw,50px); line-height:1.25; margin:0 0 16px;
+  letter-spacing:-.01em; text-wrap:balance
+}
+h1 .hl{
+  background:linear-gradient(transparent 62%,var(--accent) 62%,var(--accent) 92%,transparent 92%);
+  padding-inline:2px
+}
+.standfirst{font-size:17px; color:var(--ink-2); margin:0; max-width:60ch}
+h2{
+  font-size:12px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--muted); font-weight:700; margin:44px 0 16px
+}
+.cards{display:grid; gap:14px}
+.card{
+  display:block; text-decoration:none; color:inherit;
+  background:var(--surface); border:1px solid var(--line);
+  border-left:4px solid var(--accent);
+  padding:24px 26px; box-shadow:var(--shadow);
+}
+.card:hover{background:var(--surface-2)}
+.card:focus-visible{outline:3px solid var(--accent); outline-offset:3px}
+.card .no{
+  font-family:"JetBrains Mono",monospace; font-size:11.5px; font-weight:700;
+  letter-spacing:.1em; color:var(--accent-text)
+}
+.card .t{
+  font-family:"Noto Serif TC",Georgia,serif; font-weight:700;
+  font-size:21px; line-height:1.45; margin:4px 0 8px
+}
+.card .d{font-size:14.5px; color:var(--ink-2); margin:0; max-width:56ch}
+.tags{display:flex; flex-wrap:wrap; gap:7px; margin-top:14px}
+.tag{
+  font-size:11.5px; font-weight:700; letter-spacing:.04em;
+  color:var(--muted); background:var(--surface-2);
+  border:1px solid var(--line); border-radius:99px; padding:3px 11px
+}
+footer{
+  margin-top:52px; padding-top:20px; border-top:1px solid var(--line);
+  font-size:13px; color:var(--muted)
+}
+footer p{margin:0 0 6px; max-width:62ch}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
 </head>
 <body>
-<p>正在跳轉至課程頁面...</p>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">J3M 數學行銷人</p>
+  <h1>教學資源站<span class="hl">．</span>補充教材索引</h1>
+  <p class="standfirst">課程講義以外的延伸內容都放在這裡。每一份都是可直接照做的實作手冊，附完整步驟、參數與常見錯誤排除。</p>
+</header>
+
+<h2>目前收錄</h2>
+
+<div class="cards">
+
+  <a class="card" href="aipmp/">
+    <span class="no">01</span>
+    <div class="t">AI 專案管理｜學習補充手冊</div>
+    <p class="d">把課程簡報延伸成可自學的網頁講義，涵蓋 CREATE 提示框架、PMI 的 AI 角色定位，以及三個可跟著操作的實境演練情境。</p>
+    <div class="tags"><span class="tag">提示工程</span><span class="tag">專案管理</span><span class="tag">實境演練</span></div>
+  </a>
+
+  <a class="card" href="shorts-subtitle/">
+    <span class="no">02</span>
+    <div class="t">短影音上字幕實戰手冊</div>
+    <p class="d">用 FFmpeg 與 ASS 字幕製作直式短影音字幕的完整流程：語句邊界偵測、字卡切分、樣式設定、燒錄番圖、響度正規化，附常見坑速查與學員練習。</p>
+    <div class="tags"><span class="tag">FFmpeg</span><span class="tag">ASS 字幕</span><span class="tag">短影音</span><span class="tag">自動化</span></div>
+  </a>
+
+</div>
+
+<footer>
+  <p>本站以 GitHub Pages 靜態託管，內容持續增補。手冊中的參數均取自實際專案，請依自己的素材重新推導，不要直接照抄。</p>
+  <p>J3M 數學行銷人｜AI 工具教學與行銷自動化顧問</p>
+</footer>
+
+</div>
 </body>
 </html>
