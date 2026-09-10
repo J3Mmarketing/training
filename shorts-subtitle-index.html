@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="以 FFmpeg 與 ASS 字幕製作直式短影音字幕的完整流程、可複製指令與常見錯誤速查。J3M 數學行銷人教學手冊。">
+<meta name="author" content="J3M 數學行銷人">
+<meta property="og:type" content="article">
+<meta property="og:title" content="短影音上字幕實戰手冊">
+<meta property="og:description" content="從語句邊界偵測到燒錄輸出的完整流程，每個環節都附可直接複製的 FFmpeg 指令。">
+<meta property="og:locale" content="zh_TW">
+<title>短影音上字幕實戰手冊</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700;900&display=swap">
+
+<style>
+:root{
+  --paper:#F5F7FA;
+  --surface:#FFFFFF;
+  --surface-2:#EDF0F5;
+  --ink:#14171C;
+  --ink-2:#3C4452;
+  --muted:#66707F;
+  --line:#D8DEE7;
+  --line-soft:#E6EBF1;
+  --accent:#F5B800;
+  --accent-text:#8A6400;
+  --accent-wash:#FDF3D6;
+  --danger:#B4432E;
+  --danger-wash:#FBEDEA;
+  --calm:#1B6560;
+  --calm-wash:#E7F2F1;
+  --code-bg:#12161C;
+  --code-ink:#DCE3EC;
+  --code-dim:#7C889A;
+  --code-flag:#F5B800;
+  --code-str:#8FD3A4;
+  --shadow:0 1px 2px rgba(20,23,28,.06), 0 8px 24px -12px rgba(20,23,28,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1116;
+    --surface:#161A21;
+    --surface-2:#1D222B;
+    --ink:#E9ECF1;
+    --ink-2:#C2C9D4;
+    --muted:#8A94A3;
+    --line:#2A313C;
+    --line-soft:#232932;
+    --accent:#F5B800;
+    --accent-text:#F5B800;
+    --accent-wash:#2A2210;
+    --danger:#E68A72;
+    --danger-wash:#2B1A16;
+    --calm:#5CBDB4;
+    --calm-wash:#122624;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1116;
+  --surface:#161A21;
+  --surface-2:#1D222B;
+  --ink:#E9ECF1;
+  --ink-2:#C2C9D4;
+  --muted:#8A94A3;
+  --line:#2A313C;
+  --line-soft:#232932;
+  --accent:#F5B800;
+  --accent-text:#F5B800;
+  --accent-wash:#2A2210;
+  --danger:#E68A72;
+  --danger-wash:#2B1A16;
+  --calm:#5CBDB4;
+  --calm-wash:#122624;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -14px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:16px;
+  line-height:1.85;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:960px;margin:0 auto;padding-inline:22px;padding-block:0 96px}
+
+/* ---------- masthead ---------- */
+.masthead{padding-block:64px 40px;border-bottom:1px solid var(--line)}
+.eyebrow{
+  font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;margin:0 0 18px
+}
+h1{
+  font-family:"Noto Serif TC",Georgia,serif;font-weight:900;
+  font-size:clamp(34px,6vw,54px);line-height:1.24;letter-spacing:-.01em;
+  margin:0 0 18px;text-wrap:balance
+}
+h1 .hl{
+  background:linear-gradient(transparent 62%,var(--accent) 62%,var(--accent) 92%,transparent 92%);
+  padding-inline:2px;
+}
+.standfirst{font-size:18px;color:var(--ink-2);margin:0;max-width:62ch}
+.meta{
+  display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:28px;
+  font-size:13px;color:var(--muted)
+}
+.meta b{color:var(--ink-2);font-weight:700}
+
+/* ---------- pipeline strip ---------- */
+.pipe{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:8px;margin-block:40px 0;
+}
+.pipe a{
+  display:block;text-decoration:none;color:inherit;
+  background:var(--surface);border:1px solid var(--line);
+  border-top:3px solid var(--accent);
+  padding:12px 13px 14px;
+}
+.pipe a:hover{background:var(--surface-2)}
+.pipe .n{
+  font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;
+  color:var(--accent-text);letter-spacing:.08em
+}
+.pipe .t{font-size:14px;font-weight:700;line-height:1.5;margin-top:3px}
+.pipe .s{font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:2px}
+
+/* ---------- sections ---------- */
+section{padding-block:52px 0;scroll-margin-top:16px}
+h2{
+  font-family:"Noto Serif TC",Georgia,serif;font-weight:900;
+  font-size:clamp(24px,3.6vw,32px);line-height:1.35;margin:0 0 6px;
+  text-wrap:balance;display:flex;gap:14px;align-items:baseline
+}
+h2 .idx{
+  font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:700;
+  color:var(--accent-text);flex:none
+}
+.lede{color:var(--muted);font-size:15px;margin:0 0 26px;max-width:64ch}
+h3{
+  font-size:15px;font-weight:700;margin:34px 0 10px;
+  letter-spacing:.02em;color:var(--ink);
+  display:flex;align-items:center;gap:9px
+}
+h3::before{content:"";width:14px;height:3px;background:var(--accent);flex:none}
+p{margin:0 0 15px;max-width:66ch}
+.kw{font-weight:700;color:var(--accent-text);border-bottom:2px solid var(--accent);padding-bottom:1px}
+strong{font-weight:700}
+ul,ol{margin:0 0 15px;padding-left:1.35em;max-width:66ch}
+li{margin-bottom:7px}
+li::marker{color:var(--muted)}
+a{color:var(--accent-text)}
+
+/* ---------- code ---------- */
+.code{
+  background:var(--code-bg);color:var(--code-ink);
+  border-radius:6px;margin:0 0 18px;position:relative;
+  box-shadow:var(--shadow)
+}
+.code .bar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:9px 12px 9px 15px;border-bottom:1px solid rgba(255,255,255,.09)
+}
+.code .cap{
+  font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.06em;
+  color:var(--code-dim);text-transform:uppercase;font-weight:700
+}
+.code button{
+  font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;
+  background:rgba(255,255,255,.07);color:var(--code-ink);
+  border:1px solid rgba(255,255,255,.14);border-radius:4px;
+  padding:4px 10px;cursor:pointer;flex:none
+}
+.code button:hover{background:rgba(245,184,0,.18);border-color:rgba(245,184,0,.5)}
+.code button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.code pre{
+  margin:0;padding:15px;overflow-x:auto;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:12.5px;line-height:1.75;tab-size:2
+}
+.code pre .c{color:var(--code-dim)}
+.code pre .f{color:var(--code-flag)}
+.code pre .s{color:var(--code-str)}
+
+/* ---------- callouts ---------- */
+.note{
+  border-left:3px solid var(--calm);background:var(--calm-wash);
+  padding:15px 18px;margin:0 0 18px;font-size:14.5px;line-height:1.8
+}
+.trap{
+  border-left:3px solid var(--danger);background:var(--danger-wash);
+  padding:15px 18px;margin:0 0 18px;font-size:14.5px;line-height:1.8
+}
+.note p:last-child,.trap p:last-child{margin-bottom:0}
+.note .lbl,.trap .lbl{
+  display:block;font-size:11.5px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;margin-bottom:5px
+}
+.note .lbl{color:var(--calm)}
+.trap .lbl{color:var(--danger)}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;margin:0 0 20px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14px}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{
+  background:var(--surface-2);font-size:11.5px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--line)
+}
+tr:last-child td{border-bottom:0}
+td code,p code,li code,td .m{
+  font-family:"JetBrains Mono",monospace;font-size:12.5px;
+  background:var(--surface-2);padding:1px 5px;border-radius:3px;color:var(--ink)
+}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ---------- diagram ---------- */
+figure{margin:0 0 22px}
+.diagram{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:8px}
+.diagram svg{display:block;min-width:700px;max-width:100%;height:auto}
+.d-lbl{font:700 12px "Noto Sans TC",sans-serif;fill:var(--muted)}
+.d-tick{font:400 11px "JetBrains Mono",monospace;fill:var(--muted)}
+.d-note{font:700 11.5px "JetBrains Mono",monospace}
+figcaption{font-size:13px;color:var(--muted);margin-top:9px;max-width:66ch}
+
+/* ---------- drill ---------- */
+.drill{
+  background:var(--surface);border:1px solid var(--line);
+  border-top:3px solid var(--accent);padding:24px 26px;margin:0 0 18px;
+  box-shadow:var(--shadow)
+}
+.drill h4{
+  margin:0 0 10px;font-size:15px;font-weight:700;
+  font-family:"Noto Serif TC",serif
+}
+.drill ol{margin-bottom:0}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:0 0 20px}
+.pair>div{background:var(--surface);border:1px solid var(--line);padding:15px 17px;border-radius:6px}
+.pair .h{font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pair .bad .h{color:var(--danger)}
+.pair .good .h{color:var(--calm)}
+.pair p{margin:0;font-size:14.5px}
+
+hr.rule{border:0;border-top:1px solid var(--line);margin:52px 0 0}
+footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">J3M · 短影音製作 SOP</p>
+  <h1>把旁白變成<span class="hl">看得懂的字卡</span>：FFmpeg 上字幕實戰</h1>
+  <p class="standfirst">一支 1 分鐘的 AI 教學短影音，字幕做得好不好，決定觀眾是滑走還是看完。這份手冊拆解從語句邊界偵測到燒錄輸出的完整流程，每個環節都附可直接複製的指令，以及當初踩過的坑。</p>
+  <div class="meta">
+    <span>工具線：<b>FFmpeg ＋ ASS 字幕</b></span>
+    <span>適用：<b>直式 1080×1920 短影音</b></span>
+    <span>前提：<b>已有旁白音軌與逐字稿</b></span>
+  </div>
+</header>
+
+<nav class="pipe" aria-label="流程導覽">
+  <a href="#s1"><span class="n">STEP 1</span><span class="t">量素材</span><span class="s">ffprobe 定規格</span></a>
+  <a href="#s2"><span class="n">STEP 2</span><span class="t">抓語句邊界</span><span class="s">silencedetect</span></a>
+  <a href="#s3"><span class="n">STEP 3</span><span class="t">切字卡</span><span class="s">逐字稿轉下標題</span></a>
+  <a href="#s4"><span class="n">STEP 4</span><span class="t">寫 ASS</span><span class="s">樣式與時間軸</span></a>
+  <a href="#s5"><span class="n">STEP 5</span><span class="t">燒錄疊圖</span><span class="s">變速與浮貼卡</span></a>
+  <a href="#s6"><span class="n">STEP 6</span><span class="t">接片尾輸出</span><span class="s">concat 與響度</span></a>
+</nav>
+
+<!-- ================= 1 ================= -->
+<section id="s1">
+  <h2><span class="idx">01</span>量素材：先知道自己在剪什麼</h2>
+  <p class="lede">所有後續參數都從這一步的數字推導出來。跳過這步，字級、邊界、時間軸全部都是猜的。</p>
+
+  <div class="code">
+    <div class="bar"><span class="cap">ffprobe · 讀規格</span><button type="button" data-copy>複製</button></div>
+<pre><span class="c"># 一次讀出時長、解析度、幀率、音軌聲道</span>
+ffprobe <span class="f">-v</span> error <span class="f">-show_entries</span> format=duration,size <span class="s">\</span>
+  <span class="f">-show_entries</span> stream=codec_type,codec_name,width,height,r_frame_rate,channels <span class="s">\</span>
+  <span class="f">-of</span> default=noprint_wrappers=1 main.mp4</pre>
+  </div>
+
+  <h3>要記下來的四個數字</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>項目</th><th>本次實例</th><th>它決定了什麼</th></tr></thead>
+      <tbody>
+        <tr><td>影片尺寸</td><td class="num">720 × 1280</td><td>需升到 1080×1920，字幕字級要照 1080 的基準算</td></tr>
+        <tr><td>幀率</td><td class="num">30 fps</td><td>ASS 時間精度到 0.01 秒即可，不必更細</td></tr>
+        <tr><td>總長</td><td class="num">62.5 秒</td><td>扣掉片尾 logo 卡後，實際可用 59.34 秒</td></tr>
+        <tr><td>音軌</td><td class="num">單聲道 44.1 kHz</td><td>與片尾素材規格不同，串接前必須統一</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="lbl">原理</span>
+    <p>字幕字級不是憑感覺調的。<span class="kw">可用寬度 ÷ 每行字數 = 字級上限</span>。以 1080 寬、左右各留 70px 邊界為例，可用寬度 940px；若希望單行最多容納 14 個中文字，字級上限就是 940 ÷ 14 ≈ 67px。本次取 66px。</p>
+  </div>
+</section>
+
+<!-- ================= 2 ================= -->
+<section id="s2">
+  <h2><span class="idx">02</span>抓語句邊界：字幕對齊的地基</h2>
+  <p class="lede">這是整份手冊最關鍵、也最常被跳過的一步。字幕之所以「跟不上嘴」，九成問題出在這裡。</p>
+
+  <h3>為什麼不能直接用語音辨識給的時間軸</h3>
+  <p>ASR 工具輸出的 SRT，斷點是<strong>按語意分組</strong>的，不是按說話者的呼吸。它會把一整段話併成一個區塊，然後給一個橫跨多句的時間範圍。照套進影片，字幕就會整段停在畫面上，或整段提前消失。</p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 880 214" role="img" aria-label="ASR 區塊與語句邊界的對照圖">
+        <text class="d-lbl" x="40" y="22">ASR 輸出的區塊　（斷點按語意）</text>
+        <g fill="#B4432E" fill-opacity="0.28" stroke="#B4432E" stroke-opacity="0.7">
+          <rect x="40" y="32" width="126.7" height="26" rx="3"/>
+          <rect x="166.7" y="32" width="124.6" height="26" rx="3"/>
+          <rect x="301.1" y="32" width="120.1" height="26" rx="3"/>
+          <rect x="427.3" y="32" width="103.5" height="26" rx="3"/>
+          <rect x="536.7" y="32" width="302.9" height="26" rx="3"/>
+        </g>
+        <text class="d-note" x="43" y="76" fill="#B4432E">13 字 / 6.7 秒 ＝ 1.9 字·秒⁻¹</text>
+        <text class="d-note" x="170" y="94" fill="#B4432E">72 字 / 6.6 秒 ＝ 10.9 字·秒⁻¹</text>
+        <text class="d-note" x="540" y="76" fill="#B4432E">100 字 / 16.1 秒 ＝ 6.2 字·秒⁻¹</text>
+
+        <text class="d-lbl" x="40" y="132">silencedetect 抓到的語句邊界　（斷點按停頓）</text>
+        <g fill="#1B6560" fill-opacity="0.55">
+          <rect x="40.0" y="142" width="36.2" height="18" rx="2"/>
+          <rect x="82.3" y="142" width="47.9" height="18" rx="2"/>
+          <rect x="137.4" y="142" width="25.1" height="18" rx="2"/>
+          <rect x="171.0" y="142" width="24.3" height="18" rx="2"/>
+          <rect x="201.1" y="142" width="24.5" height="18" rx="2"/>
+          <rect x="230.9" y="142" width="62.1" height="18" rx="2"/>
+          <rect x="302.3" y="142" width="23.6" height="18" rx="2"/>
+          <rect x="332.8" y="142" width="26.2" height="18" rx="2"/>
+          <rect x="364.4" y="142" width="55.1" height="18" rx="2"/>
+          <rect x="427.8" y="142" width="27.2" height="18" rx="2"/>
+          <rect x="461.2" y="142" width="67.6" height="18" rx="2"/>
+          <rect x="537.4" y="142" width="23.6" height="18" rx="2"/>
+          <rect x="567.8" y="142" width="67.2" height="18" rx="2"/>
+          <rect x="642.7" y="142" width="24.7" height="18" rx="2"/>
+          <rect x="673.8" y="142" width="33.0" height="18" rx="2"/>
+          <rect x="711.9" y="142" width="29.1" height="18" rx="2"/>
+          <rect x="750.2" y="142" width="87.9" height="18" rx="2"/>
+        </g>
+        <text class="d-note" x="40" y="178" fill="#1B6560">17 個語句，全片語速穩定落在 4.3–6.0 字·秒⁻¹</text>
+
+        <line x1="40" y1="192" x2="840" y2="192" stroke="currentColor" stroke-opacity="0.25"/>
+        <g class="d-tick" text-anchor="middle">
+          <text x="40" y="208">0s</text>
+          <text x="228.7" y="208">10s</text>
+          <text x="417.4" y="208">20s</text>
+          <text x="606.1" y="208">30s</text>
+          <text x="794.8" y="208">40s</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>同一支影片的兩種斷點。上排 ASR 區塊的語速從 1.9 到 10.9 字／秒劇烈跳動，代表時間軸不可信；下排依靜音偵測切出的語句，語速穩定，才是可以掛字幕的地基。</figcaption>
+  </figure>
+
+  <h3>指令</h3>
+  <div class="code">
+    <div class="bar"><span class="cap">silencedetect · 找停頓</span><button type="button" data-copy>複製</button></div>
+<pre><span class="c"># noise：低於此音量視為靜音　d：至少持續多久才算一次停頓</span>
+ffmpeg <span class="f">-i</span> main.mp4 <span class="f">-af</span> <span class="s">"silencedetect=noise=-32dB:d=0.35"</span> <span class="f">-f</span> null - 2&gt;&amp;1 <span class="s">\</span>
+  | grep <span class="f">-E</span> <span class="s">"silence_(start|end)"</span></pre>
+  </div>
+
+  <p>輸出會長這樣，<code>silence_end</code> 到下一個 <code>silence_start</code> 之間，就是一個完整語句：</p>
+
+  <div class="code">
+    <div class="bar"><span class="cap">輸出範例</span></div>
+<pre>silence_start: 2.69351
+silence_end:   3.14066  | silence_duration: 0.447143
+silence_start: 6.69361
+silence_end:   7.22458  | silence_duration: 0.530975
+
+<span class="c">→ 語句 1：0.00 – 2.69　語句 2：3.14 – 6.69　語句 3：7.22 – ...</span></pre>
+  </div>
+
+  <h3>參數怎麼調</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>情況</th><th>調整</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td>切出來太碎（一句被切成三段）</td><td><code>d=0.5</code> 或更大</td><td>忽略句中的短換氣</td></tr>
+        <tr><td>整段沒切開</td><td><code>d=0.25</code></td><td>TTS 旁白停頓通常較短</td></tr>
+        <tr><td>有背景音樂</td><td><code>noise=-25dB</code></td><td>底噪抬高，門檻要跟著抬</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="lbl">驗收方法</span>
+    <p>拿每一段的<strong>字數除以秒數</strong>。中文旁白正常落在 <span class="kw">4–6 字／秒</span>；TTS 旁白偏慢，約 4–5。任何一段掉到 2 以下或衝到 9 以上，就是那一段對錯了，回頭檢查。這個檢驗只要一分鐘，卻能擋掉九成的字幕錯位。</p>
+  </div>
+</section>
+
+<!-- ================= 3 ================= -->
+<section id="s3">
+  <h2><span class="idx">03</span>切字卡：逐字稿不等於字幕</h2>
+  <p class="lede">短影音字幕的本質是「畫面下標題」，不是聽打稿。觀眾是用眼睛掃過去的，不是逐字閱讀。</p>
+
+  <h3>三條硬規則</h3>
+  <ol>
+    <li><strong>一張字卡對應一個語句邊界。</strong>超過 4 秒的長語句，從語意的自然停頓處對半切成兩張。</li>
+    <li><strong>單行 10–14 字，最多兩行。</strong>超過就換行或改寫，不要縮小字級去塞。</li>
+    <li><strong>刪贅字、留關鍵字。</strong>旁白說「它會主動幫你把緊急的郵件挑出來」，字卡寫「它會主動挑出<span class="kw">緊急郵件</span>」。</li>
+  </ol>
+
+  <div class="pair">
+    <div class="bad">
+      <div class="h">✕ 逐字照搬</div>
+      <p>「甚至在你點開前就根據上下文，擬好回信放進草稿。」<br><span style="color:var(--muted);font-size:13px">21 字擠成三行，觀眾讀完字卡已經播完了。</span></p>
+    </div>
+    <div class="good">
+      <div class="h">✓ 拆成兩張下標題</div>
+      <p>「甚至在你點開前」<br>「就依上下文擬好回信／直接放進<span class="kw">草稿</span>」<br><span style="color:var(--muted);font-size:13px">節奏跟著旁白走，關鍵字被標出來。</span></p>
+    </div>
+  </div>
+
+  <h3>分段標題另設一套樣式</h3>
+  <p>如果內容是「五大用法」這種列舉結構，把「第一、第二、最後」獨立成<strong>整行品牌黃</strong>的章節卡，與白色內文字卡區隔。觀眾中途滑進來，一眼就知道現在講到第幾點——這對完播率的幫助比任何轉場特效都大。</p>
+
+  <h3>時間軸怎麼算</h3>
+  <p>把每個語句邊界的起訖時間，依<strong>字數比例</strong>分配給該語句底下的字卡。例如語句 <code>14.17 – 18.78</code>（4.61 秒）要放兩張字卡、字數 7 與 13，則切點落在 14.17 + 4.61 × (7/20) ≈ 15.8 秒。</p>
+</section>
+
+<!-- ================= 4 ================= -->
+<section id="s4">
+  <h2><span class="idx">04</span>寫 ASS：為什麼不用 SRT</h2>
+  <p class="lede">SRT 只有文字和時間，字體、位置、單字變色一律做不到。要做出品牌一致的字幕，必須用 ASS。</p>
+
+  <h3>檔案骨架</h3>
+  <div class="code">
+    <div class="bar"><span class="cap">sub.ass · 完整可用範本</span><button type="button" data-copy>複製</button></div>
+<pre>[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour,
+ BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle,
+ BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Sub,Noto Sans CJK TC Black,66,&amp;H00FFFFFF,&amp;H00FFFFFF,&amp;H00101010,&amp;H96000000,0,0,0,0,100,100,1,0,1,5,3,2,70,70,300,1
+Style: Chap,Noto Sans CJK TC Black,74,&amp;H0000B8F5,&amp;H0000B8F5,&amp;H00101010,&amp;H96000000,0,0,0,0,100,100,2,0,1,5,3,2,70,70,300,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:08.54,0:00:09.84,Sub,,0,0,0,,{\fad(120,120)}它會主動挑出{\c&amp;H00B8F5&amp;}緊急郵件{\c&amp;H00FFFFFF&amp;}
+Dialogue: 0,0:00:13.90,0:00:15.15,Chap,,0,0,0,,{\fad(120,120)}第二，微創修改文件</pre>
+  </div>
+
+  <h3>關鍵欄位</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>欄位</th><th>本次設定</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><code>PlayResX / Y</code></td><td class="num">1080 / 1920</td><td>字幕的座標系。必須與輸出解析度一致，否則字級全錯</td></tr>
+        <tr><td><code>WrapStyle</code></td><td class="num">2</td><td>關閉自動換行，換行完全由 <code>\N</code> 控制</td></tr>
+        <tr><td><code>Fontsize</code></td><td class="num">66</td><td>由「可用寬度 ÷ 字數」推導</td></tr>
+        <tr><td><code>Outline</code></td><td class="num">5</td><td>黑描邊寬度。淺色畫面上沒描邊等於沒字幕</td></tr>
+        <tr><td><code>Alignment</code></td><td class="num">2</td><td>底部置中（小鍵盤方位：2 下、5 中、8 上）</td></tr>
+        <tr><td><code>MarginV</code></td><td class="num">300</td><td>距底部 300px，避開 Shorts 的標題與按鈕遮擋區</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>行內標籤</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>標籤</th><th>用途</th></tr></thead>
+      <tbody>
+        <tr><td><code>{\fad(120,120)}</code></td><td>淡入 / 淡出各 120 毫秒。字幕硬切會有廉價感</td></tr>
+        <tr><td><code>{\c&amp;H00B8F5&amp;}</code></td><td>從此處起改字色，用完要用 <code>{\c&amp;H00FFFFFF&amp;}</code> 改回白色</td></tr>
+        <tr><td><code>\N</code></td><td>強制換行</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="trap">
+    <span class="lbl">最大的坑：色碼是 BGR，不是 RGB</span>
+    <p>ASS 的顏色格式為 <code>&amp;HAABBGGRR&amp;</code>，紅藍順序與 CSS 相反，而且前兩碼是<strong>透明度</strong>（00 為完全不透明）。品牌黃 <code>#F5B800</code> 要寫成 <code>&amp;H00B8F5&amp;</code>。直接把 CSS 色碼貼進去，黃色會變成藍色。</p>
+  </div>
+
+  <div class="trap">
+    <span class="lbl">第二個坑：字型名稱要用系統實際註冊的名字</span>
+    <p>先用 <code>fc-list :lang=zh</code> 查出可用的中文字型，照抄它回報的家族名（例如 <code>Noto Sans CJK TC Black</code>）。名稱打錯不會報錯，libass 會靜默換成預設字型，你要到輸出成品才會發現字型不對。</p>
+  </div>
+</section>
+
+<!-- ================= 5 ================= -->
+<section id="s5">
+  <h2><span class="idx">05</span>燒錄、變速、疊圖</h2>
+  <p class="lede">一次 filter 鏈把升尺寸、燒字幕、疊截圖、變速全部做完，避免多次重編造成畫質損失。</p>
+
+  <h3>最小可用版本</h3>
+  <div class="code">
+    <div class="bar"><span class="cap">燒錄字幕 · 升至 1080×1920</span><button type="button" data-copy>複製</button></div>
+<pre>ffmpeg <span class="f">-i</span> main.mp4 <span class="s">\</span>
+  <span class="f">-vf</span> <span class="s">"scale=1080:1920:flags=lanczos,fps=30,setsar=1,ass=sub.ass"</span> <span class="s">\</span>
+  <span class="f">-c:v</span> libx264 <span class="f">-preset</span> slow <span class="f">-crf</span> 19 <span class="f">-pix_fmt</span> yuv420p <span class="s">\</span>
+  <span class="f">-c:a</span> aac <span class="f">-b:a</span> 192k out.mp4</pre>
+  </div>
+
+  <h3>變速：旁白太滿時的正解</h3>
+  <p>當旁白句間停頓只有 0.4–0.7 秒，全片幾乎沒有空白可剪，硬跳剪會截斷語句。這時應該<strong>整體變速</strong>，而不是跳剪。<code>atempo</code> 會保留音高，1.4 倍以內聽感自然。</p>
+
+  <div class="trap">
+    <span class="lbl">變速後字幕時間要同步換算</span>
+    <p>所有 ASS 時間軸都必須<strong>除以倍率</strong>。原片 <code>14.17</code> 秒的字卡，在 1.4 倍加速後要寫成 <code>14.17 ÷ 1.4 = 10.12</code> 秒。作法上，先在原始時間軸算好所有斷點，最後統一除一次，不要邊算邊換算。</p>
+  </div>
+
+  <div class="code">
+    <div class="bar"><span class="cap">變速 ＋ 燒錄 ＋ 疊圖 · 完整 filter 鏈</span><button type="button" data-copy>複製</button></div>
+<pre><span class="c"># -t 放在 -i 之前才是「裁切輸入」；放在後面只會限制輸出長度</span>
+ffmpeg <span class="f">-t</span> 59.34 <span class="f">-i</span> main.mp4 <span class="s">\</span>
+  <span class="f">-loop</span> 1 <span class="f">-framerate</span> 30 <span class="f">-t</span> 3.45 <span class="f">-i</span> card.png <span class="s">\</span>
+  <span class="f">-filter_complex</span> <span class="s">"</span>
+    <span class="c">[1:v]</span>format=rgba,
+      fade=t=in:st=0:d=0.20:alpha=1,
+      fade=t=out:st=3.25:d=0.20:alpha=1,
+      tpad=start_duration=22.40:start_mode=add:color=black@0<span class="c">[ov]</span>;
+    <span class="c">[0:v]</span>setpts=PTS/1.40,scale=1080:1920:flags=lanczos,
+      fps=30,setsar=1,ass=sub.ass<span class="c">[base]</span>;
+    <span class="c">[base][ov]</span>overlay=x=(W-w)/2:y=620-h/2:eof_action=pass<span class="c">[v]</span>;
+    <span class="c">[0:a]</span>atempo=1.40,
+      aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo<span class="c">[a]</span>
+  <span class="s">"</span> <span class="s">\</span>
+  <span class="f">-map</span> <span class="s">"[v]"</span> <span class="f">-map</span> <span class="s">"[a]"</span> <span class="s">\</span>
+  <span class="f">-c:v</span> libx264 <span class="f">-preset</span> slow <span class="f">-crf</span> 19 <span class="f">-pix_fmt</span> yuv420p <span class="s">\</span>
+  <span class="f">-c:a</span> aac <span class="f">-b:a</span> 192k segA.mp4</pre>
+  </div>
+
+  <h3>疊圖的三個要點</h3>
+  <ul>
+    <li><strong>用 <code>tpad</code> 做延遲進場。</strong><code>tpad=start_duration=22.40:start_mode=add:color=black@0</code> 會在圖片前面補上透明幀，時間戳才會正確對齊。前面必須先 <code>format=rgba</code>，否則透明通道會被丟掉。</li>
+    <li><strong>淡入淡出寫在 tpad 之前。</strong>此時圖片串流的時間軸還是從 0 起算，<code>fade</code> 的 <code>st</code> 用相對時間即可。</li>
+    <li><strong>字幕先燒、疊圖後上。</strong>filter 鏈的順序決定圖層。把疊圖錨在畫面上半部（本次 <code>y=620-h/2</code>），字幕在下方 300px，兩者不會互相遮擋。</li>
+  </ul>
+
+  <div class="note">
+    <span class="lbl">截圖處理</span>
+    <p>手機或網頁截圖直接疊上去會像誤觸的彈窗。先用 Python（PIL）加上<strong>白底、圓角、投影</strong>做成浮貼卡，再疊進畫面，才會像設計過的元素。放大倍率盡量不超過 2 倍，超過就該回頭找更高解析度的原圖。</p>
+  </div>
+</section>
+
+<!-- ================= 6 ================= -->
+<section id="s6">
+  <h2><span class="idx">06</span>接片尾、統一響度、輸出</h2>
+  <p class="lede">串接前規格不統一，是 concat 失敗或畫面錯亂的最常見原因。</p>
+
+  <h3>串接</h3>
+  <div class="code">
+    <div class="bar"><span class="cap">concat · 主片 ＋ 品牌片尾</span><button type="button" data-copy>複製</button></div>
+<pre><span class="c"># 前提：所有片段的解析度、幀率、SAR、取樣率、聲道數必須一致</span>
+printf <span class="s">"file 'cover.mp4'\nfile 'segA.mp4'\nfile 'outro.mp4'\n"</span> &gt; list.txt
+
+ffmpeg <span class="f">-f</span> concat <span class="f">-safe</span> 0 <span class="f">-i</span> list.txt <span class="s">\</span>
+  <span class="f">-c:v</span> copy <span class="s">\</span>
+  <span class="f">-af</span> <span class="s">"loudnorm=I=-14:TP=-1.5:LRA=11"</span> <span class="f">-c:a</span> aac <span class="f">-b:a</span> 192k <span class="s">\</span>
+  <span class="f">-movflags</span> +faststart final.mp4</pre>
+  </div>
+
+  <h3>三個收尾細節</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>做法</th><th>參數</th><th>為什麼</th></tr></thead>
+      <tbody>
+        <tr><td>響度正規化</td><td><code>loudnorm=I=-14</code></td><td>−14 LUFS 是 YouTube 的標準值。太小聲觀眾直接滑走</td></tr>
+        <tr><td>結尾淡出</td><td><code>fade=t=out:d=0.28</code></td><td>畫面與音訊同時淡出，銜接品牌片尾才不突兀</td></tr>
+        <tr><td>快速起播</td><td><code>-movflags +faststart</code></td><td>把索引移到檔頭，上傳與預覽都更快</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="trap">
+    <span class="lbl">片尾素材要檢查最後一幀</span>
+    <p>許多片尾模板結尾是「滑出」動畫，最後 0.3 秒其實是空白畫面。直接接上去，影片會結束在一片黑。作法是裁到標題完全定位的時間點（本次 2.0 秒），再用 <code>tpad=stop_mode=clone:stop_duration=0.5</code> 凍結最後一幀，讓品牌卡停留住。</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ================= 坑總表 ================= -->
+<section id="traps">
+  <h2><span class="idx">附錄 A</span>常見坑速查</h2>
+  <p class="lede">按出錯的頻率排序。前三項佔了實務上八成的除錯時間。</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th>症狀</th><th>原因</th><th>修法</th></tr></thead>
+      <tbody>
+        <tr><td>字幕跟不上嘴</td><td>套用了 ASR 的區塊時間軸</td><td>改用 silencedetect 的語句邊界，並用字數／秒驗收</td></tr>
+        <tr><td>關鍵字顏色不對</td><td>ASS 色碼是 BGR 且含透明度</td><td><code>#F5B800</code> → <code>&amp;H00B8F5&amp;</code></td></tr>
+        <tr><td>字型變成預設宋體</td><td>字型名稱與系統註冊名不符</td><td>先跑 <code>fc-list :lang=zh</code> 照抄家族名</td></tr>
+        <tr><td>字幕超出畫面右側</td><td><code>WrapStyle: 2</code> 不會自動換行</td><td>自己算每行字數上限，用 <code>\N</code> 手動斷行</td></tr>
+        <tr><td>輸出比預期長</td><td><code>-t</code> 放在 <code>-i</code> 之後</td><td>裁切輸入要把 <code>-t</code> 放在 <code>-i</code> 之前</td></tr>
+        <tr><td>疊圖是半透明的</td><td>抽的檢查幀剛好落在淡入淡出區間</td><td>抽 fade 結束後的時間點再判斷</td></tr>
+        <tr><td>疊圖完全不透明、蓋掉整片</td><td>filter 鏈缺少 <code>format=rgba</code></td><td>在 fade 之前補上 <code>format=rgba</code></td></tr>
+        <tr><td>concat 後畫面錯亂</td><td>各片段 SAR 或取樣率不一致</td><td>串接前逐段加 <code>setsar=1</code> 與 <code>aformat</code> 統一</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================= 練習 ================= -->
+<section id="drill">
+  <h2><span class="idx">附錄 B</span>學員練習</h2>
+  <p class="lede">用自己的一支 30–60 秒素材完成，每一題都對應上面的一個階段。</p>
+
+  <div class="drill">
+    <h4>➊ 語速檢驗（對應 STEP 2）</h4>
+    <ol>
+      <li>對自己的影片跑一次 <code>silencedetect</code>，把語句邊界抄成表格。</li>
+      <li>把逐字稿依語意分配到各語句，算出每一段的「字數 ÷ 秒數」。</li>
+      <li>找出偏離 4–6 字／秒的那一段，說明是分配錯了、還是 <code>d</code> 參數需要調整。</li>
+    </ol>
+  </div>
+
+  <div class="drill">
+    <h4>➋ 字卡改寫（對應 STEP 3）</h4>
+    <ol>
+      <li>挑出逐字稿中最長的三句，各改寫成不超過 14 字的下標題。</li>
+      <li>每張字卡標出<strong>一個</strong>關鍵字（只能一個），準備套用品牌色。</li>
+      <li>比對改寫前後的字數，計算刪掉了幾成。目標是 30% 以上。</li>
+    </ol>
+  </div>
+
+  <div class="drill">
+    <h4>➌ 樣式與燒錄（對應 STEP 4–5）</h4>
+    <ol>
+      <li>依「可用寬度 ÷ 字數」算出你的 <code>Fontsize</code>，寫出計算過程。</li>
+      <li>把你的品牌色從 HEX 換算成 ASS 的 BGR 格式。</li>
+      <li>燒錄後抽出三張畫面檢查：字幕是否超框、描邊是否足夠、是否落在 Shorts 遮擋區內。</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <p>本手冊的所有參數均取自實際專案：一支 45 秒的 Gemini Spark 教學短影音，22 張字卡、3 處畫面疊圖、1.4 倍變速、−14 LUFS 響度。數值請依自己的素材重新推導，不要直接照抄。</p>
+</footer>
+
+</div>
+
+<script>
+document.querySelectorAll('[data-copy]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var pre = btn.closest('.code').querySelector('pre');
+    var text = pre.innerText;
+    var done = function(){
+      var old = btn.textContent;
+      btn.textContent = '已複製';
+      setTimeout(function(){ btn.textContent = old; }, 1400);
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+    } catch (e) { fallback(); }
+    function fallback(){
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        done();
+      } catch (err) {
+        btn.textContent = '請手動選取';
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>
