@@ -147,6 +147,7 @@ body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:#f5f4
   <button class="tab" onclick="switchTab('doc')">④ 公文撰寫小幫手</button>
   <button class="tab" onclick="switchTab('dm')">⑤ DM 製作</button>
   <button class="tab" onclick="switchTab('closure')">⑥ 結案數據分析報告</button>
+  <button class="tab" onclick="switchTab('finance')">⑦ 理財規劃器</button>
   <button class="tab" onclick="switchTab('instructor')">講師介紹</button>
 </div>
 
@@ -469,6 +470,54 @@ body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:#f5f4
 
 </div>
 
+<!-- ⑦ 理財規劃器 -->
+<div id="panel-finance" class="panel">
+  <div class="card">
+    <div class="card-head"><div class="snum na">7</div><h3>目標理財規劃器：用 AI 開發的課堂示範工具</h3></div>
+    <p>設定「民國幾年要存到多少錢」，組合市值型 ETF、高股息 ETF、主動式 ETF、美股 ETF 與定存，系統會依過去 5 年的回測報酬，算出每個月需要存多少錢，並可逐月記錄實際投入、追蹤進度。</p>
+    <div class="tag-row"><span class="tag a">複利試算</span><span class="tag b">歷史回測</span><span class="tag t">情境分析</span><span class="tag p">每月追蹤</span></div>
+    <a href="./finance-planner/" target="_blank" rel="noopener" style="display:inline-block;margin-top:.8rem;font-size:13px;font-weight:500;padding:8px 16px;border-radius:20px;background:var(--color-text-primary);color:var(--color-background-primary);text-decoration:none">開啟理財規劃器 →</a>
+  </div>
+
+  <p class="sec-label">使用流程</p>
+  <div class="flow">
+    <div class="fn"><span>Step 1</span><strong>目標設定</strong></div><div class="fa">→</div>
+    <div class="fn"><span>Step 2</span><strong>工具配置</strong></div><div class="fa">→</div>
+    <div class="fn"><span>Step 3</span><strong>試算結果</strong></div><div class="fa">→</div>
+    <div class="fn"><span>Step 4</span><strong>每月追蹤</strong></div>
+  </div>
+
+  <p class="sec-label">四大功能</p>
+  <div class="step-block"><div class="snum na">1</div><div class="step-block-content"><h4>目標設定</h4><p>以民國年＋月份設定期限，填寫目標金額與起始資金。可開啟通膨換算，看見未來實際需要的金額；也可設定每年加薪後的投入調升比例。</p></div></div>
+  <div class="step-block"><div class="snum na">2</div><div class="step-block-content"><h4>工具配置</h4><p>內建五大類標的，可多選並設定比例。報酬率自動帶入過去 5 年回測值（未滿 5 年者取上市以來），也可手動改成自己的預期；配息可選擇再投入或領現金。</p></div></div>
+  <div class="step-block"><div class="snum na">3</div><div class="step-block-content"><h4>試算結果</h4><p>同時呈現保守、中性、樂觀三種情境的每月應存金額，搭配資產成長曲線與逐月明細表，明細可匯出 CSV。</p></div></div>
+  <div class="step-block"><div class="snum na">4</div><div class="step-block-content"><h4>每月追蹤</h4><p>每月記錄實際投入與帳戶市值，系統自動比對計畫進度，並依最新市值重新計算剩餘期間每月應存金額。</p></div></div>
+
+  <p class="sec-label">內建理財工具</p>
+  <div class="card">
+    <table class="compare-table">
+      <tr><th>類別</th><th>代表標的</th><th>回測期間</th></tr>
+      <tr><td>市值型 ETF</td><td>0050、006208、00922 等 10 檔</td><td>近 5 年</td></tr>
+      <tr><td>高股息 ETF</td><td>0056、00878、00919 等 10 檔</td><td>近 5 年或上市以來</td></tr>
+      <tr><td>主動式 ETF</td><td>00981A、00980A、00982A 等 8 檔</td><td>上市以來</td></tr>
+      <tr><td>美股 ETF</td><td>VOO、QQQ、VT、SCHD 等 10 檔</td><td>近 5 年</td></tr>
+      <tr><td>定存</td><td>臺灣銀行一年期定存</td><td>近 5 年平均利率</td></tr>
+    </table>
+  </div>
+
+  <p class="sec-label">課堂操作建議</p>
+  <div class="card">
+    <ul class="checklist">
+      <li>先用範例資料操作一輪，觀察「配息再投入」與「領現金」的差異</li>
+      <li>比較三種情境的每月應存金額，理解報酬率假設對結果的影響</li>
+      <li>換成自己的目標，填入真實數字試算</li>
+      <li>課程結束後按「重設範例資料」或「清除資料」</li>
+    </ul>
+    <div class="tip">回測報酬為整理自公開資料的參考值，部分為估算；過去績效不代表未來報酬。本工具僅供教學與試算，不構成投資建議。</div>
+    <div class="tip tip-green">所有資料只存在使用者自己的瀏覽器，不會上傳，其他人看不到。</div>
+  </div>
+</div>
+
 <!-- 講師介紹 -->
 <div id="panel-instructor" class="panel">
 <div style="max-width:520px;margin:0 auto">
@@ -514,7 +563,7 @@ body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:#f5f4
 
 <script>
 function switchTab(id){
-  const ids=['notebook','layered','gem','doc','dm','closure','instructor'];
+  const ids=['notebook','layered','gem','doc','dm','closure','finance','instructor'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',ids[i]===id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+id));
 }

@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>理財規劃課堂示範</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout：左側步驟導覽＋右側工作區（窄螢幕改為上方步驟列），結果摘要固定在工作區頂部 */
+:root{
+  --bg:#F2F3F5; --surface:#FFFFFF; --surface-2:#E8ECEF; --line:#D5D9DE;
+  --fg:#2B2D31; --fg-2:#5A5E66; --fg-3:#8E929A;
+  --gold:#9C7A17; --gold-soft:#FDF3D6; --gold-line:#C59B27;
+  --ink:#383A3E; --on-ink:#FFFFFF;
+  --good:#2F7A4F; --warn:#A8620F; --bad:#B23B3B;
+  --good-bg:#E5F2EA; --warn-bg:#FBEEDC; --bad-bg:#F7E3E3;
+  --chart-principal:#9AA3AE; --chart-main:#9C7A17; --chart-band:#C59B27; --chart-actual:#2B6CB0; --chart-target:#B23B3B;
+  --f-display:"Noto Serif TC","Noto Serif CJK TC","Noto Serif CJK JP",serif;
+  --f-body:"Noto Sans TC","Noto Sans CJK TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#232529; --surface:#2E3035; --surface-2:#383A3E; --line:#4E5158;
+  --fg:#ECEDEF; --fg-2:#C3C7CF; --fg-3:#8E929A;
+  --gold:#D9B04A; --gold-soft:#3D3624; --gold-line:#C59B27;
+  --ink:#ECEDEF; --on-ink:#2B2D31;
+  --good:#6CC58F; --warn:#E3A452; --bad:#E77B7B;
+  --good-bg:#24372B; --warn-bg:#3B3022; --bad-bg:#3E2828;
+  --chart-principal:#6F7680; --chart-main:#D9B04A; --chart-band:#C59B27; --chart-actual:#6AA9EC; --chart-target:#E77B7B;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#232529; --surface:#2E3035; --surface-2:#383A3E; --line:#4E5158;
+  --fg:#ECEDEF; --fg-2:#C3C7CF; --fg-3:#8E929A;
+  --gold:#D9B04A; --gold-soft:#3D3624; --gold-line:#C59B27;
+  --ink:#ECEDEF; --on-ink:#2B2D31;
+  --good:#6CC58F; --warn:#E3A452; --bad:#E77B7B;
+  --good-bg:#24372B; --warn-bg:#3B3022; --bad-bg:#3E2828;
+  --chart-principal:#6F7680; --chart-main:#D9B04A; --chart-band:#C59B27; --chart-actual:#6AA9EC; --chart-target:#E77B7B;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.65}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.brand{display:flex;flex-direction:column;gap:2px}
+.brand small{color:var(--gold);font-weight:700;letter-spacing:.12em;font-size:12px}
+h1{font-family:var(--f-display);font-size:clamp(24px,4vw,32px);margin:0;line-height:1.25;text-wrap:balance}
+h2{font-family:var(--f-display);font-size:20px;margin:0 0 4px;text-wrap:balance}
+h3{font-size:15px;margin:0;font-weight:700}
+.lede{color:var(--fg-2);margin:0;font-size:14px}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;align-items:start}
+nav.steps{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);display:flex;flex-direction:column;gap:4px}
+nav.steps button{all:unset;cursor:pointer;display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:8px;color:var(--fg-2);font-weight:500}
+nav.steps button .mk{font-size:18px;color:var(--fg-3);width:22px;text-align:center}
+nav.steps button:hover{background:var(--surface-2)}
+nav.steps button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:inset 3px 0 0 var(--gold-line)}
+nav.steps button[aria-selected="true"] .mk{color:var(--gold)}
+nav.steps button:focus-visible{outline:2px solid var(--gold-line);outline-offset:2px}
+@media (max-width:820px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.steps{position:static;flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:4px}
+  nav.steps button{white-space:nowrap;padding:8px 10px}
+  nav.steps button[aria-selected="true"]{box-shadow:inset 0 -3px 0 var(--gold-line)}
+}
+
+.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:20px}
+.summary>div{background:var(--surface);padding:14px 16px;min-width:0}
+.summary .k{font-size:12px;color:var(--fg-3);letter-spacing:.04em}
+.summary .v{font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:clamp(18px,2.4vw,24px);font-weight:500;line-height:1.3;overflow-wrap:anywhere}
+.summary .s{font-size:12px;color:var(--fg-2)}
+.summary .hl .v{color:var(--gold)}
+@media (max-width:640px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+section.panel{display:none;flex-direction:column;gap:18px}
+section.panel.on{display:flex}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.card-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--fg-2);font-weight:500;min-width:0}
+label.f .hint{font-weight:400;color:var(--fg-3);font-size:12px}
+.inline{display:flex;gap:8px;align-items:center}
+.inline>*{min-width:0}
+input[type=number],input[type=text],input[type=month],select{font:inherit;font-size:15px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-width:0}
+input:focus-visible,select:focus-visible{outline:2px solid var(--gold-line);outline-offset:1px;border-color:transparent}
+.unit{color:var(--fg-3);font-size:13px;white-space:nowrap}
+.btn{font:inherit;font-size:14px;font-weight:500;border-radius:8px;padding:8px 14px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--ink);color:var(--on-ink);border-color:var(--ink)}
+.btn.primary:hover{opacity:.9}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.danger:hover{background:var(--bad-bg)}
+.btn.danger[data-armed]{background:var(--bad);color:var(--surface);border-color:var(--bad)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--fg-2)}
+.btn.sm{padding:4px 10px;font-size:13px}
+.btn:focus-visible{outline:2px solid var(--gold-line);outline-offset:2px}
+.switch{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;user-select:none}
+.switch input{appearance:none;width:38px;height:22px;border-radius:22px;background:var(--line);position:relative;cursor:pointer;flex:none;margin:0;transition:background .15s}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--surface);transition:left .15s}
+.switch input:checked{background:var(--gold-line)}
+.switch input:checked::after{left:19px}
+.switch input:focus-visible{outline:2px solid var(--gold-line);outline-offset:2px}
+
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{all:unset;cursor:pointer;padding:7px 14px;font-size:14px;color:var(--fg-2)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--on-ink)}
+.seg button:focus-visible{outline:2px solid var(--gold-line);outline-offset:-2px}
+
+.note{font-size:13px;padding:10px 12px;border-radius:8px;background:var(--surface-2);color:var(--fg-2)}
+.note.warn{background:var(--warn-bg);color:var(--fg)}
+.note.warn b{color:var(--warn)}
+.note.gold{background:var(--gold-soft);color:var(--fg)}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:20px;letter-spacing:.03em;white-space:nowrap}
+.pill.ok{background:var(--good-bg);color:var(--good)}
+.pill.est{background:var(--warn-bg);color:var(--warn)}
+.pill.short{background:var(--bad-bg);color:var(--bad)}
+.pill.cat{background:var(--surface-2);color:var(--fg-2)}
+
+.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:500;color:var(--fg-3);font-size:12px;background:var(--surface-2);position:sticky;top:0}
+td.l,th.l{text-align:left}
+tbody tr:last-child td{border-bottom:0}
+td input[type=number]{padding:5px 8px;font-size:14px;width:120px;text-align:right}
+td input[type=number].w-s{width:84px}
+tr.yr td{background:var(--gold-soft)}
+.scroll-y{max-height:520px;overflow:auto}
+
+.holdings{display:flex;flex-direction:column;gap:10px}
+.hold{display:grid;grid-template-columns:minmax(0,1.6fr) 110px 150px auto;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.hold .nm{display:flex;flex-direction:column;gap:3px;min-width:0}
+.hold .nm b{font-size:15px;overflow-wrap:anywhere}
+.hold .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--fg-3)}
+.hold .ratebox{display:flex;flex-direction:column;gap:2px}
+.hold .reset{font-size:12px;color:var(--gold);background:none;border:0;padding:0;cursor:pointer;text-align:left;font:inherit;font-size:12px}
+.hold .reset:focus-visible{outline:2px solid var(--gold-line)}
+@media (max-width:640px){.hold{grid-template-columns:1fr 1fr}.hold .nm{grid-column:1/-1}}
+.addrow{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:10px;align-items:end}
+@media (max-width:640px){.addrow{grid-template-columns:1fr}}
+.custom{display:grid;grid-template-columns:minmax(0,1.4fr) 1fr 1fr auto;gap:10px;align-items:end}
+@media (max-width:640px){.custom{grid-template-columns:1fr 1fr}}
+.wsum{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:14px}
+.bar{height:10px;border-radius:10px;background:var(--surface-2);overflow:hidden;display:flex;flex:1;min-width:160px}
+.bar span{display:block;height:100%}
+
+.scen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.scen>div{border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.scen>div.mid{border-color:var(--gold-line);background:var(--gold-soft)}
+.scen .t{font-size:13px;color:var(--fg-2);font-weight:700}
+.scen .r{font-size:12px;color:var(--fg-3)}
+.scen .big{font-family:var(--f-num);font-size:22px;font-weight:500;overflow-wrap:anywhere}
+@media (max-width:640px){.scen{grid-template-columns:1fr}}
+.chartbox{position:relative;height:340px;max-width:100%}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--fg-2)}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.legend i.dash{background:repeating-linear-gradient(90deg,var(--chart-band) 0 4px,transparent 4px 7px)!important}
+.status{display:flex;gap:16px;flex-wrap:wrap}
+.status>div{flex:1;min-width:180px;padding:12px 14px;border-radius:8px;background:var(--bg);border:1px solid var(--line)}
+.status .k{font-size:12px;color:var(--fg-3)}
+.status .v{font-family:var(--f-num);font-size:20px}
+.ok-t{color:var(--good)} .bad-t{color:var(--bad)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--on-ink);padding:10px 16px;border-radius:8px;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
+.src{font-size:12.5px;color:var(--fg-2);line-height:1.7}
+.src a{color:var(--gold)}
+footer{margin-top:28px;font-size:12px;color:var(--fg-3);border-top:1px solid var(--line);padding-top:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <small>CLASSROOM DEMO</small>
+      <h1>目標理財規劃器</h1>
+      <p class="lede">設定目標金額與期限，配置理財工具，系統以歷史回測報酬試算每月應存金額，並逐月追蹤進度。</p>
+    </div>
+    <div class="top-actions">
+      <button class="btn" id="btnReset" type="button">重設範例資料</button>
+      <button class="btn" id="btnBackup" type="button">匯出備份</button>
+      <label class="btn" for="fileImport" style="cursor:pointer">匯入備份</label>
+      <input type="file" id="fileImport" accept=".json,application/json" hidden>
+      <button class="btn danger" id="btnClear" type="button">清除資料</button>
+    </div>
+  </header>
+
+  <div class="note gold" style="margin-bottom:16px">課堂示範版：畫面中的目標與金額皆為範例，可自由修改；課程結束後按「重設範例資料」即可還原。</div>
+  <div class="summary" id="summary" aria-live="polite"></div>
+
+  <div class="layout">
+    <nav class="steps" role="tablist" aria-label="規劃步驟">
+      <button role="tab" data-tab="goal" aria-selected="true"><span class="mk">➊</span>目標設定</button>
+      <button role="tab" data-tab="tools" aria-selected="false"><span class="mk">➋</span>工具配置</button>
+      <button role="tab" data-tab="result" aria-selected="false"><span class="mk">➌</span>試算結果</button>
+      <button role="tab" data-tab="track" aria-selected="false"><span class="mk">➍</span>每月追蹤</button>
+      <button role="tab" data-tab="data" aria-selected="false"><span class="mk">➎</span>資料說明</button>
+    </nav>
+
+    <main style="min-width:0">
+      <!-- ➊ 目標設定 -->
+      <section class="panel on" id="p-goal" role="tabpanel">
+        <div class="card">
+          <div><h2>目標設定</h2><p class="lede">填寫目標名稱、達成時間與金額。時間採民國年，精確到月份。</p></div>
+          <div class="grid">
+            <label class="f">目標名稱<input type="text" id="goalName" maxlength="30"></label>
+            <label class="f">目標金額<span class="inline"><input type="number" id="goalAmount" min="0" step="10000"><span class="unit">元</span></span></label>
+            <label class="f">達成時間（民國）<span class="inline"><input type="number" id="goalY" min="100" max="200" step="1"><span class="unit">年</span><select id="goalM" aria-label="月份"></select></span></label>
+            <label class="f">起始資金<span class="hint">目前已有的存款或持股市值</span><span class="inline"><input type="number" id="initCap" min="0" step="10000"><span class="unit">元</span></span></label>
+          </div>
+          <div class="note" id="periodNote"></div>
+        </div>
+
+        <div class="card">
+          <div><h2>通膨與加薪</h2><p class="lede">通膨會侵蝕未來的購買力；加薪則讓每月投入可以逐年提高。</p></div>
+          <label class="switch"><input type="checkbox" id="inflOn">將目標金額換算為未來購買力（考慮通膨）</label>
+          <div class="grid">
+            <label class="f">年通膨率<span class="inline"><input type="number" id="inflRate" min="0" max="15" step="0.1"><span class="unit">%</span></span></label>
+            <label class="f">每月投入逐年調升<span class="hint">例如隨加薪每年多存 3%，不調升請填 0</span><span class="inline"><input type="number" id="raiseRate" min="0" max="30" step="0.5"><span class="unit">%／年</span></span></label>
+          </div>
+          <div class="note gold" id="inflNote"></div>
+        </div>
+        <div style="display:flex;justify-content:flex-end"><button class="btn primary" data-go="tools" type="button">下一步：工具配置</button></div>
+      </section>
+
+      <!-- ➋ 工具配置 -->
+      <section class="panel" id="p-tools" role="tabpanel">
+        <div class="card">
+          <div class="card-h">
+            <div><h2>工具配置</h2><p class="lede">可組合多種工具並設定比例。報酬率預設帶入回測值，也可以手動改成自己的預期。</p></div>
+            <div class="seg" role="group" aria-label="配息處理">
+              <button type="button" id="reinvOn" aria-pressed="true">配息再投入</button>
+              <button type="button" id="reinvOff" aria-pressed="false">配息領現金</button>
+            </div>
+          </div>
+          <div class="note" id="reinvNote"></div>
+          <div class="holdings" id="holdings"></div>
+          <div class="wsum"><span>配置比例合計 <b class="num" id="wTotal"></b></span><div class="bar" id="wBar"></div></div>
+          <div class="note warn" id="wWarn" hidden></div>
+        </div>
+
+        <div class="card">
+          <h3>新增工具</h3>
+          <div class="addrow">
+            <label class="f">類別<select id="addCat"></select></label>
+            <label class="f">標的<select id="addCode"></select></label>
+            <button class="btn" id="btnAdd" type="button">加入配置</button>
+          </div>
+          <div id="addInfo" class="note"></div>
+          <details>
+            <summary style="cursor:pointer;font-size:14px;color:var(--fg-2)">新增自訂工具（清單中沒有的標的）</summary>
+            <div class="custom" style="margin-top:12px">
+              <label class="f">名稱<input type="text" id="cuName" maxlength="24" placeholder="例如：儲蓄險、基金"></label>
+              <label class="f">年化總報酬<span class="inline"><input type="number" id="cuRate" step="0.1" value="5"><span class="unit">%</span></span></label>
+              <label class="f">其中配息率<span class="inline"><input type="number" id="cuDiv" step="0.1" value="0" min="0"><span class="unit">%</span></span></label>
+              <button class="btn" id="btnAddCustom" type="button">加入</button>
+            </div>
+          </details>
+        </div>
+
+        <div class="card">
+          <div><h3>情境分析設定</h3><p class="lede">以加權報酬為中性情境，上下各調整一個百分點區間，呈現保守與樂觀結果。</p></div>
+          <label class="f" style="max-width:260px">情境差距<span class="inline"><input type="number" id="scenGap" min="0" max="20" step="0.5"><span class="unit">個百分點</span></span></label>
+        </div>
+        <div style="display:flex;justify-content:space-between"><button class="btn ghost" data-go="goal" type="button">上一步</button><button class="btn primary" data-go="result" type="button">查看試算結果</button></div>
+      </section>
+
+      <!-- ➌ 試算結果 -->
+      <section class="panel" id="p-result" role="tabpanel">
+        <div class="card">
+          <div><h2>每月應存金額</h2><p class="lede" id="resLede"></p></div>
+          <div class="scen" id="scen"></div>
+          <div class="note warn" id="hotWarn" hidden></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>資產成長曲線</h3>
+            <div class="seg" role="group" aria-label="曲線情境"><button type="button" data-cs="0" aria-pressed="false">保守</button><button type="button" data-cs="1" aria-pressed="true">中性</button><button type="button" data-cs="2" aria-pressed="false">樂觀</button></div>
+          </div>
+          <div class="legend" id="legend"></div>
+          <div class="chartbox"><canvas id="chart" aria-label="資產成長曲線"></canvas></div>
+          <p class="lede" style="font-size:12.5px">曲線依所選情境的「每月應存金額」計算；實際市值來自 ➍ 每月追蹤的紀錄。</p>
+        </div>
+        <div class="card">
+          <div class="card-h"><div><h3>逐月明細表</h3><p class="lede" id="tblLede"></p></div><button class="btn" id="btnCsv" type="button">匯出明細（CSV）</button></div>
+          <div class="tablebox scroll-y"><table id="tbl"></table></div>
+        </div>
+      </section>
+
+      <!-- ➍ 每月追蹤 -->
+      <section class="panel" id="p-track" role="tabpanel">
+        <div class="card">
+          <div><h2>每月追蹤</h2><p class="lede">每月填寫「實際投入金額」與「帳戶實際市值」。系統會比對計畫進度，並依最新市值重新計算剩餘期間每月應存金額。</p></div>
+          <div class="status" id="trackStatus"></div>
+          <div class="note" id="trackNote"></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>紀錄表</h3><span class="lede" style="font-size:12.5px">以中性情境為計畫基準；空白代表尚未記錄</span></div>
+          <div class="tablebox scroll-y"><table id="trackTbl"></table></div>
+        </div>
+      </section>
+
+      <!-- ➎ 資料說明 -->
+      <section class="panel" id="p-data" role="tabpanel">
+        <div class="card">
+          <div><h2>回測資料與計算方式</h2><p class="lede" id="dataLede"></p></div>
+          <div class="note warn"><b>使用前請先了解</b>：內建報酬率為整理自公開資料的參考值，部分標的為估算（標示「估算」）。正式決策前，請至投信官網或證交所 ETF e添富核對最新數據，並可在 ➋ 中手動修改。</div>
+          <div class="seg" role="group" aria-label="資料類別" id="dataCats"></div>
+          <div class="tablebox"><table id="dataTbl"></table></div>
+        </div>
+        <div class="card">
+          <h3>計算邏輯</h3>
+          <div class="src">
+            <p>➊ 期數：從規劃起始月份到目標月份的月數，每月月初投入。</p>
+            <p>➋ 月報酬：年化報酬換算為月複利，公式為 (1 + 年報酬)<sup>1/12</sup> − 1。</p>
+            <p>➌ 配息再投入：以含息總報酬複利計算。配息領現金：資產以價格報酬成長，配息逐月轉為現金累積，現金不再產生報酬，但計入總資產。</p>
+            <p>➍ 多工具配置：每月投入依比例分配到各工具，各自複利後加總（不做再平衡）。</p>
+            <p>➎ 通膨調整：目標金額 × (1 + 通膨率)<sup>年數</sup>。</p>
+            <p>➏ 每月應存金額：在上述條件下，以數值方法求出讓期末總資產剛好達到目標的第一年每月投入額；之後每年依調升比例增加。</p>
+            <p>➐ 第一版不計入手續費、ETF 內扣費用、二代健保補充保費與股利所得稅；美股 ETF 以美元報酬計算，未含匯率變動。</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3>資料來源</h3>
+          <div class="src">
+            <p>台股 ETF 近五年績效：<a href="https://www.bnext.com.tw/article/91835/etf-total-return-ranking-2026" target="_blank" rel="noopener">數位時代（引用 ETF e添富）</a>、<a href="https://tw.stock.yahoo.com/quote/0050.TW/performance" target="_blank" rel="noopener">Yahoo 股市</a>、<a href="https://www.bnext.com.tw/article/92213/00929-00940-high-dividend-etf-ranking-2026" target="_blank" rel="noopener">高股息 ETF 績效排行</a></p>
+            <p>主動式 ETF 上市以來績效：<a href="https://www.cmoney.tw/forum/active-etf/performance" target="_blank" rel="noopener">CMoney 主動式 ETF 排行</a>、<a href="https://newtalk.tw/news/view/2026-09-27/1062197" target="_blank" rel="noopener">新頭殼</a></p>
+            <p>美股 ETF 含息報酬：<a href="https://totalrealreturns.com/n/SPY,SCHD,VOO,VTI,QQQ" target="_blank" rel="noopener">Total Real Returns</a></p>
+            <p>台銀定存利率：<a href="https://rate.bot.com.tw/twd" target="_blank" rel="noopener">臺灣銀行牌告利率</a></p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <footer>本工具為試算參考，不構成投資建議。歷史報酬不代表未來績效，投資前請評估自身風險承受度。資料僅儲存在您目前使用的瀏覽器中。</footer>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+(function(){
+"use strict";
+/* ---------- 回測資料（基準：2026 年 9 月） ----------
+   tr = 年化含息總報酬（%），pr = 年化價格報酬（%）
+   期間：上市滿 5 年者取近 5 年；未滿 5 年者取上市以來年化
+   q：ok = 已與公開資料核對；est = 依公開資訊估算 */
+const DATA_YM = [2026, 9];
+const CATS = [
+  {id:"cap", name:"市值型 ETF"},
+  {id:"div", name:"高股息 ETF"},
+  {id:"act", name:"主動式 ETF"},
+  {id:"us",  name:"美股 ETF"},
+  {id:"dep", name:"定存"},
+];
+const DB = [
+  // 市值型
+  {code:"0050",   name:"元大台灣50",        cat:"cap", listed:"2003-06", tr:29.1, pr:26.6, q:"ok"},
+  {code:"006208", name:"富邦台50",          cat:"cap", listed:"2012-07", tr:29.0, pr:26.2, q:"est"},
+  {code:"009816", name:"凱基台灣TOP50",     cat:"cap", listed:"2025-02", tr:42.0, pr:42.0, q:"est"},
+  {code:"00692",  name:"富邦公司治理",      cat:"cap", listed:"2017-05", tr:27.5, pr:24.6, q:"est"},
+  {code:"00850",  name:"元大臺灣ESG永續",   cat:"cap", listed:"2019-08", tr:27.0, pr:24.4, q:"est"},
+  {code:"00922",  name:"國泰台灣領袖50",    cat:"cap", listed:"2023-03", tr:30.0, pr:27.0, q:"est"},
+  {code:"00923",  name:"群益台ESG低碳50",   cat:"cap", listed:"2023-03", tr:25.0, pr:21.5, q:"est"},
+  {code:"00905",  name:"FT臺灣Smart",       cat:"cap", listed:"2022-12", tr:26.0, pr:22.8, q:"est"},
+  {code:"00912",  name:"中信臺灣智慧50",    cat:"cap", listed:"2022-07", tr:27.0, pr:24.0, q:"est"},
+  {code:"0051",   name:"元大中型100",       cat:"cap", listed:"2006-08", tr:22.0, pr:19.6, q:"est"},
+  // 高股息
+  {code:"0056",   name:"元大高股息",        cat:"div", listed:"2007-12", tr:20.7, pr:13.5, q:"ok"},
+  {code:"00878",  name:"國泰永續高股息",    cat:"div", listed:"2020-07", tr:19.5, pr:12.3, q:"est"},
+  {code:"00919",  name:"群益台灣精選高息",  cat:"div", listed:"2022-10", tr:30.0, pr:19.0, q:"est"},
+  {code:"00929",  name:"復華台灣科技優息",  cat:"div", listed:"2023-06", tr:26.0, pr:16.5, q:"est"},
+  {code:"00940",  name:"元大台灣價值高息",  cat:"div", listed:"2024-04", tr:12.0, pr:3.0,  q:"est"},
+  {code:"00713",  name:"元大台灣高息低波",  cat:"div", listed:"2017-09", tr:21.0, pr:14.0, q:"est"},
+  {code:"00915",  name:"凱基優選高股息30",  cat:"div", listed:"2022-08", tr:22.0, pr:13.0, q:"est"},
+  {code:"00918",  name:"大華優利高填息30",  cat:"div", listed:"2022-12", tr:24.0, pr:15.0, q:"est"},
+  {code:"00934",  name:"中信成長高股息",    cat:"div", listed:"2023-08", tr:24.0, pr:15.5, q:"est"},
+  {code:"00939",  name:"統一台灣高息動能",  cat:"div", listed:"2024-03", tr:22.0, pr:14.0, q:"est"},
+  // 主動式（上市未滿 2 年，年化值被短期行情放大）
+  {code:"00981A", name:"主動統一台股增長",  cat:"act", listed:"2025-05", tr:148.7, pr:140.0, q:"ok"},
+  {code:"00980A", name:"主動野村臺灣優選",  cat:"act", listed:"2025-05", tr:119.5, pr:115.0, q:"ok"},
+  {code:"00982A", name:"主動群益台灣強棒",  cat:"act", listed:"2025-05", tr:107.6, pr:103.0, q:"ok"},
+  {code:"00985A", name:"主動野村台灣50",    cat:"act", listed:"2025-07", tr:104.8, pr:101.0, q:"ok"},
+  {code:"00984A", name:"主動安聯台灣高息",  cat:"act", listed:"2025-07", tr:45.0,  pr:38.0,  q:"est"},
+  {code:"00983A", name:"主動中信ARK創新",   cat:"act", listed:"2025-06", tr:40.0,  pr:40.0,  q:"est"},
+  {code:"00991A", name:"主動復華未來50",    cat:"act", listed:"2025-10", tr:45.0,  pr:43.0,  q:"est"},
+  {code:"00992A", name:"主動群益科技創新",  cat:"act", listed:"2025-10", tr:50.0,  pr:48.0,  q:"est"},
+  // 美股（美元計價）
+  {code:"VOO",  name:"Vanguard S&P 500",      cat:"us", listed:"2010-09", tr:13.9, pr:12.5, q:"ok"},
+  {code:"IVV",  name:"iShares Core S&P 500",  cat:"us", listed:"2000-05", tr:13.9, pr:12.5, q:"est"},
+  {code:"SPY",  name:"SPDR S&P 500",          cat:"us", listed:"1993-01", tr:13.9, pr:12.5, q:"ok"},
+  {code:"VTI",  name:"Vanguard 全美股市",     cat:"us", listed:"2001-05", tr:12.8, pr:11.4, q:"ok"},
+  {code:"QQQ",  name:"Invesco 那斯達克100",   cat:"us", listed:"1999-03", tr:16.9, pr:16.2, q:"ok"},
+  {code:"VT",   name:"Vanguard 全世界股票",   cat:"us", listed:"2008-06", tr:10.5, pr:8.6,  q:"ok"},
+  {code:"VGT",  name:"Vanguard 資訊科技",     cat:"us", listed:"2004-01", tr:19.0, pr:18.4, q:"est"},
+  {code:"VUG",  name:"Vanguard 成長股",       cat:"us", listed:"2004-01", tr:15.5, pr:14.9, q:"est"},
+  {code:"SCHD", name:"Schwab 美國高股息",     cat:"us", listed:"2011-10", tr:8.7,  pr:5.1,  q:"ok"},
+  {code:"VYM",  name:"Vanguard 高股息",       cat:"us", listed:"2006-11", tr:11.0, pr:8.2,  q:"est"},
+  // 定存
+  {code:"BOT1Y", name:"臺灣銀行一年期定存", cat:"dep", listed:"2000-01", tr:1.46, pr:0, q:"ok", noteTxt:"近 5 年機動利率平均約 1.46%，目前牌告 1.715%"},
+];
+const byCode = Object.fromEntries(DB.map(d=>[d.code,d]));
+const ymIdx = (y,m)=>y*12+(m-1);
+const dataIdx = ymIdx(DATA_YM[0],DATA_YM[1]);
+function histYears(d){const [y,m]=d.listed.split("-").map(Number);return Math.min(5,(dataIdx-ymIdx(y,m))/12);}
+function histLabel(d){if(d.cat==="dep")return "近 5 年平均";const y=histYears(d);return y>=5?"近 5 年":"上市以來 "+(y<1?Math.round(y*12)+" 個月":y.toFixed(1)+" 年");}
+
+/* ---------- 狀態 ---------- */
+const KEY="goal-planner-demo-v1";
+const now=new Date(); const nowY=now.getFullYear(), nowM=now.getMonth()+1;
+function defaults(){
+  return {
+    goalName:"買房頭期款（範例）", goalAmount:5000000, goalY:nowY-1911+6, goalM:12, initCap:300000,
+    startY:nowY, startM:nowM,
+    inflOn:true, inflRate:2, raiseRate:0, reinvest:true, scenGap:3,
+    holdings:[
+      {code:"0050", w:50, rate:null},
+      {code:"00878", w:20, rate:null},
+      {code:"VOO", w:15, rate:null},
+      {code:"BOT1Y", w:15, rate:null},
+    ],
+    custom:[], records:{}, sample:true
+  };
+}
+// 清除資料後的空白狀態：沒有目標金額與工具，由使用者自行填寫
+function blank(){
+  return Object.assign(defaults(),{goalName:"",goalAmount:0,initCap:0,goalY:nowY-1911+5,goalM:12,inflOn:true,holdings:[],custom:[],records:{},sample:false});
+}
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){S=null}
+if(!S||typeof S!=="object")S=defaults();
+S=Object.assign(defaults(),S);
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+const $=id=>document.getElementById(id);
+const fmt=n=>Math.round(n).toLocaleString("zh-TW");
+const fmtW=n=>{const a=Math.abs(n);if(a>=1e8)return (n/1e8).toFixed(2)+" 億";if(a>=1e4)return (n/1e4).toFixed(a>=1e6?0:1)+" 萬";return fmt(n)};
+const pct=(n,d=1)=>(Math.round(n*Math.pow(10,d))/Math.pow(10,d)).toFixed(d)+"%";
+const roc=(y,m)=>"民國 "+(y-1911)+" 年 "+m+" 月";
+const rocShort=(y,m)=>(y-1911)+"/"+String(m).padStart(2,"0");
+function toast(t){const el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>el.hidden=true,2600)}
+
+function toolInfo(h){
+  if(h.code.startsWith("CU:")){const c=S.custom.find(x=>x.id===h.code);return c?{code:h.code,name:c.name,cat:"custom",tr:c.tr,pr:c.tr-c.div,q:"custom"}:null}
+  return byCode[h.code]||null;
+}
+function effRates(h){ // 回傳 {tr, pr}，自訂報酬視為含息總報酬，配息率維持不變
+  const d=toolInfo(h); if(!d)return {tr:0,pr:0};
+  const div=d.tr-d.pr;
+  const tr=(h.rate==null||h.rate==="")?d.tr:Number(h.rate);
+  return {tr, pr:tr-div};
+}
+
+/* ---------- 計算核心 ---------- */
+function months(){return ymIdx(S.goalY+1911,S.goalM)-ymIdx(S.startY,S.startM)}
+function targetNominal(){const N=months();return S.inflOn?S.goalAmount*Math.pow(1+S.inflRate/100,N/12):S.goalAmount}
+function mr(a){return Math.pow(1+a/100,1/12)-1}
+function portfolio(shift){
+  const tw=S.holdings.reduce((s,h)=>s+(Number(h.w)||0),0)||1;
+  return S.holdings.filter(h=>toolInfo(h)).map(h=>{const r=effRates(h);const tr=Math.max(-99,r.tr+shift), pr=Math.max(-99,r.pr+shift);return {w:(Number(h.w)||0)/tw, mt:mr(tr), mp:mr(pr)}});
+}
+function weightedRate(shift){const tw=S.holdings.reduce((s,h)=>s+(Number(h.w)||0),0)||1;return S.holdings.reduce((s,h)=>s+(Number(h.w)||0)/tw*(effRates(h).tr+shift),0)}
+// 模擬：N 期、起始資產 P0、首年每月投入 c0，回傳每期期末資料
+function simulate(P,N,P0,c0,full){
+  const g=S.raiseRate/100, re=S.reinvest;
+  let v=P.map(p=>P0*p.w), cash=0, principal=P0; const rows=full?[]:null;
+  for(let m=0;m<N;m++){
+    const c=c0*Math.pow(1+g,Math.floor(m/12));
+    principal+=c;
+    for(let i=0;i<P.length;i++){
+      const base=v[i]+c*P[i].w;
+      if(re){v[i]=base*(1+P[i].mt)}else{v[i]=base*(1+P[i].mp);cash+=base*(P[i].mt-P[i].mp)}
+    }
+    if(full){const inv=v.reduce((a,b)=>a+b,0);rows.push({m,c,principal,inv,cash,total:inv+cash})}
+  }
+  const inv=v.reduce((a,b)=>a+b,0);
+  return full?rows:inv+cash;
+}
+function solveMonthly(P,N,P0,target){
+  if(N<=0)return P0>=target?0:Infinity;
+  if(simulate(P,N,P0,0)>=target)return 0;
+  let lo=0,hi=Math.max(1000,target/N);
+  let guard=0;while(simulate(P,N,P0,hi)<target&&guard++<60)hi*=2;
+  for(let i=0;i<60;i++){const mid=(lo+hi)/2;if(simulate(P,N,P0,mid)>=target)hi=mid;else lo=mid}
+  return hi;
+}
+function scenarios(){
+  const N=months(), T=targetNominal(), gap=Number(S.scenGap)||0;
+  return [-gap,0,gap].map((sh,i)=>{const P=portfolio(sh);const c=solveMonthly(P,N,S.initCap,T);return {i,sh,rate:weightedRate(sh),c,P,rows:isFinite(c)?simulate(P,N,S.initCap,c,true):[]}});
+}
+
+/* ---------- 介面：目標 ---------- */
+const goalM=$("goalM");for(let m=1;m<=12;m++){const o=document.createElement("option");o.value=m;o.textContent=m+" 月";goalM.appendChild(o)}
+function bindGoal(){
+  $("goalName").value=S.goalName; $("goalAmount").value=S.goalAmount; $("goalY").value=S.goalY; goalM.value=S.goalM;
+  $("initCap").value=S.initCap; $("inflOn").checked=S.inflOn; $("inflRate").value=S.inflRate; $("raiseRate").value=S.raiseRate;
+  $("scenGap").value=S.scenGap;
+}
+const numF={goalAmount:1,goalY:1,goalM:1,initCap:1,inflRate:1,raiseRate:1,scenGap:1};
+["goalName","goalAmount","goalY","goalM","initCap","inflRate","raiseRate","scenGap"].forEach(id=>{
+  $(id).addEventListener("input",e=>{const v=e.target.value;S[id]=numF[id]?(v===""?0:Number(v)):v;S.sample=false;save();renderAll()});
+});
+$("inflOn").addEventListener("change",e=>{S.inflOn=e.target.checked;save();renderAll()});
+
+/* ---------- 介面：工具 ---------- */
+const addCat=$("addCat"), addCode=$("addCode");
+CATS.forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=c.name;addCat.appendChild(o)});
+function fillCodes(){addCode.innerHTML="";DB.filter(d=>d.cat===addCat.value).forEach(d=>{const o=document.createElement("option");o.value=d.code;o.textContent=(d.cat==="dep"?"":d.code+"　")+d.name;addCode.appendChild(o)});showAddInfo()}
+function showAddInfo(){const d=byCode[addCode.value];if(!d){$("addInfo").textContent="";return}
+  $("addInfo").innerHTML="";const t=document.createElement("span");
+  t.textContent=`${d.name}：${histLabel(d)}年化含息報酬 ${pct(d.tr)}，價格報酬 ${pct(d.pr)}`+(d.noteTxt?`（${d.noteTxt}）`:"")+(histYears(d)<2&&d.cat!=="dep"?"。資料期間不足 2 年，年化數字容易被短期行情放大。":"");
+  $("addInfo").appendChild(t)}
+addCat.addEventListener("change",fillCodes); addCode.addEventListener("change",showAddInfo);
+$("btnAdd").addEventListener("click",()=>{const code=addCode.value;if(S.holdings.some(h=>h.code===code)){toast("這個標的已在配置中");return}
+  S.holdings.push({code,w:0,rate:null});S.sample=false;save();renderAll();toast("已加入，請設定配置比例")});
+$("btnAddCustom").addEventListener("click",()=>{const name=$("cuName").value.trim();if(!name){toast("請輸入自訂工具名稱");return}
+  const id="CU:"+Date.now();S.custom.push({id,name,tr:Number($("cuRate").value)||0,div:Math.max(0,Number($("cuDiv").value)||0)});
+  S.holdings.push({code:id,w:0,rate:null});$("cuName").value="";save();renderAll();toast("已加入自訂工具")});
+function setReinvest(v){S.reinvest=v;save();renderAll()}
+$("reinvOn").addEventListener("click",()=>setReinvest(true)); $("reinvOff").addEventListener("click",()=>setReinvest(false));
+
+const catName=Object.fromEntries(CATS.map(c=>[c.id,c.name]));catName.custom="自訂";
+const palette=["#C59B27","#5B6B7F","#8FA3B8","#B58A5A","#6E8B74","#A0A6AE","#7C6A9A","#C77D6A"];
+function renderHoldings(){
+  const box=$("holdings");box.innerHTML="";
+  S.holdings.forEach((h,idx)=>{
+    const d=toolInfo(h);if(!d)return;const r=effRates(h);
+    const row=document.createElement("div");row.className="hold";
+    const nm=document.createElement("div");nm.className="nm";
+    const b=document.createElement("b");b.textContent=(d.cat==="dep"||d.cat==="custom"?"":d.code+"　")+d.name;nm.appendChild(b);
+    const meta=document.createElement("div");meta.className="meta";
+    const p1=document.createElement("span");p1.className="pill cat";p1.textContent=catName[d.cat];meta.appendChild(p1);
+    if(d.cat!=="custom"){
+      const short=histYears(d)<2&&d.cat!=="dep";
+      const p2=document.createElement("span");p2.className="pill "+(short?"short":d.q==="ok"?"ok":"est");p2.textContent=short?"資料不足 2 年":d.q==="ok"?"已核對":"估算";meta.appendChild(p2);
+      const s=document.createElement("span");s.textContent=`${histLabel(d)}｜含息 ${pct(d.tr)}｜價格 ${pct(d.pr)}`;meta.appendChild(s);
+    }else{const s=document.createElement("span");s.textContent=`配息率 ${pct(d.tr-d.pr)}`;meta.appendChild(s)}
+    nm.appendChild(meta);row.appendChild(nm);
+    // 比例
+    const wl=document.createElement("label");wl.className="f";wl.textContent="比例";
+    const wi=document.createElement("span");wi.className="inline";const win=document.createElement("input");win.type="number";win.min=0;win.max=100;win.step=5;win.value=h.w;win.id="w_"+idx;
+    win.addEventListener("input",()=>{h.w=Number(win.value)||0;S.sample=false;save();renderAll(true)});
+    const u=document.createElement("span");u.className="unit";u.textContent="%";wi.append(win,u);wl.appendChild(wi);row.appendChild(wl);
+    // 報酬率
+    const rb=document.createElement("div");rb.className="ratebox";
+    const rl=document.createElement("label");rl.className="f";rl.textContent=(h.rate==null?"年化報酬（回測）":"年化報酬（自訂）");
+    const ri=document.createElement("span");ri.className="inline";const rin=document.createElement("input");rin.type="number";rin.step=0.1;rin.id="r_"+idx;
+    rin.value=+(S.reinvest?r.tr:r.pr).toFixed(2);
+    rin.addEventListener("change",()=>{const v=rin.value;if(v===""){h.rate=null}else{const div=d.tr-d.pr;h.rate=S.reinvest?Number(v):Number(v)+div}S.sample=false;save();renderAll()});
+    const u2=document.createElement("span");u2.className="unit";u2.textContent="%";ri.append(rin,u2);rl.appendChild(ri);rb.appendChild(rl);
+    if(h.rate!=null&&d.cat!=="custom"){const rs=document.createElement("button");rs.type="button";rs.className="reset";rs.textContent="還原回測值";rs.addEventListener("click",()=>{h.rate=null;save();renderAll()});rb.appendChild(rs)}
+    row.appendChild(rb);
+    const del=document.createElement("button");del.type="button";del.className="btn ghost sm";del.textContent="移除";del.setAttribute("aria-label","移除 "+d.name);
+    del.addEventListener("click",()=>{S.holdings.splice(idx,1);save();renderAll()});row.appendChild(del);
+    box.appendChild(row);
+  });
+  if(!S.holdings.length){const n=document.createElement("div");n.className="note";n.textContent="尚未加入任何工具。請從下方「新增工具」選擇類別與標的。";box.appendChild(n)}
+  // 比例合計
+  const tw=S.holdings.reduce((s,h)=>s+(Number(h.w)||0),0);
+  $("wTotal").textContent=tw+"%";$("wTotal").className="num "+(tw===100?"ok-t":"bad-t");
+  const bar=$("wBar");bar.innerHTML="";S.holdings.forEach((h,i)=>{const s=document.createElement("span");s.style.width=Math.min(100,Number(h.w)||0)+"%";s.style.background=palette[i%palette.length];bar.appendChild(s)});
+  const ww=$("wWarn");if(tw!==100&&S.holdings.length){ww.hidden=false;ww.innerHTML="";const b=document.createElement("b");b.textContent="比例合計不是 100%";ww.append(b,`：目前試算會自動按比例換算（例如合計 ${tw}% 時，每項比例 ÷ ${tw}%）。建議調整為剛好 100%。`)}else ww.hidden=true;
+  $("reinvOn").setAttribute("aria-pressed",S.reinvest);$("reinvOff").setAttribute("aria-pressed",!S.reinvest);
+  $("reinvNote").textContent=S.reinvest?"配息再投入：欄位顯示「含息總報酬」，配息自動買回同一標的繼續複利。":"配息領現金：欄位顯示「價格報酬」，配息逐月轉為現金累積、計入總資產，但不再產生報酬。定存利息同樣視為領出。";
+}
+
+/* ---------- 介面：摘要與結果 ---------- */
+let SC=[], chartSc=1, chart=null;
+function renderSummary(){
+  const N=months(), T=targetNominal(), mid=SC[1];
+  const box=$("summary");box.innerHTML="";
+  const cells=[
+    {k:"目標",v:fmtW(S.goalAmount)+" 元",s:(S.goalName||"未命名")+"｜"+roc(S.goalY+1911,S.goalM)},
+    {k:S.inflOn?"通膨調整後目標":"目標金額",v:fmtW(T)+" 元",s:S.inflOn?`年通膨 ${pct(S.inflRate)}，共 ${(N/12).toFixed(1)} 年`:"未考慮通膨"},
+    {k:"加權預期報酬（中性）",v:mid?pct(mid.rate):"—",s:S.reinvest?"含息總報酬，配息再投入":"配息領現金"},
+    {k:"每月應存（中性）",v:mid&&isFinite(mid.c)?fmt(mid.c)+" 元":"—",s:N>0?`共 ${N} 期，每月月初投入`:"目標時間需晚於本月",hl:true},
+  ];
+  cells.forEach(c=>{const d=document.createElement("div");if(c.hl)d.className="hl";
+    const k=document.createElement("div");k.className="k";k.textContent=c.k;const v=document.createElement("div");v.className="v";v.textContent=c.v;const s=document.createElement("div");s.className="s";s.textContent=c.s;d.append(k,v,s);box.appendChild(d)});
+}
+function renderGoalNotes(){
+  const N=months();
+  $("periodNote").textContent=N>0?`規劃期間：${roc(S.startY,S.startM)} 起，至 ${roc(S.goalY+1911,S.goalM)}，共 ${N} 個月（約 ${(N/12).toFixed(1)} 年）。`:`目標時間需晚於規劃起始月份（${roc(S.startY,S.startM)}），請調整民國年或月份。`;
+  const T=targetNominal();
+  $("inflNote").textContent=S.inflOn?`以年通膨 ${pct(S.inflRate)} 計算，今天的 ${fmtW(S.goalAmount)} 元，到目標時間約需 ${fmtW(T)} 元才有相同購買力。`:"目前未考慮通膨，目標金額以名目金額計算。";
+}
+function renderResult(){
+  const N=months();
+  const names=["保守","中性","樂觀"];
+  const box=$("scen");box.innerHTML="";
+  SC.forEach((s,i)=>{const d=document.createElement("div");if(i===1)d.className="mid";
+    const t=document.createElement("div");t.className="t";t.textContent=names[i]+"情境";
+    const r=document.createElement("div");r.className="r";r.textContent=`加權年化報酬 ${pct(s.rate)}`;
+    const big=document.createElement("div");big.className="big";big.textContent=isFinite(s.c)?fmt(s.c)+" 元／月":"無法達成";
+    const last=s.rows[s.rows.length-1];
+    const r2=document.createElement("div");r2.className="r";r2.textContent=last?`累計本金 ${fmtW(last.principal)}，期末總資產 ${fmtW(last.total)}`:"";
+    d.append(t,r,big,r2);box.appendChild(d)});
+  $("resLede").textContent=N>0?`在 ${N} 個月內，從起始資金 ${fmtW(S.initCap)} 元累積到 ${fmtW(targetNominal())} 元，`+(S.raiseRate>0?`首年每月需存以下金額，之後每年調升 ${pct(S.raiseRate)}。`:"每月需存以下金額。"):"目標時間需晚於本月才能試算。";
+  // 過熱提醒
+  const hw=$("hotWarn");const mid=SC[1];
+  const shortHeavy=S.holdings.some(h=>{const d=toolInfo(h);return d&&d.cat!=="custom"&&d.cat!=="dep"&&histYears(d)<2&&(Number(h.w)||0)>0&&h.rate==null});
+  if(mid&&(mid.rate>12||shortHeavy)){hw.hidden=false;hw.innerHTML="";const b=document.createElement("b");b.textContent="報酬率偏高提醒";
+    hw.append(b,"：過去五年台股受 AI 行情推升，回測報酬明顯高於長期平均（全球股市長期約 7%–10%）。"+(shortHeavy?"配置中含有上市未滿 2 年的主動式 ETF，其年化數字被短期行情大幅放大。":"")+"建議以「保守情境」作為每月存錢依據，或在 ➋ 將報酬率改成較保守的數值。")}else hw.hidden=true;
+  renderChart();renderTable();
+}
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+function renderChart(){
+  const s=SC[chartSc];if(!s||!window.Chart)return;
+  const N=months();const T=targetNominal();
+  const labels=[],principal=[],total=[],actual=[],target=[];
+  const lo=SC[0].rows,hi=SC[2].rows;
+  s.rows.forEach((r,i)=>{const idx=ymIdx(S.startY,S.startM)+r.m;const y=Math.floor(idx/12),m=idx%12+1;labels.push(rocShort(y,m));principal.push(Math.round(r.principal));total.push(Math.round(r.total));target.push(Math.round(T));
+    const rec=S.records[y+"-"+m];actual.push(rec&&rec.value!=null&&rec.value!==""?Number(rec.value):null)});
+  const c={grid:cssVar("--line"),fg:cssVar("--fg-2"),p:cssVar("--chart-principal"),main:cssVar("--chart-main"),act:cssVar("--chart-actual"),tg:cssVar("--chart-target")};
+  const names=["保守","中性","樂觀"];
+  $("legend").innerHTML="";[[c.main,names[chartSc]+"情境總資產"],[c.p,"累計本金"],[c.act,"實際市值"],[c.tg,"目標金額"]].forEach(([col,t])=>{const sp=document.createElement("span");const i=document.createElement("i");i.style.background=col;sp.append(i,t);$("legend").appendChild(sp)});
+  const ds=[
+    {label:names[chartSc]+"情境總資產",data:total,borderColor:c.main,backgroundColor:c.main+"22",fill:"origin",borderWidth:2.5,pointRadius:0,tension:.2},
+    {label:"累計本金",data:principal,borderColor:c.p,backgroundColor:c.p+"33",fill:"origin",borderWidth:1.5,pointRadius:0,tension:0},
+    {label:"實際市值",data:actual,borderColor:c.act,backgroundColor:c.act,showLine:true,spanGaps:true,borderWidth:2,pointRadius:3.5},
+    {label:"目標金額",data:target,borderColor:c.tg,borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false},
+  ];
+  const opt={responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw==null?null:`${ctx.dataset.label}：${fmt(ctx.raw)} 元`}}},
+    scales:{x:{grid:{display:false},ticks:{color:c.fg,maxTicksLimit:8,autoSkip:true}},y:{grid:{color:c.grid},border:{display:false},ticks:{color:c.fg,callback:v=>fmtW(v)}}}};
+  if(chart){chart.data.labels=labels;chart.data.datasets=ds;chart.options=opt;chart.update()}
+  else chart=new Chart($("chart"),{type:"line",data:{labels,datasets:ds},options:opt});
+}
+document.querySelectorAll("[data-cs]").forEach(b=>b.addEventListener("click",()=>{chartSc=Number(b.dataset.cs);document.querySelectorAll("[data-cs]").forEach(x=>x.setAttribute("aria-pressed",x===b));renderChart();renderTable()}));
+
+function tableRows(){
+  const s=SC[chartSc];if(!s)return [];
+  return s.rows.map(r=>{const idx=ymIdx(S.startY,S.startM)+r.m;const y=Math.floor(idx/12),m=idx%12+1;const rec=S.records[y+"-"+m]||{};
+    return {period:r.m+1,label:rocShort(y,m),y,m,c:r.c,principal:r.principal,inv:r.inv,cash:r.cash,total:r.total,aInv:rec.invest,aVal:rec.value}});
+}
+function renderTable(){
+  const names=["保守","中性","樂觀"];const s=SC[chartSc];
+  $("tblLede").textContent=s?`${names[chartSc]}情境，加權年化報酬 ${pct(s.rate)}。每年最後一期以底色標示。`:"";
+  const rows=tableRows();const t=$("tbl");t.innerHTML="";
+  const head=["期數","年月（民國）","本月投入","累計本金","投資市值"].concat(S.reinvest?[]:["累計現金配息"]).concat(["總資產","實際投入","實際市值"]);
+  const th=document.createElement("thead");const tr=document.createElement("tr");head.forEach((h,i)=>{const e=document.createElement("th");e.textContent=h;if(i<2)e.className="l";tr.appendChild(e)});th.appendChild(tr);t.appendChild(th);
+  const tb=document.createElement("tbody");
+  rows.forEach(r=>{const tr=document.createElement("tr");if(r.m===12||r.period===rows.length)tr.className="yr";
+    const vals=[r.period,r.label,fmt(r.c),fmt(r.principal),fmt(r.inv)].concat(S.reinvest?[]:[fmt(r.cash)]).concat([fmt(r.total),r.aInv!=null&&r.aInv!==""?fmt(r.aInv):"—",r.aVal!=null&&r.aVal!==""?fmt(r.aVal):"—"]);
+    vals.forEach((v,i)=>{const td=document.createElement("td");td.textContent=v;td.className=i<2?"l num":"num";tr.appendChild(td)});tb.appendChild(tr)});
+  t.appendChild(tb);
+}
+
+/* ---------- 每月追蹤 ---------- */
+function renderTrack(){
+  const mid=SC[1];const N=months();const T=targetNominal();
+  const t=$("trackTbl");t.innerHTML="";
+  const th=document.createElement("thead");const trh=document.createElement("tr");["期數","年月（民國）","計畫投入","實際投入","計畫市值","實際市值","差距"].forEach((h,i)=>{const e=document.createElement("th");e.textContent=h;if(i<2)e.className="l";trh.appendChild(e)});th.appendChild(trh);t.appendChild(th);
+  const tb=document.createElement("tbody");
+  let lastRec=null, sumPlan=0, sumAct=0;
+  const curIdx=ymIdx(nowY,nowM);
+  (mid?mid.rows:[]).forEach(r=>{
+    const idx=ymIdx(S.startY,S.startM)+r.m;const y=Math.floor(idx/12),m=idx%12+1;const key=y+"-"+m;const rec=S.records[key]||{};
+    const tr=document.createElement("tr");
+    const add=(v,cls)=>{const td=document.createElement("td");if(v instanceof Node)td.appendChild(v);else td.textContent=v;td.className=cls||"num";tr.appendChild(td);return td};
+    add(r.m+1,"l num");add(rocShort(y,m)+(idx===curIdx?"（本月）":""),"l num");add(fmt(r.c));
+    const mk=(field)=>{const i=document.createElement("input");i.type="number";i.min=0;i.step=1000;i.id=`rec_${field}_${key}`;i.setAttribute("aria-label",`${rocShort(y,m)} ${field==="invest"?"實際投入":"實際市值"}`);i.value=rec[field]!=null?rec[field]:"";
+      i.addEventListener("change",()=>{const o=S.records[key]||{};o[field]=i.value===""?null:Number(i.value);if(o.invest==null&&o.value==null)delete S.records[key];else S.records[key]=o;save();renderAll()});return i};
+    add(mk("invest"));add(fmt(r.total));add(mk("value"));
+    let diffTxt="—",cls="num";
+    if(rec.value!=null){const d=rec.value-r.total;diffTxt=(d>=0?"+":"")+fmt(d);cls="num "+(d>=0?"ok-t":"bad-t");lastRec={r,rec,y,m}}
+    if(rec.invest!=null){sumAct+=rec.invest;sumPlan+=r.c}
+    add(diffTxt,cls);tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+  // 狀態
+  const st=$("trackStatus");st.innerHTML="";
+  const cell=(k,v,cls)=>{const d=document.createElement("div");const a=document.createElement("div");a.className="k";a.textContent=k;const b=document.createElement("div");b.className="v "+(cls||"");b.textContent=v;d.append(a,b);st.appendChild(d)};
+  if(!lastRec){
+    cell("原計畫每月應存（中性）",mid&&isFinite(mid.c)?fmt(mid.c)+" 元":"—");cell("已記錄月份","0 個月");cell("最新實際市值","尚未記錄");
+    $("trackNote").textContent="在下表填入「實際市值」後，系統會以最新市值重新試算剩餘期間每月應存金額。建議每月固定一天（例如扣款後）記錄。";
+    return;
+  }
+  const remain=N-(lastRec.r.m+1);
+  const P=portfolio(0);const newC=solveMonthly(P,remain,lastRec.rec.value,T);
+  const diff=lastRec.rec.value-lastRec.r.total;
+  cell("最新實際市值（"+rocShort(lastRec.y,lastRec.m)+"）",fmt(lastRec.rec.value)+" 元");
+  cell("與計畫差距",(diff>=0?"超前 ":"落後 ")+fmt(Math.abs(diff))+" 元",diff>=0?"ok-t":"bad-t");
+  cell("重新試算：剩餘 "+remain+" 期每月應存",isFinite(newC)?fmt(newC)+" 元":"—",isFinite(newC)&&mid&&newC<=mid.c?"ok-t":"bad-t");
+  const n=Object.values(S.records).filter(x=>x.invest!=null).length;
+  $("trackNote").textContent=`已記錄 ${n} 個月的投入，累計實際投入 ${fmt(sumAct)} 元，同期計畫投入 ${fmt(sumPlan)} 元。`+(remain<=0?"規劃期間已結束。":isFinite(newC)?`以最新市值為起點、中性情境報酬 ${pct(SC[1].rate)} 計算，剩餘期間每月需存 ${fmt(newC)} 元`+(S.raiseRate>0?`（之後每年調升 ${pct(S.raiseRate)}）`:"")+"。":"");
+}
+
+/* ---------- 資料說明 ---------- */
+let dataCat="cap";
+function renderData(){
+  $("dataLede").textContent=`資料基準：${DATA_YM[0]-1911} 年 ${DATA_YM[1]} 月。上市滿 5 年者取近 5 年年化報酬；未滿 5 年者取上市以來年化報酬。`;
+  const seg=$("dataCats");if(!seg.children.length)CATS.forEach(c=>{const b=document.createElement("button");b.type="button";b.textContent=c.name;b.dataset.c=c.id;b.addEventListener("click",()=>{dataCat=c.id;renderData()});seg.appendChild(b)});
+  [...seg.children].forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===dataCat));
+  const t=$("dataTbl");t.innerHTML="";const th=document.createElement("thead");const tr=document.createElement("tr");
+  ["代號","名稱","上市","期間","含息年化","價格年化","配息貢獻","狀態"].forEach((h,i)=>{const e=document.createElement("th");e.textContent=h;if(i<2||i===7)e.className="l";tr.appendChild(e)});th.appendChild(tr);t.appendChild(th);
+  const tb=document.createElement("tbody");
+  DB.filter(d=>d.cat===dataCat).forEach(d=>{const r=document.createElement("tr");const short=histYears(d)<2&&d.cat!=="dep";
+    [d.cat==="dep"?"—":d.code,d.name,d.cat==="dep"?"—":d.listed.replace("-","/"),histLabel(d),pct(d.tr),pct(d.pr),pct(d.tr-d.pr)].forEach((v,i)=>{const td=document.createElement("td");td.textContent=v;td.className=i<2?"l":"num";r.appendChild(td)});
+    const td=document.createElement("td");td.className="l";const p=document.createElement("span");p.className="pill "+(short?"short":d.q==="ok"?"ok":"est");p.textContent=short?"資料不足 2 年":d.q==="ok"?"已核對":"估算";td.appendChild(p);r.appendChild(td);tb.appendChild(r)});
+  t.appendChild(tb);
+}
+
+/* ---------- 分頁 ---------- */
+const tabs=[...document.querySelectorAll("nav.steps button")];
+function go(id){tabs.forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===id));document.querySelectorAll("section.panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+id));try{localStorage.setItem(KEY+":tab",id)}catch(e){}if(id==="result")renderChart();window.scrollTo({top:0})}
+tabs.forEach(b=>b.addEventListener("click",()=>go(b.dataset.tab)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+
+/* ---------- 匯出 ---------- */
+async function saveFile(filename,data,okMsg){
+  if(!window.claude?.use){ // 在桌機直接開啟 HTML 檔時，改用瀏覽器原生下載
+    const url=URL.createObjectURL(new Blob([data],{type:"application/octet-stream"}));const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast(okMsg);return}
+  try{const dl=await window.claude.use("downloads");if(!dl){toast("此檢視環境無法下載檔案，請在 claude.ai 開啟本頁");return}
+    await dl.save({filename,data});toast(okMsg)}catch(e){if(e&&e.code==="declined")return;toast(e&&e.code==="rate_limited"?"請稍候再試":"匯出未完成，請再試一次")}
+}
+$("btnCsv").addEventListener("click",()=>{
+  const names=["保守","中性","樂觀"];const rows=tableRows();
+  const head=["期數","年月(民國)","本月投入","累計本金","投資市值"].concat(S.reinvest?[]:["累計現金配息"]).concat(["總資產","實際投入","實際市值"]);
+  const lines=[`# ${S.goalName}｜${names[chartSc]}情境｜加權年化報酬 ${pct(SC[chartSc].rate)}｜目標 ${Math.round(targetNominal())} 元`,head.join(",")];
+  rows.forEach(r=>lines.push([r.period,r.label,Math.round(r.c),Math.round(r.principal),Math.round(r.inv)].concat(S.reinvest?[]:[Math.round(r.cash)]).concat([Math.round(r.total),r.aInv??"",r.aVal??""]).join(",")));
+  saveFile(`理財規劃明細_${names[chartSc]}.csv`,"﻿"+lines.join("\r\n"),"已匯出逐月明細");
+});
+$("btnReset").addEventListener("click",e=>{const b=e.currentTarget;
+  if(b.dataset.armed){clearTimeout(b._t);delete b.dataset.armed;b.textContent="重設範例資料";S=defaults();save();bindGoal();renderAll();go("goal");toast("已還原範例資料");return}
+  b.dataset.armed="1";b.textContent="再按一次確認重設";b._t=setTimeout(()=>{delete b.dataset.armed;b.textContent="重設範例資料"},3000)});
+$("btnBackup").addEventListener("click",()=>saveFile("理財規劃備份.json",JSON.stringify(S,null,2),"已匯出備份"));
+$("fileImport").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const o=JSON.parse(rd.result);if(!o||!Array.isArray(o.holdings))throw 0;S=Object.assign(defaults(),o);save();bindGoal();renderAll();toast("已匯入備份")}catch(err){toast("檔案格式不正確，請選擇本工具匯出的備份檔")}e.target.value=""};rd.readAsText(f)});
+
+/* ---------- 清除資料（按兩次確認） ---------- */
+$("btnClear").addEventListener("click",e=>{const b=e.currentTarget;
+  if(b.dataset.armed){clearTimeout(b._t);delete b.dataset.armed;b.textContent="清除資料";
+    try{localStorage.removeItem(KEY);localStorage.removeItem(KEY+":tab")}catch(err){}
+    S=blank();save();bindGoal();renderAll();go("goal");toast("已清除所有資料，請重新填寫目標");return}
+  b.dataset.armed="1";b.textContent="再按一次確認清除";toast("清除後無法復原，建議先「匯出備份」");
+  b._t=setTimeout(()=>{delete b.dataset.armed;b.textContent="清除資料"},4000)});
+
+/* ---------- 渲染 ---------- */
+function renderAll(keepFocus){
+  SC=months()>0&&S.holdings.length?scenarios():[];
+  const fid=document.activeElement&&document.activeElement.id;
+  renderGoalNotes();renderHoldings();renderSummary();
+  if(SC.length){renderResult();renderTrack()}else{$("scen").innerHTML="";$("tbl").innerHTML="";$("trackTbl").innerHTML="";$("trackStatus").innerHTML="";$("resLede").textContent="請先完成目標設定（目標時間需晚於本月）並至少加入一項工具。";$("trackNote").textContent=""}
+  renderData();
+  if(fid&&$(fid)&&document.activeElement!==$(fid)){const el=$(fid);el.focus();}
+}
+bindGoal();fillCodes();renderAll();
+try{const t=localStorage.getItem(KEY+":tab");if(t)go(t)}catch(e){}
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",renderChart);
+new MutationObserver(renderChart).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+})();
+</script>
+
+</body>
+</html>
