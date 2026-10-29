@@ -68,6 +68,9 @@ h2{
   color:var(--muted); font-weight:700; margin:44px 0 16px
 }
 .cards{display:grid; gap:14px}
+.cat-note{
+font-size:13.5px; color:var(--muted); margin:-8px 0 16px; max-width:60ch
+}
 .card{
   display:block; text-decoration:none; color:inherit;
   background:var(--surface); border:1px solid var(--line);
@@ -110,7 +113,8 @@ footer p{margin:0 0 6px; max-width:62ch}
   <p class="about-link"><a href="about/">關於 J3M →</a></p>
 </header>
 
-<h2>目前收錄</h2>
+<h2>課程教材</h2>
+<p class="cat-note">搭配實體課程的完整講義，附操作步驟、提示詞與常見錯誤排除。</p>
 
 <div class="cards">
 
@@ -121,36 +125,49 @@ footer p{margin:0 0 6px; max-width:62ch}
     <div class="tags"><span class="tag">NotebookLM</span><span class="tag">Gemini</span><span class="tag">職訓行政</span><span class="tag">公文撰寫</span></div>
   </a>
 
-  <a class="card" href="shorts-subtitle/">
-    <span class="no">02</span>
-    <div class="t">短影音上字幕實戰手冊</div>
-    <p class="d">用 FFmpeg 與 ASS 字幕製作直式短影音字幕的完整流程：語句邊界偵測、字卡切分、樣式設定、燒錄番圖、響度正規化，附常見坑速查與學員練習。</p>
-    <div class="tags"><span class="tag">FFmpeg</span><span class="tag">ASS 字幕</span><span class="tag">短影音</span><span class="tag">自動化</span></div>
-  </a>
-
   <a class="card" href="ai-evolution/">
-    <span class="no">03</span>
+    <span class="no">02</span>
     <div class="t">AI 工具進化論：打造你的高效職場力</div>
     <p class="d">從問 AI 升級到讓 AI 做事。Agent 的五個組成、Claude 與 ChatGPT 與 Gemini 三平台 Skills 比較、API 與連接器與 MCP 的差別，以及七個實際在跑的工作流。附 LINE 提醒小助理、Google 表單儀表板與目標設定三個系統化案例。</p>
     <div class="tags"><span class="tag">AI Agent</span><span class="tag">Skills</span><span class="tag">MCP</span><span class="tag">工作流</span></div>
   </a>
 
+</div>
+
+<h2>影片製作</h2>
+<p class="cat-note">從拍完到上架之間的實作流程：字幕、剪輯與自動化處理。</p>
+
+<div class="cards">
+
+  <a class="card" href="shorts-subtitle/">
+    <span class="no">01</span>
+    <div class="t">短影音上字幕實戰手冊</div>
+    <p class="d">用 FFmpeg 與 ASS 字幕製作直式短影音字幕的完整流程：語句邊界偵測、字卡切分、樣式設定、燒錄番圖、響度正規化，附常見坑速查與學員練習。</p>
+    <div class="tags"><span class="tag">FFmpeg</span><span class="tag">ASS 字幕</span><span class="tag">短影音</span><span class="tag">自動化</span></div>
+  </a>
+
+</div>
+
+<h2>Vibe Coding</h2>
+<p class="cat-note">用對話做出可以直接使用的工具與小應用，不必自己寫程式。</p>
+
+<div class="cards">
+
   <a class="card" href="finance-planner/">
-    <span class="no">04</span>
+    <span class="no">01</span>
     <div class="t">目標理財規劃器：用 AI 開發的複利試算工具</div>
     <p class="d">設定民國幾年要存到多少錢，組合市值型、高股息、主動式、美股 ETF 與定存，系統依過去 5 年回測報酬算出每月應存金額，並呈現保守、中性、樂觀三種情境。可逐月記錄實際投入與市值，自動重新試算剩餘期間的存款目標，明細可匯出 CSV。資料只存在使用者自己的瀏覽器。</p>
     <div class="tags"><span class="tag">複利試算</span><span class="tag">ETF 回測</span><span class="tag">情境分析</span><span class="tag">課堂示範</span></div>
   </a>
 
   <a class="card" href="https://sites.google.com/view/1000-vocabulary-que/full-page-embed" target="_blank" rel="noopener">
-    <span class="no">05</span>
+    <span class="no">02</span>
     <div class="t">用 Gemini 做互動小遊戲，直接匯出成網站</div>
     <p class="d">➊ 在 Gemini 用對話做出一個互動式應用，例如「課程選擇小測驗」。<br>➋ 在產出的應用上找到匯出到 Google Sites 的選項。<br>➌ 系統會建立一份私人網站草稿，檢查過再決定要不要發布。<br>省掉自己架站與複製貼上程式碼，從對話到網頁草稿一次完成。範例是一款 1000 題的英語拼字闖關遊戲。</p>
     <div class="tags"><span class="tag">Gemini</span><span class="tag">Google Sites</span><span class="tag">互動應用</span><span class="tag">免寫程式</span></div>
   </a>
 
 </div>
-
 <footer>
   <p>本站以 GitHub Pages 靜態託管，內容持續增補。手冊中的參數均取自實際專案，請依自己的素材重新推導，不要直接照抄。</p>
   <p>J3M 數學行銷人｜AI 工具教學與行銷自動化顧問</p>
