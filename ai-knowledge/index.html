@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J3M AI 小知識</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#1f1f1f; --panel:#262626; --text:#ffffff; --muted:#a6a6a6; --gold:#b08d1e; --gold-soft:#e0c15a; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:"Noto Sans TC",sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+  header { padding:32px 16px 8px; text-align:center; }
+  header h1 { font-size:26px; font-weight:900; }
+  header p { color:var(--muted); font-size:14px; margin-top:8px; }
+  .shelf-wrap { padding:40px 16px 60px; }
+  .shelf { max-width:1100px; margin:0 auto; display:flex; flex-wrap:wrap; justify-content:center; gap:16px;
+    padding:24px 16px 0; border-bottom:14px solid #3a3a3a; background:linear-gradient(#262626,#2b2b2b); border-radius:6px 6px 0 0; }
+  .book { width:104px; height:230px; border-radius:4px 6px 6px 4px; padding:14px 10px; cursor:pointer;
+    display:flex; flex-direction:column; justify-content:space-between; box-shadow:inset 6px 0 0 rgba(0,0,0,.25),0 6px 14px rgba(0,0,0,.45);
+    transition:transform .35s ease; }
+  .book:hover { transform:translateY(-12px); }
+  .book.pulled { transform:translateY(-40px) rotate(-3deg); }
+  .book .name { font-size:14px; font-weight:900; line-height:1.35; writing-mode:vertical-rl; margin:0 auto; }
+  .book .count { font-size:12px; color:var(--gold-soft); font-weight:700; text-align:center; border-top:1px solid rgba(255,255,255,.2); padding-top:6px; }
+  .overlay { position:fixed; inset:0; background:rgba(0,0,0,.78); display:none; align-items:center; justify-content:center; z-index:10; padding:16px; }
+  .overlay.open { display:flex; }
+  .panel { background:var(--panel); border:1px solid #3a3a3a; border-radius:10px; width:min(760px,100%); max-height:92vh; overflow:auto; padding:24px; }
+  .panel-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; }
+  .panel-head h2 { font-size:20px; font-weight:900; }
+  .close-btn { background:none; border:1px solid #555; color:var(--text); padding:6px 12px; border-radius:6px; cursor:pointer; font-family:inherit; font-size:13px; }
+  .post-list { list-style:none; }
+  .post-list li { border-bottom:1px solid #3a3a3a; padding:12px 4px; cursor:pointer; display:flex; justify-content:space-between; gap:12px; }
+  .post-list li:hover { color:var(--gold-soft); }
+  .post-list .date { color:var(--muted); font-size:12px; white-space:nowrap; }
+  .post-list .title { font-size:15px; font-weight:500; }
+  .viewer-img-wrap { background:#000; border-radius:6px; display:flex; align-items:center; justify-content:center; min-height:300px; }
+  .viewer-img-wrap img { max-width:100%; max-height:70vh; display:block; border-radius:6px; }
+  .viewer-meta { display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:10px; flex-wrap:wrap; }
+  .viewer-meta .caption { font-size:14px; color:var(--muted); }
+  .viewer-meta .caption strong { color:var(--text); font-weight:700; }
+  .nav { display:flex; gap:8px; }
+  .nav button { background:var(--gold); color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:700; }
+  .nav button:disabled { background:#555; cursor:default; }
+  .footer-brand { color:var(--gold-soft); font-weight:700; font-size:13px; margin-top:12px; }
+  @media (max-width:600px) { .book { width:88px; height:200px; } .book .name { font-size:13px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>J3M AI 小知識</h1>
+  <p>點選工具，即可翻閱最新資訊</p>
+</header>
+<div class="shelf-wrap"><div class="shelf" id="shelf"></div></div>
+
+<div class="overlay" id="bookOverlay">
+  <div class="panel">
+    <div class="panel-head"><h2 id="bookTitle"></h2><button class="close-btn" data-close="bookOverlay">關閉</button></div>
+    <ul class="post-list" id="postList"></ul>
+  </div>
+</div>
+
+<div class="overlay" id="viewerOverlay">
+  <div class="panel">
+    <div class="panel-head"><h2 id="viewerTitle"></h2><button class="close-btn" data-close="viewerOverlay">返回</button></div>
+    <div class="viewer-img-wrap"><img id="viewerImg" alt=""></div>
+    <div class="viewer-meta">
+      <div class="caption" id="viewerCaption"></div>
+      <div class="nav"><button id="prevBtn">上一張</button><button id="nextBtn">下一張</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BOOKS = [{"name": "Claude", "posts": [{"title": "Claude Haiku 5.5 取代 Haiku 4.5", "date": "2026-10-29", "images": ["cards/b01/p01/01.png", "cards/b01/p01/02.png"]}, {"title": "Claude 剪片", "date": "2026-10-28", "images": ["cards/b01/p02/01.png", "cards/b01/p02/02.png"]}, {"title": "Claude Duet", "date": "2026-10-22", "images": ["cards/b01/p03/01.png", "cards/b01/p03/02.png"]}, {"title": "Claude Haiku 5.5", "date": "2026-10-13", "images": ["cards/b01/p04/01.png", "cards/b01/p04/02.png", "cards/b01/p04/03.png"]}, {"title": "Claude 文件簡報設計免費版開放", "date": "2026-10-13", "images": ["cards/b01/p05/01.png", "cards/b01/p05/02.png"]}, {"title": "Claude Dashboards 與 Motion", "date": "2026-10-12", "images": ["cards/b01/p06/01.png", "cards/b01/p06/02.png", "cards/b01/p06/03.png", "cards/b01/p06/04.png"]}]}, {"name": "ChatGPT", "posts": [{"title": "ChatGPT iCloud Mail 與 Calendar", "date": "2026-10-28", "images": ["cards/b02/p01/01.png"]}, {"title": "ChatGPT Maps", "date": "2026-10-04", "images": ["cards/b02/p02/01.png", "cards/b02/p02/02.png"]}]}, {"name": "Google Gemini", "posts": [{"title": "Gemini 互動應用匯出 Google Sites", "date": "2026-10-30", "images": ["cards/b03/p01/01.png", "cards/b03/p01/02.png"]}, {"title": "Gemini 填試算表", "date": "2026-10-29", "images": ["cards/b03/p02/01.png", "cards/b03/p02/02.png", "cards/b03/p02/03.png"]}, {"title": "Google 試算表 iPhone 版 Gemini", "date": "2026-10-26", "images": ["cards/b03/p03/01.png", "cards/b03/p03/02.png"]}, {"title": "Google 簡報 Gemini AI 功能", "date": "2026-10-20", "images": ["cards/b03/p04/01.png", "cards/b03/p04/02.png", "cards/b03/p04/03.png"]}, {"title": "Gemini 免費版改成自動選模型", "date": "2026-10-18", "images": ["cards/b03/p05/01.png"]}, {"title": "Google 雲端硬碟 Gemini 資料夾摘要", "date": "2026-10-17", "images": ["cards/b03/p06/01.png", "cards/b03/p06/02.png", "cards/b03/p06/03.png"]}, {"title": "Google AI Edge Foresight 圖卡", "date": "2026-10-11", "images": ["cards/b03/p07/01.png", "cards/b03/p07/02.png", "cards/b03/p07/03.png", "cards/b03/p07/04.png"]}, {"title": "Nano banana 2.1", "date": "2026-10-08", "images": ["cards/b03/p08/01.png", "cards/b03/p08/02.png"]}, {"title": "Google AI Studio Voice Library 語音配音", "date": "2026-09-17", "images": ["cards/b03/p09/01.png", "cards/b03/p09/02.png", "cards/b03/p09/03.png", "cards/b03/p09/04.png", "cards/b03/p09/05.png"]}, {"title": "Gmail AI Overview 新功能全面上線", "date": "2026-09-16", "images": ["cards/b03/p10/01.png", "cards/b03/p10/02.png", "cards/b03/p10/03.png", "cards/b03/p10/04.png", "cards/b03/p10/05.png"]}, {"title": "Google 試算表圖表字體庫更新", "date": "2026-09-16", "images": ["cards/b03/p11/01.png", "cards/b03/p11/02.png", "cards/b03/p11/03.png", "cards/b03/p11/04.png", "cards/b03/p11/05.png"]}, {"title": "LINE 語音小助理 群組延伸應用", "date": "2026-09-16", "images": ["cards/b03/p12/01.png", "cards/b03/p12/02.png", "cards/b03/p12/03.png", "cards/b03/p12/04.png", "cards/b03/p12/05.png"]}, {"title": "Threads美食串 Google我的地圖", "date": "2026-09-14", "images": ["cards/b03/p13/01.png", "cards/b03/p13/02.png", "cards/b03/p13/03.png", "cards/b03/p13/04.png", "cards/b03/p13/05.png", "cards/b03/p13/06.png"]}, {"title": "LINE GAS Gemini 個人特助", "date": "2026-09-13", "images": ["cards/b03/p14/01.png", "cards/b03/p14/02.png", "cards/b03/p14/03.png", "cards/b03/p14/04.png", "cards/b03/p14/05.png", "cards/b03/p14/06.png"]}, {"title": "Gemini Spark 帳單自動同步Keep", "date": "2026-09-10", "images": ["cards/b03/p15/01.png", "cards/b03/p15/02.png", "cards/b03/p15/03.png", "cards/b03/p15/04.png", "cards/b03/p15/05.png"]}, {"title": "Gemini Spark 功能盤點", "date": "2026-09-07", "images": ["cards/b03/p16/01.png", "cards/b03/p16/02.png", "cards/b03/p16/03.png", "cards/b03/p16/04.png", "cards/b03/p16/05.png", "cards/b03/p16/06.png", "cards/b03/p16/07.png"]}, {"title": "Gemini Spark Google 相簿", "date": "2026-09-06", "images": ["cards/b03/p17/01.png", "cards/b03/p17/02.png", "cards/b03/p17/03.png", "cards/b03/p17/04.png", "cards/b03/p17/05.png"]}, {"title": "Google Sheets 互動式儀表板", "date": "2026-09-05", "images": ["cards/b03/p18/01.png", "cards/b03/p18/02.png", "cards/b03/p18/03.png", "cards/b03/p18/04.png", "cards/b03/p18/05.png"]}]}, {"name": "Gemini Notebook", "posts": [{"title": "Gemini Notebook 免費教科書", "date": "2026-10-30", "images": ["cards/b04/p01/01.png"]}, {"title": "Gemini 可以 @ Gemini Notebook", "date": "2026-10-26", "images": ["cards/b04/p02/01.png", "cards/b04/p02/02.png"]}, {"title": "Gemini Notebook 手機版即時語音", "date": "2026-09-16", "images": ["cards/b04/p03/01.png", "cards/b04/p03/02.png", "cards/b04/p03/03.png", "cards/b04/p03/04.png", "cards/b04/p03/05.png"]}, {"title": "Gemini Notebook 影片與圖表風格盤點", "date": "2026-09-11", "images": ["cards/b04/p04/01.png", "cards/b04/p04/02.png", "cards/b04/p04/03.png", "cards/b04/p04/04.png", "cards/b04/p04/05.png"]}, {"title": "Gemini Notebook 短影音系列產製", "date": "2026-09-10", "images": ["cards/b04/p05/01.png", "cards/b04/p05/02.png", "cards/b04/p05/03.png", "cards/b04/p05/04.png", "cards/b04/p05/05.png"]}, {"title": "Gemini Notebook 直式短影音", "date": "2026-09-07", "images": ["cards/b04/p06/01.png", "cards/b04/p06/02.png", "cards/b04/p06/03.png", "cards/b04/p06/04.png", "cards/b04/p06/05.png"]}, {"title": "Gemini Notebook 可編輯PPTX", "date": "2026-09-04", "images": ["cards/b04/p07/01.png", "cards/b04/p07/02.png", "cards/b04/p07/03.png", "cards/b04/p07/04.png", "cards/b04/p07/05.png"]}]}, {"name": "Notion", "posts": [{"title": "Notion 連結 ChatGPT 方案", "date": "2026-10-21", "images": ["cards/b05/p01/01.png"]}, {"title": "Notion Skills 外部工具通用大腦", "date": "2026-09-21", "images": ["cards/b05/p02/01.png", "cards/b05/p02/02.png", "cards/b05/p02/03.png", "cards/b05/p02/04.png", "cards/b05/p02/05.png"]}, {"title": "Notion Agent 工作區全面升級", "date": "2026-09-20", "images": ["cards/b05/p03/01.png", "cards/b05/p03/02.png", "cards/b05/p03/03.png", "cards/b05/p03/04.png", "cards/b05/p03/05.png"]}, {"title": "Notion 3.7 會議自動觸發Agent", "date": "2026-09-18", "images": ["cards/b05/p04/01.png", "cards/b05/p04/02.png", "cards/b05/p04/03.png", "cards/b05/p04/04.png", "cards/b05/p04/05.png"]}, {"title": "Notion MCP 跨AI記憶", "date": "2026-09-10", "images": ["cards/b05/p05/01.png", "cards/b05/p05/02.png", "cards/b05/p05/03.png", "cards/b05/p05/04.png", "cards/b05/p05/05.png"]}]}, {"name": "AI 工作日常", "posts": [{"title": "Gemini 4 Argon 開放 Pro", "date": "2026-10-14", "images": ["cards/b06/p01/01.png"]}, {"title": "番茄鐘與 AI 額度", "date": "2026-10-13", "images": ["cards/b06/p02/01.png"]}]}, {"name": "Microsoft Copilot", "posts": [{"title": "Copilot Notebooks 自動週報", "date": "2026-10-12", "images": ["cards/b07/p01/01.png", "cards/b07/p01/02.png", "cards/b07/p01/03.png"]}]}, {"name": "其他", "posts": [{"title": "Perplexity Computer 本機模式", "date": "2026-10-26", "images": ["cards/b08/p01/01.png", "cards/b08/p01/02.png"]}, {"title": "Suno API 實測", "date": "2026-10-18", "images": ["cards/b08/p02/01.png", "cards/b08/p02/02.png", "cards/b08/p02/03.png"]}, {"title": "YouTube AI 縮圖建議", "date": "2026-10-14", "images": ["cards/b08/p03/01.png", "cards/b08/p03/02.png", "cards/b08/p03/03.png"]}]}];
+const COLORS = ["#8c4a2f","#2f5d4e","#2c4a7a","#5a3d7a","#3a3a3a","#4a6a3a","#7a5a1e","#6a2f4a","#1f5f7a","#4a4a4a"];
+
+const shelf = document.getElementById("shelf");
+BOOKS.forEach((book, i) => {
+  const cardCount = book.posts.reduce((s, p) => s + p.images.length, 0);
+  const el = document.createElement("div");
+  el.className = "book";
+  el.style.background = COLORS[i % COLORS.length];
+  el.innerHTML = '<div class="name"></div><div class="count"></div>';
+  el.querySelector(".name").textContent = book.name;
+  el.querySelector(".count").textContent = cardCount + " 張";
+  el.addEventListener("click", () => openBook(i, el));
+  shelf.appendChild(el);
+});
+
+let currentBook = null, currentBookEl = null, flatCards = [], cardIndex = 0;
+
+function openBook(i, el) {
+  currentBook = BOOKS[i];
+  currentBookEl = el;
+  el.classList.add("pulled");
+  document.getElementById("bookTitle").textContent = currentBook.name;
+  const list = document.getElementById("postList");
+  list.innerHTML = "";
+  currentBook.posts.forEach((post, pi) => {
+    const li = document.createElement("li");
+    li.innerHTML = '<span class="title"></span><span class="date"></span>';
+    li.querySelector(".title").textContent = post.title;
+    li.querySelector(".date").textContent = post.date;
+    li.addEventListener("click", () => openViewer(pi));
+    list.appendChild(li);
+  });
+  document.getElementById("bookOverlay").classList.add("open");
+}
+
+function openViewer(postIndex) {
+  const post = currentBook.posts[postIndex];
+  flatCards = post.images.map((src, idx) => ({ src, title: post.title, date: post.date, page: idx + 1, total: post.images.length }));
+  cardIndex = 0;
+  document.getElementById("bookOverlay").classList.remove("open");
+  document.getElementById("viewerOverlay").classList.add("open");
+  renderCard();
+}
+
+function renderCard() {
+  const c = flatCards[cardIndex];
+  document.getElementById("viewerTitle").textContent = c.title;
+  const img = document.getElementById("viewerImg");
+  img.alt = c.title;
+  img.src = c.src;
+  const cap = document.getElementById("viewerCaption");
+  cap.innerHTML = "";
+  const strong = document.createElement("strong");
+  strong.textContent = currentBook.name;
+  cap.appendChild(strong);
+  cap.appendChild(document.createTextNode("　" + c.date + "　第 " + c.page + "/" + c.total + " 張"));
+  document.getElementById("prevBtn").disabled = cardIndex === 0;
+  document.getElementById("nextBtn").disabled = cardIndex === flatCards.length - 1;
+}
+
+document.getElementById("prevBtn").addEventListener("click", () => { if (cardIndex > 0) { cardIndex--; renderCard(); } });
+document.getElementById("nextBtn").addEventListener("click", () => { if (cardIndex < flatCards.length - 1) { cardIndex++; renderCard(); } });
+
+document.addEventListener("keydown", (e) => {
+  if (!document.getElementById("viewerOverlay").classList.contains("open")) return;
+  if (e.key === "ArrowLeft") document.getElementById("prevBtn").click();
+  if (e.key === "ArrowRight") document.getElementById("nextBtn").click();
+  if (e.key === "Escape") closeOverlay("viewerOverlay");
+});
+
+function closeOverlay(id) {
+  document.getElementById(id).classList.remove("open");
+  if (id === "viewerOverlay") {
+    document.getElementById("bookOverlay").classList.add("open");
+  } else if (currentBookEl) {
+    currentBookEl.classList.remove("pulled");
+    currentBookEl = null;
+  }
+}
+
+document.querySelectorAll("[data-close]").forEach(btn => btn.addEventListener("click", () => closeOverlay(btn.dataset.close)));
+document.querySelectorAll(".overlay").forEach(ov => ov.addEventListener("click", (e) => { if (e.target === ov) closeOverlay(ov.id); }));
+</script>
+</body>
+</html>
