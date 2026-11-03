@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="40 種簡報視覺風格，附封面示意、色票、字體建議與 AI 提示詞。">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>簡報風格圖鑑｜J3M 教學資源站</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Noto+Serif+TC:wght@600;700;900&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&family=Press+Start+2P&family=IBM+Plex+Mono:wght@500&family=LXGW+WenKai+TC:wght@400;700&display=swap">
+<style>
+/* Layout：型錄式目錄。標頭與使用步驟 → 篩選列 → 卡片網格；卡片上方是該風格的 16:9 封面示意 */
+:root{
+  --bg:#EEF0F3; --surface:#FFFFFF; --ink:#14171C; --muted:#5D6674; --line:#D6DCE4; --chip:#E3E7ED;
+  --accent:#F5B800; --accent-ink:#14171C; --accent-text:#8A6400; --overlay:rgba(14,18,24,.6);
+  --ok:#1F8A4C; --spec:#6B7280; --warn:#B45309;
+  /* 影片畫面固定色票：示意的是成片，不隨介面主題反轉 */
+  --st-bg:#0E1B33; --st-bg2:#1B2B4A; --st-ink:#FFFFFF; --st-a:#F5B800; --st-r:#E2553F; --st-b:#4C8DFF;
+  --st-g:#8A97AB; --st-paper:#FBFAF6; --st-skin:#E8C6A4; --st-shirt:#3B6FD8;
+  --f-disp:"Noto Serif TC","Songti TC",serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1216; --surface:#171B21; --ink:#E8EBF0; --muted:#98A2AF; --line:#2A313B; --chip:#222831;
+    --accent:#F5B800; --accent-ink:#14171C; --accent-text:#F5C933; --overlay:rgba(0,0,0,.7);
+    --ok:#4ADE80; --spec:#9CA3AF; --warn:#FBBF24;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1216; --surface:#171B21; --ink:#E8EBF0; --muted:#98A2AF; --line:#2A313B; --chip:#222831;
+  --accent:#F5B800; --accent-ink:#14171C; --accent-text:#F5C933; --overlay:rgba(0,0,0,.7);
+  --ok:#4ADE80; --spec:#9CA3AF; --warn:#FBBF24;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1280px;margin:0 auto}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header.top{padding-block:48px 24px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:40px;align-items:end}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.eyebrow a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line)}
+h1{font-family:var(--f-disp);font-weight:900;font-size:clamp(36px,6vw,64px);line-height:1.08;margin:10px 0 14px;text-wrap:balance}
+h1 .hl{background:linear-gradient(transparent 62%,var(--accent) 62%,var(--accent) 92%,transparent 92%);padding-inline:2px}
+.lede{color:var(--muted);max-width:36em;margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;font-size:13px;color:var(--muted)}
+.stats b{display:block;font-family:var(--f-mono);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:baseline}
+.steps b{font-size:18px;color:var(--accent-text);font-weight:500}
+.setup{margin-top:18px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 10px;align-items:end}
+.setup label{font-size:13px;color:var(--muted);grid-column:1/-1}
+.field{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;font-size:15px}
+.field::placeholder{color:var(--muted);opacity:.8}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:9px 12px;font-size:13px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-top:8px;overflow-x:auto}
+.tab{border:0;background:transparent;padding:12px 16px;font-size:15px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap;color:var(--muted)}
+.tab[aria-selected="true"]{border-color:var(--accent);color:var(--ink)}
+.tab small{font-family:var(--f-mono);font-weight:400;margin-left:6px;font-size:12px}
+
+.bar{background:var(--bg);padding-block:14px;border-bottom:1px solid var(--line);display:grid;gap:10px;z-index:5}
+@media (min-width:860px){.bar{position:sticky;top:env(safe-area-inset-top,0px)}}
+.bar-row{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.bar-row .lbl{font-size:12px;color:var(--muted);min-width:4.5em}
+.search{flex:1 1 260px;max-width:440px}
+.count{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+.chip{border:1px solid transparent;background:var(--chip);border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer;line-height:1.5;display:inline-flex;gap:6px;align-items:center}
+.chip:hover{border-color:var(--line)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chip small{font-family:var(--f-mono);font-size:11px;opacity:.65}
+
+main{padding-block:26px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:22px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-width:0;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 28px -16px rgba(0,0,0,.35)}
+.card.is-picked{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.pv{cursor:zoom-in;display:block}
+.meta{padding:14px 16px 16px;display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.row1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.no{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.st{font-size:11px;font-weight:700;border-radius:4px;padding:1px 7px;border:1px solid currentColor;white-space:nowrap}
+.st.ok{color:var(--ok)} .st.spec{color:var(--spec)} .st.near{color:var(--warn)} .st.ext{color:var(--accent-text)}
+.card h3{font-family:var(--f-disp);font-weight:900;font-size:19px;line-height:1.3;margin:2px 0 0}
+.code{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin:0;overflow-wrap:anywhere}
+.desc{margin:4px 0 0;font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.tag{font-size:11px;border:1px solid var(--line);color:var(--muted);border-radius:4px;padding:0 6px}
+.tag.src{background:var(--chip);border-color:transparent;color:var(--ink)}
+.acts{margin-top:auto;padding-top:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pick{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer}
+.pick input{accent-color:var(--accent-text);width:16px;height:16px}
+.btn{border:1px solid var(--line);background:transparent;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.btn.primary:hover{filter:brightness(1.06)}
+.empty{padding:60px 20px;text-align:center;color:var(--muted)}
+
+/* 網頁動態索引 */
+.ml{display:grid;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ml-row{display:grid;grid-template-columns:64px minmax(0,1.3fr) minmax(0,2fr) 92px 92px 118px;gap:12px;align-items:center;padding:12px 16px;border-top:1px solid var(--line)}
+.ml-row:first-child{border-top:0}
+.ml-head{font-size:12px;color:var(--muted);background:var(--chip)}
+.ml-row .nm b{display:block;font-weight:700}
+.ml-row .nm span{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.ml-row .ds{font-size:14px}
+.tech{font-family:var(--f-mono);font-size:12px}
+.more{display:flex;justify-content:center;padding:18px}
+.ref-note{font-size:13px;color:var(--muted);margin:0 0 14px;max-width:70ch}
+.ref-note a{color:var(--accent-text)}
+@media (max-width:760px){
+  .ml-row{grid-template-columns:52px minmax(0,1fr) auto;row-gap:4px}
+  .ml-row .ds{grid-column:2/-1}
+  .ml-row .tech,.ml-row .when{grid-column:2/3;font-size:12px}
+  .ml-row .go{grid-column:3/4;grid-row:1/2}
+  .ml-head{display:none}
+}
+
+/* Detail */
+.overlay{position:fixed;inset:0;background:var(--overlay);z-index:20;display:grid;place-items:center;
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.panel{background:var(--surface);border-radius:14px;width:min(1120px,100%);max-height:100%;overflow:auto;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.panel .stage{background:var(--chip);padding:26px;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.nav{display:flex;justify-content:space-between;gap:8px}
+.panel .info{padding:26px;display:flex;flex-direction:column;gap:13px;min-width:0}
+.panel h2{font-family:var(--f-disp);font-weight:900;font-size:28px;line-height:1.25;margin:0}
+.panel h4{font-size:12px;letter-spacing:.12em;color:var(--muted);margin:0 0 4px;font-weight:500}
+.panel p{margin:0}
+.rule{border-left:3px solid var(--accent);padding-left:10px;color:var(--muted);font-size:14px}
+pre.cmd{font-family:var(--f-mono);font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.prompt{font-family:var(--f-body);font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;white-space:pre-wrap;margin:0;max-height:220px;overflow:auto;line-height:1.6}
+.x{margin-left:auto;border:0;background:var(--chip);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1}
+.src-info{font-size:13px;color:var(--muted)}
+@media (max-width:860px){
+  .panel{grid-template-columns:minmax(0,1fr)}
+  .panel .stage,.panel .info{padding:18px}
+  header.top{grid-template-columns:minmax(0,1fr);gap:24px;padding-block:32px 18px}
+}
+.tray{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--ink);color:var(--bg);
+  padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.tray-in{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tray .names{flex:1 1 240px;font-size:13px;opacity:.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tray .btn{border-color:rgba(127,127,127,.5);color:var(--bg)}
+.tray .btn.primary{color:var(--accent-ink)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px}
+.fb textarea{width:100%;min-height:220px;font-size:13px}
+
+
+/* ================= 投影片示意 ================= */
+.s{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;container-type:inline-size;overflow:hidden;background:#fff;color:#111;font-family:var(--f-body);line-height:1.3;isolation:isolate}
+.s *{box-sizing:border-box}
+.s .a{position:absolute}
+.s .ln{display:block;border-radius:1cqw}
+.s .k900{font-family:var(--f-body);font-weight:900}
+.s .serif{font-family:var(--f-disp)}
+.s .pf{font-family:"Playfair Display","Noto Serif TC",serif}
+.s .px{font-family:"Press Start 2P",var(--f-mono)}
+.s .pm{font-family:"IBM Plex Mono",var(--f-mono)}
+.s .hw{font-family:"LXGW WenKai TC","Kaiti TC","STKaiti",var(--f-disp)}
+.s .ph{background:linear-gradient(180deg,#8FB0D4,#E6ECF2 72%);overflow:hidden}
+.s .ph::before{content:"";position:absolute;left:0;right:0;bottom:0;height:60%;background:#56677F;clip-path:polygon(0 100%,0 55%,14% 30%,28% 52%,46% 8%,63% 44%,78% 22%,100% 50%,100% 100%)}
+.s .blink{animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.pal{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.sw{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface);cursor:pointer;text-align:left;padding:0}
+.sw i{display:block;height:44px}
+.sw span{display:block;padding:6px 8px;font-size:12px;line-height:1.35}
+.sw code{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.mini-pal{display:flex;gap:3px;margin-top:2px}
+.mini-pal i{width:18px;height:10px;border-radius:2px;border:1px solid rgba(127,127,127,.25)}
+.plist{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.plist li{display:grid;grid-template-columns:24px 1fr;gap:4px}
+.plist b{color:var(--accent-text);font-weight:500}
+.avoid{border-left:3px solid var(--line);padding-left:10px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.s .blink{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow"><a href="../">J3M 教學資源站</a> · AI 簡報術 · Slide Style Library</div>
+      <h1>簡報風格圖鑑<span class="hl">．</span></h1>
+      <p class="lede">40 種簡報視覺風格，從瑞士國際風到水墨新中式。每一種都附封面示意、色票、字體建議與版面要點，複製提示詞就能請 AI 用同一種風格做完整份簡報。版面構圖技巧請見<a href="../slide-craft/" style="color:var(--accent-text)">簡報技法圖鑑</a>。</p>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div>
+      <ol class="steps">
+        <li><b>➊</b><span>依「場合」與「風格類型」篩選，先找到兩三個候選</span></li>
+        <li><b>➋</b><span>點開示意，查看色票、字體與版面要點；點色票可複製色碼</span></li>
+        <li><b>➌</b><span>複製提示詞；勾選多種風格可產生「風格比稿」提示詞</span></li>
+      </ol>
+      <div class="setup">
+        <label for="topic">簡報主題（會自動帶入所有提示詞）</label>
+        <input class="field" id="topic" type="text" placeholder="例如：2027 年度品牌行銷策略提案" autocomplete="off" style="grid-column:1/-1">
+      </div>
+    </div>
+  </header>
+
+  <div class="bar">
+    <div class="bar-row"><input class="field search" id="q" type="search" placeholder="搜尋風格、色彩或用途，例如：深色、復古、教學" autocomplete="off" aria-label="搜尋簡報風格"><span class="count" id="count"></span></div>
+    <div class="bar-row" id="fOcc" role="group" aria-label="場合"></div>
+    <div class="bar-row" id="fFam" role="group" aria-label="風格類型"></div>
+    <div class="bar-row" id="fTone" role="group" aria-label="色調"></div>
+  </div>
+  <main>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" hidden><p>找不到符合的風格。試著換個關鍵字，或清除篩選條件。</p><button class="btn" id="reset" type="button">清除篩選</button></div>
+  </main>
+</div>
+
+<div class="tray" id="tray" hidden>
+  <div class="tray-in">
+    <strong id="trayCount"></strong>
+    <span class="names" id="trayNames"></span>
+    <button class="btn" id="trayClear" type="button">清除</button>
+    <button class="btn primary" id="trayCopy" type="button">複製風格比稿提示詞</button>
+  </div>
+</div>
+
+<div class="overlay" id="detail" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <div class="stage">
+      <div id="dPv"></div>
+      <div class="nav"><button class="btn" id="dPrev" type="button">← 上一個</button><button class="btn" id="dNext" type="button">下一個 →</button></div>
+      <div><h4 style="font-size:12px;letter-spacing:.12em;color:var(--muted);margin:6px 0;font-weight:500">色票（點擊複製色碼）</h4><div class="pal" id="dPal"></div></div>
+    </div>
+    <div class="info">
+      <div class="row1"><span class="no" id="dNo"></span><button class="x" id="dClose" type="button" aria-label="關閉">×</button></div>
+      <div><div class="tags" id="dTags"></div><h2 id="dTitle" style="margin-top:6px"></h2><p class="code" id="dEn"></p></div>
+      <p id="dDesc"></p>
+      <div><h4>字體建議</h4><p id="dFont"></p></div>
+      <div><h4>版面要點</h4><ol class="plist" id="dSteps"></ol></div>
+      <div><h4>請避免</h4><p class="avoid" id="dAvoid"></p></div>
+      <div><h4>AI 提示詞</h4><pre class="prompt" id="dPrompt"></pre></div>
+      <div class="acts" style="padding-top:0"><label class="pick"><input type="checkbox" id="dPick"> 加入比稿</label><button class="btn primary" id="dCopy" type="button">複製提示詞</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay fb" id="fallback" hidden>
+  <div class="panel" style="grid-template-columns:minmax(0,1fr);max-width:640px">
+    <div class="info">
+      <div class="row1"><strong>請手動複製</strong><button class="x" id="fbClose" type="button" aria-label="關閉">×</button></div>
+      <p style="color:var(--muted)">此環境不允許自動寫入剪貼簿。文字已全選，請按 Ctrl＋C 或 ⌘＋C。</p>
+      <textarea class="field" id="fbText" readonly></textarea>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<script>
+const FAM={min:"極簡",edit:"編輯排印",biz:"商務專業",tech:"科技未來",bold:"大膽前衛",retro:"復古",hand:"手作插畫",natural:"自然東方"};
+const OCC={pitch:"提案簡報",teach:"教學課程",launch:"發表會",report:"內部報告",brand:"品牌故事",social:"社群圖文",workshop:"工作坊"};
+const TONE={light:"淺色",dark:"深色",vivid:"鮮豔"};
+const B=(c)=>`<div class="a" style="inset:0;background:${c}"></div>`;
+const LN=(w,c="#D9DEE5",h=1)=>`<i class="ln" style="width:${w}%;background:${c};height:${h}cqw"></i>`;
+
+const ST=[
+/* ---------- 極簡 ---------- */
+{id:"S01",fam:"min",zh:"瑞士國際風",en:"Swiss Style",tone:"light",occ:["pitch","report","brand"],
+desc:"嚴謹網格、無襯線粗體、大面積留白，加上一塊紅色。",
+look:"白底，左上一塊正紅色方塊，右側以極粗無襯線字體寫兩行主標並靠左對齊；底部一條黑色細線，下方三欄以編號標示重點，所有元素嚴格對齊網格。",
+pal:[["#FFFFFF","白"],["#111111","墨黑"],["#E3120B","瑞士紅"],["#D9D9D9","淺灰"]],font:["思源黑體 Black","思源黑體 Regular"],
+steps:["設定 12 欄網格，所有元素對齊欄線","標題靠左對齊，字級對比拉大","紅色只用在一個色塊或關鍵字"],avoid:"置中排版與多種顏色，會失去瑞士風的秩序感。",
+pv:`${B("#fff")}<div class="a" style="left:6%;top:9%;width:18%;height:34%;background:#E3120B"></div><div class="a k900" style="left:30%;top:7%;right:6%;font-size:7.6cqw;line-height:1.05;color:#111;letter-spacing:-.02em">設計<br>系統化</div><div class="a" style="left:30%;bottom:10%;right:6%;border-top:.35cqw solid #111;padding-top:1.4cqw;display:grid;grid-template-columns:repeat(3,1fr);gap:2cqw;font-size:1.8cqw;color:#111"><span><b>01</b><br>網格</span><span><b>02</b><br>層級</span><span><b>03</b><br>對齊</span></div>`},
+{id:"S02",fam:"min",zh:"日式留白",en:"Japanese Minimal",tone:"light",occ:["brand","teach"],
+desc:"「間」的美學：大量空白、細字、一點朱紅。",
+look:"米白底，畫面右側一行細襯線直排標題，左下角一枚小小的朱紅圓點，旁邊一行極小的說明文字，其餘全部留白。",
+pal:[["#F7F5F0","和紙白"],["#2B2B2B","墨"],["#B8352C","朱"],["#C9C2B6","砂"]],font:["思源宋體 SemiBold","思源黑體 Light"],
+steps:["留白至少七成，只放一個主角","字級偏小、字距拉開","朱紅色只用一個小點或印章"],avoid:"加入裝飾圖示或照片，破壞靜謐感。",
+pv:`${B("#F7F5F0")}<div class="a serif" style="right:12%;top:14%;writing-mode:vertical-rl;font-size:4.4cqw;letter-spacing:.4em;color:#2B2B2B;font-weight:600">一期一會</div><div class="a" style="left:10%;bottom:16%;width:3cqw;height:3cqw;border-radius:50%;background:#B8352C"></div><div class="a" style="left:15%;bottom:16.5%;font-size:1.6cqw;letter-spacing:.3em;color:#8A847A">茶事與待客之道</div>`},
+{id:"S03",fam:"min",zh:"單色極簡",en:"Monochrome Minimal",tone:"light",occ:["report","pitch","teach"],
+desc:"只用黑、白、灰，靠字重與大小建立層級。",
+look:"白底黑字，左側一個極大的細體數字，右側粗體標題與兩行灰色說明，全頁沒有任何彩色。",
+pal:[["#FFFFFF","白"],["#0F0F0F","黑"],["#8C8C8C","中灰"],["#E6E6E6","淺灰"]],font:["思源黑體 Light / Black","思源黑體 Regular"],
+steps:["只用三階灰，不加彩色","以字重對比取代顏色強調","圖片轉成黑白"],avoid:"灰階層次太多，畫面變得模糊。",
+pv:`${B("#fff")}<div class="a" style="left:6%;top:50%;transform:translateY(-55%);font-size:26cqw;font-weight:300;color:#111;line-height:1">3</div><div class="a" style="left:40%;top:30%;right:6%;display:grid;gap:1.4cqw"><div class="k900" style="font-size:5cqw;color:#111">三個決定</div><div style="font-size:2cqw;color:#8C8C8C;line-height:1.6">先刪減，再排序，<br>最後才加上顏色。</div></div>`},
+{id:"S04",fam:"min",zh:"精品奢華",en:"Luxury Minimal",tone:"dark",occ:["brand","launch"],
+desc:"黑底金字、襯線大標、字距拉開，營造高級感。",
+look:"近黑底，中央一行大寫襯線英文標題與一行中文副標，上下各一條細金線，字距明顯拉開，四周大量留白。",
+pal:[["#0E0E0E","曜黑"],["#C8A45C","香檳金"],["#F3EEE4","象牙"],["#3A3A3A","炭灰"]],font:["Playfair Display / 思源宋體","思源黑體 Light"],
+steps:["標題用襯線字並拉開字距","金色只用在細線與小字","照片選低飽和、暗調的商品照"],avoid:"金色漸層與大量裝飾花紋，反而顯得廉價。",
+pv:`${B("#0E0E0E")}<i class="a" style="left:38%;right:38%;top:30%;height:1px;background:#C8A45C"></i><div class="a pf" style="left:0;right:0;top:36%;text-align:center;font-size:6.4cqw;letter-spacing:.3em;color:#F3EEE4;font-weight:700">MAISON</div><div class="a" style="left:0;right:0;top:56%;text-align:center;font-size:1.8cqw;letter-spacing:.6em;color:#C8A45C">二〇二六 秋冬系列</div><i class="a" style="left:38%;right:38%;top:68%;height:1px;background:#C8A45C"></i>`},
+/* ---------- 編輯排印 ---------- */
+{id:"S05",fam:"edit",zh:"雜誌編排",en:"Editorial Magazine",tone:"light",occ:["brand","pitch","social"],
+desc:"大照片、襯線標題壓在圖上、分欄內文與期數資訊。",
+look:"右側六成為照片，襯線粗體大標從左側白底跨到照片上，左上角有期數與日期，左下為兩欄小字內文。",
+pal:[["#FFFFFF","紙白"],["#141414","墨黑"],["#FF4F2E","標題橘"],["#E9E5DD","米灰"]],font:["思源宋體 Heavy","思源黑體 Regular"],
+steps:["主標允許跨越圖片邊界","加上期數、日期、頁碼等編排資訊","內文分兩欄，字級小而整齊"],avoid:"標題壓在照片雜亂處，難以閱讀。",
+pv:`${B("#fff")}<div class="a ph" style="left:42%;right:0;top:0;bottom:0"></div><div class="a pm" style="left:5%;top:8%;font-size:1.5cqw;letter-spacing:.14em">ISSUE 08 · 2026</div><div class="a serif" style="left:5%;top:20%;font-size:11cqw;line-height:1.02;color:#141414;font-weight:900">慢工<br><span style="color:#FF4F2E">出細活</span></div><div class="a" style="left:5%;bottom:9%;width:30%;display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw">${LN(100,"#CFCAC0",.8)}${LN(100,"#CFCAC0",.8)}${LN(80,"#CFCAC0",.8)}${LN(70,"#CFCAC0",.8)}</div>`},
+{id:"S06",fam:"edit",zh:"報紙版面",en:"Newspaper",tone:"light",occ:["report","social","teach"],
+desc:"報頭、分欄、細線分隔與頭條標題，像在讀一份報紙。",
+look:"淺米色新聞紙底，頂部是粗襯線報頭與日期列，下方雙線分隔，頭條大標橫跨全寬，下方三欄內文以細直線分隔。",
+pal:[["#F4F1E8","新聞紙"],["#1A1A1A","油墨黑"],["#8B0000","暗紅"],["#BDB6A6","灰褐"]],font:["Playfair Display / 思源宋體 Black","思源宋體 Regular"],
+steps:["報頭置中並配日期與期號","頭條標題寫成新聞句","內文分欄並以細線分隔"],avoid:"欄寬不一、字級過多，看起來像傳單。",
+pv:`${B("#F4F1E8")}<div class="a pf" style="left:0;right:0;top:4%;text-align:center;font-size:6cqw;font-weight:900;color:#1A1A1A">The AI Daily</div><div class="a" style="left:5%;right:5%;top:20%;border-top:.25cqw solid #1A1A1A;border-bottom:1px solid #1A1A1A;padding:.4cqw 0;display:flex;justify-content:space-between;font-size:1.4cqw;color:#1A1A1A"><span>第 128 期</span><span>2026 年 11 月 4 日</span></div><div class="a serif" style="left:5%;right:5%;top:30%;font-size:5.4cqw;font-weight:900;color:#1A1A1A;line-height:1.15">AI 代理正式進入辦公室</div><div class="a" style="left:5%;right:5%;top:56%;bottom:8%;display:grid;grid-template-columns:repeat(3,1fr);gap:2cqw">${[0,1,2].map(i=>`<div style="display:grid;gap:1cqw;align-content:start;${i?"border-left:1px solid #BDB6A6;padding-left:2cqw":""}">${LN(100,"#BDB6A6",.7)}${LN(90,"#BDB6A6",.7)}${LN(100,"#BDB6A6",.7)}${LN(60,"#BDB6A6",.7)}</div>`).join("")}</div>`},
+{id:"S07",fam:"edit",zh:"學術書卷",en:"Academic",tone:"light",occ:["teach","report"],
+desc:"襯線字、圖表編號、註腳與引用，沉穩可信。",
+look:"白底，左側襯線標題與編號小節，右側一張簡潔的圖表並標註「圖 1」與說明，頁尾有註腳與引用格式。",
+pal:[["#FFFFFF","白"],["#1F2A44","學院藍"],["#7A1F2B","酒紅"],["#E8E4DA","書頁灰"]],font:["思源宋體 Bold","思源宋體 Regular"],
+steps:["標題與小節使用編號，例如 2.1","圖表加上編號與一句說明","頁尾放資料來源與引用"],avoid:"使用卡通圖示或鮮豔配色，削弱可信度。",
+pv:`${B("#fff")}<div class="a serif" style="left:6%;top:10%;font-size:1.8cqw;color:#7A1F2B;font-weight:600">第二章　研究方法</div><div class="a serif" style="left:6%;top:18%;width:40%;font-size:4.2cqw;font-weight:900;color:#1F2A44;line-height:1.25">2.1 樣本設計與資料來源</div><div class="a" style="left:6%;top:48%;width:38%;display:grid;gap:1.2cqw">${LN(100,"#D8D3C6",.8)}${LN(92,"#D8D3C6",.8)}${LN(96,"#D8D3C6",.8)}${LN(60,"#D8D3C6",.8)}</div><div class="a" style="right:6%;top:14%;width:40%;height:52%;border:1px solid #D8D3C6;display:flex;align-items:flex-end;gap:2cqw;padding:2cqw">${[40,62,55,84].map(h=>`<i style="flex:1;height:${h}%;background:#1F2A44"></i>`).join("")}</div><div class="a serif" style="right:6%;top:70%;width:40%;font-size:1.6cqw;color:#555">圖 1　四年樣本數變化</div><div class="a serif" style="left:6%;right:6%;bottom:6%;border-top:1px solid #D8D3C6;padding-top:1cqw;font-size:1.3cqw;color:#777">¹ 資料來源：國家發展委員會，2025。</div>`},
+{id:"S08",fam:"edit",zh:"大字排印",en:"Big Type",tone:"dark",occ:["launch","brand","social"],
+desc:"文字就是畫面：超大字、疊字、出血裁切。",
+look:"黑底，一個超大的白色詞語佔滿畫面並超出邊界，上方疊一行黃色小字，左下角極小的說明文字。",
+pal:[["#111111","黑"],["#F5F5F0","白"],["#FFD400","螢光黃"],["#555555","灰"]],font:["思源黑體 Black","思源黑體 Medium"],
+steps:["主字放大到超出畫面","只用一種字體家族","用顏色區分主字與輔助字"],avoid:"文字太多，失去大字的衝擊力。",
+pv:`${B("#111")}<div class="a k900" style="left:-3%;top:8%;font-size:30cqw;line-height:.9;color:#F5F5F0;letter-spacing:-.04em">現在</div><div class="a k900" style="left:6%;top:6%;font-size:3cqw;color:#FFD400">不是明天</div><div class="a" style="right:6%;bottom:8%;font-size:1.6cqw;color:#888">2026 KEYNOTE</div>`},
+/* ---------- 商務專業 ---------- */
+{id:"S09",fam:"biz",zh:"企業清爽",en:"Corporate Clean",tone:"light",occ:["report","pitch","teach"],
+desc:"白底、品牌藍、圖示與卡片，穩定好讀的通用商務風。",
+look:"白底，頂部細色條與 Logo 區，左側藍色粗體標題，下方三張淺藍卡片並排，每張有圖示、標題與一行說明。",
+pal:[["#FFFFFF","白"],["#0B4EA2","品牌藍"],["#E9F0FA","淺藍"],["#1E293B","深灰藍"]],font:["思源黑體 Bold","思源黑體 Regular"],
+steps:["全份固定頁首、頁碼與 Logo 位置","卡片結構一致：圖示、標題、說明","品牌色只用於標題與重點"],avoid:"每頁換不同版型，看起來像拼湊。",
+pv:`${B("#fff")}<i class="a" style="left:0;right:0;top:0;height:2.4%;background:#0B4EA2"></i><div class="a k900" style="left:6%;top:12%;font-size:4.6cqw;color:#0B4EA2">三大服務方向</div><div class="a" style="left:6%;top:24%;font-size:1.8cqw;color:#64748B">從策略到執行，一站完成</div><div class="a" style="left:6%;right:6%;top:40%;bottom:12%;display:grid;grid-template-columns:repeat(3,1fr);gap:2cqw">${["策略規劃","系統導入","教育訓練"].map(t=>`<div style="background:#E9F0FA;border-radius:1.2cqw;padding:2cqw;display:grid;gap:1cqw;align-content:start"><i style="width:4cqw;height:4cqw;border-radius:1cqw;background:#0B4EA2"></i><b style="font-size:2.2cqw;color:#1E293B">${t}</b>${LN(90,"#C9D8EE",.8)}</div>`).join("")}</div>`},
+{id:"S10",fam:"biz",zh:"顧問報告",en:"Consulting Deck",tone:"light",occ:["report","pitch"],
+desc:"標題即結論、左圖右重點、頁尾附資料來源。",
+look:"白底，頂部一整句結論式標題，右上角章節追蹤小字；左側一張簡潔長條圖，右側三點重點以編號列出，頁尾小字標註資料來源。",
+pal:[["#FFFFFF","白"],["#051C2C","深海藍"],["#2251FF","電藍"],["#A3B1BF","霧灰"]],font:["思源黑體 Bold","思源黑體 Regular"],
+steps:["標題寫成完整結論句","一頁一個論點，圖表支撐論點","每頁註明資料來源與章節位置"],avoid:"標題只寫主題名稱，觀眾要自己找結論。",
+pv:`${B("#fff")}<div class="a" style="right:5%;top:5%;font-size:1.3cqw;color:#A3B1BF">市場分析 ｜ 2 / 5</div><div class="a k900" style="left:5%;top:10%;right:5%;font-size:3.4cqw;color:#051C2C;line-height:1.3">中小企業的 AI 導入率兩年內成長三倍，但留存率不到四成</div><i class="a" style="left:5%;right:5%;top:30%;height:1px;background:#051C2C"></i><div class="a" style="left:5%;top:36%;width:44%;bottom:16%;display:flex;align-items:flex-end;gap:1.6cqw;border-bottom:1px solid #A3B1BF">${[22,38,66].map((h,i)=>`<i style="flex:1;height:${h}%;background:${i==2?"#2251FF":"#A3B1BF"}"></i>`).join("")}</div><div class="a" style="left:55%;right:5%;top:38%;display:grid;gap:2cqw;font-size:1.9cqw;color:#051C2C">${["導入門檻下降","缺乏內部教練","需要流程重設計"].map((t,i)=>`<div style="display:flex;gap:1.2cqw"><b style="color:#2251FF">${i+1}</b>${t}</div>`).join("")}</div><div class="a" style="left:5%;bottom:5%;font-size:1.2cqw;color:#8896A6">資料來源：產業調查，2026 年 Q3，n=1,200</div>`},
+{id:"S11",fam:"biz",zh:"財報數據",en:"Financial Report",tone:"light",occ:["report"],
+desc:"表格、KPI 與漲跌色，數字清楚對齊。",
+look:"白底，上方三個 KPI 數字並排，數字使用等寬字並標示綠色成長或紅色衰退；下方是只有橫線的精簡表格，數字靠右對齊。",
+pal:[["#FFFFFF","白"],["#0A3D62","財報藍"],["#16A34A","成長綠"],["#DC2626","衰退紅"]],font:["思源黑體 Bold","IBM Plex Mono（數字）"],
+steps:["數字一律等寬並靠右對齊","成長與衰退使用固定顏色","每個數字標示期間與單位"],avoid:"3D 圓餅圖與漸層長條，數字反而難讀。",
+pv:`${B("#fff")}<div class="a k900" style="left:5%;top:8%;font-size:3.4cqw;color:#0A3D62">第三季財務摘要</div><div class="a" style="left:5%;right:5%;top:22%;display:grid;grid-template-columns:repeat(3,1fr);gap:2cqw">${[["營收","4.2 億","+18%","#16A34A"],["毛利率","42.6%","+2.1pt","#16A34A"],["費用率","31.0%","+0.8pt","#DC2626"]].map(k=>`<div style="border-top:.4cqw solid #0A3D62;padding-top:1cqw"><div style="font-size:1.5cqw;color:#64748B">${k[0]}</div><div class="pm" style="font-size:3.6cqw;color:#0A3D62;font-weight:500">${k[1]}</div><div class="pm" style="font-size:1.6cqw;color:${k[3]}">${k[2]}</div></div>`).join("")}</div><div class="a pm" style="left:5%;right:5%;top:60%;font-size:1.6cqw;display:grid;grid-template-columns:2fr 1fr 1fr;row-gap:1cqw;color:#0A3D62">${["項目","Q2","Q3","營收","3.56","4.20","淨利","0.48","0.61"].map((c,i)=>`<span style="${i%3?"text-align:right;":""}${i<3?"font-weight:700;border-bottom:1px solid #0A3D62;":"border-bottom:1px solid #E2E8F0;"}padding-bottom:.6cqw">${c}</span>`).join("")}</div>`},
+{id:"S12",fam:"biz",zh:"新創募資",en:"Startup Pitch",tone:"light",occ:["pitch","launch"],
+desc:"一頁一句痛點、大數字牽引，節奏明快。",
+look:"白底，左側超大的橘紅數字與一句痛點描述，右側一條向上的成長曲線，底部小字寫出市場規模，整體簡潔有力。",
+pal:[["#FFFFFF","白"],["#101828","深墨"],["#FF5A36","火焰橘"],["#F2F4F7","霧白"]],font:["思源黑體 Black","思源黑體 Regular"],
+steps:["每頁只講一件事：痛點、解法、牽引、團隊","關鍵數字放到最大","使用一個高彩度強調色"],avoid:"一頁塞滿功能清單，投資人抓不到重點。",
+pv:`${B("#fff")}<div class="a k900" style="left:6%;top:16%;font-size:15cqw;color:#FF5A36;line-height:1">120h</div><div class="a k900" style="left:6%;top:50%;width:46%;font-size:3.2cqw;color:#101828;line-height:1.35">每位行銷人每年<br>浪費在整理報表的時間</div><svg class="a" viewBox="0 0 100 60" style="right:6%;top:18%;width:38%;height:56%"><path d="M0 56 C 30 54, 50 40, 70 24 S 92 6, 100 2" fill="none" stroke="#101828" stroke-width="2"/><circle cx="100" cy="2" r="2.6" fill="#FF5A36"/></svg><div class="a" style="left:6%;bottom:8%;font-size:1.6cqw;color:#667085">市場規模 NT$ 480 億 · 年成長 22%</div>`},
+{id:"S13",fam:"biz",zh:"公部門簡報",en:"Public Sector",tone:"light",occ:["report","teach"],
+desc:"大字清楚、層級分明、使用壹貳參編號，適合長官與民眾閱讀。",
+look:"白底，頂部深藍頁首帶單位名稱，左側以「壹、貳、參」編號的大字條列，重點以黃色標示，字級偏大、行距寬。",
+pal:[["#FFFFFF","白"],["#004B97","公務藍"],["#F5A623","提示黃"],["#E6EEF7","淺藍底"]],font:["思源黑體 Bold","思源黑體 Medium"],
+steps:["內文字級不小於 24 pt","使用壹、貳、參或一、二、三的層級編號","重點詞以底色標示，不用花俏效果"],avoid:"一頁超過七行文字，或使用過小字級。",
+pv:`${B("#fff")}<div class="a" style="left:0;right:0;top:0;height:14%;background:#004B97;color:#fff;display:flex;align-items:center;padding-left:5%;gap:1.6cqw;font-size:2cqw;font-weight:700"><i style="width:4cqw;height:4cqw;border-radius:50%;border:.4cqw solid #fff"></i>數位發展推動計畫</div><div class="a" style="left:6%;right:6%;top:24%;display:grid;gap:2.4cqw;font-size:3cqw;font-weight:700;color:#1E293B">${[["壹、","計畫目標"],["貳、","執行策略："],["參、","預期效益"]].map((r,i)=>`<div><span style="color:#004B97">${r[0]}</span>${r[1]}${i==1?`<span style="background:#F5A623;padding:0 .3em">三年完成</span>`:""}</div>`).join("")}</div>`},
+/* ---------- 科技未來 ---------- */
+{id:"S14",fam:"tech",zh:"深色科技",en:"Dark Tech",tone:"dark",occ:["launch","pitch","teach"],
+desc:"深色背景、淡格線、藍色光暈，現代科技感。",
+look:"深藍黑底，背景隱約可見細格線，右上方一團藍色光暈；左側藍青色等寬小標、白色粗體標題與灰色說明。",
+pal:[["#0B0F19","夜幕"],["#3B82F6","科技藍"],["#22D3EE","青光"],["#E5E7EB","亮灰"]],font:["思源黑體 Bold","JetBrains Mono（標籤）"],
+steps:["背景加極淡的格線增加層次","光暈只放一處","文字對比足夠，內文用淺灰"],avoid:"深色背景配深藍小字，投影後看不見。",
+pv:`<div class="a" style="inset:0;background:radial-gradient(circle at 80% 18%,rgba(59,130,246,.55),transparent 42%),linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px) 0 0/4cqw 4cqw,linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px) 0 0/4cqw 4cqw,#0B0F19"></div><div class="a" style="left:7%;top:30%;display:grid;gap:1.4cqw"><span class="pm" style="font-size:1.6cqw;color:#22D3EE;letter-spacing:.2em">// PLATFORM 2.0</span><span class="k900" style="font-size:6cqw;color:#fff">下一代平台</span><span style="font-size:2cqw;color:#9CA3AF">更快、更安全、更容易擴充</span></div>`},
+{id:"S15",fam:"tech",zh:"終端機",en:"Terminal",tone:"dark",occ:["teach","workshop"],
+desc:"黑底綠字與指令列，適合程式與 AI 工具教學。",
+look:"黑底，畫面像終端機視窗：上方三個圓點，內容是等寬字的指令與輸出，提示符號為綠色，最後一行有閃爍游標。",
+pal:[["#0C0C0C","終端黑"],["#33FF66","螢光綠"],["#9AA0A6","輸出灰"],["#FFB000","警示琥珀"]],font:["JetBrains Mono","思源黑體 Regular"],
+steps:["指令與輸出用不同顏色區分","一頁只示範一個指令","重要參數以琥珀色標示"],avoid:"直接貼整段截圖，字小到無法閱讀。",
+pv:`${B("#0C0C0C")}<div class="a" style="left:5%;top:7%;display:flex;gap:1cqw"><i style="width:1.6cqw;height:1.6cqw;border-radius:50%;background:#FF5F57"></i><i style="width:1.6cqw;height:1.6cqw;border-radius:50%;background:#FEBC2E"></i><i style="width:1.6cqw;height:1.6cqw;border-radius:50%;background:#28C840"></i></div><div class="a pm" style="left:5%;top:20%;right:5%;font-size:2.4cqw;line-height:1.8;color:#9AA0A6"><div><span style="color:#33FF66">$</span> <span style="color:#fff">claude</span> --model <span style="color:#FFB000">opus</span></div><div>✓ 已載入 3 個技能</div><div>✓ 已連接 Notion、Gmail</div><div><span style="color:#33FF66">$</span> <i class="blink" style="display:inline-block;width:1.2cqw;height:2.4cqw;background:#33FF66;vertical-align:middle"></i></div></div>`},
+{id:"S16",fam:"tech",zh:"極光漸層",en:"Aurora Gradient",tone:"dark",occ:["launch","brand","social"],
+desc:"深色底上流動的多彩光暈，柔和又有未來感。",
+look:"深夜藍底，畫面中央偏下有青綠、天藍、淡紫三團模糊光暈交融，中間白色粗體標題與一行淺色副標。",
+pal:[["#0B1026","深夜藍"],["#2DD4BF","極光綠"],["#60A5FA","天藍"],["#A78BFA","薰衣草"]],font:["思源黑體 Black","思源黑體 Regular"],
+steps:["光暈使用三種相近明度的顏色","光暈放在文字後方並大幅模糊","文字保持純白，確保可讀"],avoid:"高飽和漸層鋪滿整頁，文字對比不足。",
+pv:`<div class="a" style="inset:0;background:radial-gradient(ellipse 40% 50% at 30% 70%,rgba(45,212,191,.7),transparent 70%),radial-gradient(ellipse 40% 50% at 60% 60%,rgba(96,165,250,.7),transparent 70%),radial-gradient(ellipse 35% 45% at 80% 80%,rgba(167,139,250,.6),transparent 70%),#0B1026;filter:saturate(1.1)"></div><div class="a" style="left:0;right:0;top:34%;text-align:center"><div class="k900" style="font-size:6cqw;color:#fff">AI 新紀元</div><div style="font-size:2cqw;color:rgba(255,255,255,.75);margin-top:1cqw">2026 產品發表會</div></div>`},
+{id:"S17",fam:"tech",zh:"玻璃擬態",en:"Glassmorphism",tone:"vivid",occ:["launch","social","pitch"],
+desc:"彩色背景上的半透明磨砂卡片，輕盈有層次。",
+look:"鮮豔的彩色光球背景，前景是一張半透明白色磨砂卡片，帶細白邊框與柔和陰影，卡片內有標題與數據。",
+pal:[["#FF7EB3","粉"],["#7AFCFF","水藍"],["#FEFF9C","檸檬"],["#FFFFFF","白（40% 透明）"]],font:["思源黑體 Bold","思源黑體 Regular"],
+steps:["背景用二到三個彩色圓形並模糊","卡片使用白色半透明與背景模糊","卡片內文字用深色，確保可讀"],avoid:"卡片疊太多層，畫面變得混濁。",
+pv:`<div class="a" style="inset:0;background:#E9E6FF"></div><i class="a" style="left:10%;top:10%;width:30cqw;height:30cqw;border-radius:50%;background:#FF7EB3"></i><i class="a" style="right:8%;bottom:-10%;width:34cqw;height:34cqw;border-radius:50%;background:#7AFCFF"></i><i class="a" style="right:30%;top:-12%;width:18cqw;height:18cqw;border-radius:50%;background:#FEFF9C"></i><div class="a" style="left:22%;right:22%;top:22%;bottom:22%;background:rgba(255,255,255,.35);backdrop-filter:blur(2cqw);-webkit-backdrop-filter:blur(2cqw);border:1px solid rgba(255,255,255,.8);border-radius:2.4cqw;padding:3cqw;color:#1E1B4B;box-shadow:0 2cqw 4cqw rgba(30,27,75,.15)"><div style="font-size:1.8cqw">本月使用者</div><div class="k900" style="font-size:7cqw">12.8K</div><div style="font-size:1.8cqw">較上月成長 24%</div></div>`},
+{id:"S18",fam:"tech",zh:"賽博霓虹",en:"Cyberpunk Neon",tone:"dark",occ:["launch","social"],
+desc:"深紫黑底、霓虹粉與青、發光文字與透視網格。",
+look:"近黑深紫底，下半部是粉紅色透視網格地板，中央霓虹青色發光標題，旁邊粉色小字，整體帶發光暈染。",
+pal:[["#0A0014","深夜紫"],["#FF2E88","霓虹粉"],["#00F0FF","霓虹青"],["#FFE600","警示黃"]],font:["思源黑體 Black","JetBrains Mono"],
+steps:["文字加上同色外光暈","網格地板做出透視消失點","霓虹色不超過兩種"],avoid:"內文也加發光，閱讀疲勞。",
+pv:`${B("#0A0014")}<div class="a" style="left:-20%;right:-20%;bottom:-6%;height:52%;background:linear-gradient(#FF2E88 1px,transparent 1px) 0 0/100% 3cqw,linear-gradient(90deg,#FF2E88 1px,transparent 1px) 0 0/5cqw 100%;transform:perspective(30cqw) rotateX(60deg);transform-origin:center top;opacity:.7"></div><div class="a k900" style="left:0;right:0;top:22%;text-align:center;font-size:8cqw;color:#00F0FF;text-shadow:0 0 1cqw #00F0FF,0 0 3cqw #00F0FF">NIGHT CITY</div><div class="a pm" style="left:0;right:0;top:44%;text-align:center;font-size:2cqw;color:#FF2E88;text-shadow:0 0 1cqw #FF2E88">夜間模式發表會 · 2077</div>`},
+{id:"S19",fam:"tech",zh:"Bento 格局",en:"Bento Grid",tone:"light",occ:["launch","pitch","report"],
+desc:"大小不一的圓角格子拼成總覽，一格一重點。",
+look:"淺灰底，畫面由圓角格子拼成：左側一大格深色寫核心訊息，右側數個小格放數字、圖示與短句，格間距一致。",
+pal:[["#F2F2F2","底灰"],["#111111","深格"],["#FF6B35","橘格"],["#FFFFFF","白格"]],font:["思源黑體 Black","思源黑體 Medium"],
+steps:["最重要的訊息給最大的格子","格子間距與圓角統一","每格只放一種內容"],avoid:"所有格子一樣大，失去主次。",
+pv:`${B("#F2F2F2")}<div class="a" style="inset:6%;display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:1.4cqw">${[["grid-row:span 2;background:#111;color:#fff","<b style='font-size:4.4cqw'>一格<br>一重點</b>"],["background:#fff","<b class='pm' style='font-size:4cqw;color:#FF6B35'>4.9</b><span style='font-size:1.6cqw'>評分</span>"],["background:#FF6B35;color:#fff","<b style='font-size:2.4cqw'>即時同步</b>"],["grid-column:span 2;background:#fff","<b style='font-size:2.6cqw'>支援 40 種整合</b>"]].map(t=>`<div style="${t[0]};border-radius:1.6cqw;padding:2cqw;display:flex;flex-direction:column;justify-content:flex-end;gap:.4cqw;line-height:1.2">${t[1]}</div>`).join("")}</div>`},
+{id:"S20",fam:"tech",zh:"等角立體",en:"Isometric 3D",tone:"light",occ:["teach","pitch"],
+desc:"以等角視角的立體方塊表達系統、流程與架構。",
+look:"淺色底，右側三個等角立體方塊組成階梯或堆疊，分別使用藍、橘、綠色，左側標題與說明。",
+pal:[["#F5F7FB","淺底"],["#5B8DEF","藍面"],["#FF9F43","橘面"],["#26C281","綠面"]],font:["思源黑體 Bold","思源黑體 Regular"],
+steps:["所有立體物件使用相同角度","每個方塊的三個面使用同色的三種明度","以方塊高低表達層級"],avoid:"混用不同透視角度，畫面失衡。",
+pv:`${B("#F5F7FB")}<div class="a" style="left:6%;top:30%;width:36%;display:grid;gap:1.4cqw"><b class="k900" style="font-size:4.4cqw;color:#1E293B">三層架構</b><span style="font-size:1.9cqw;color:#64748B">資料、模型、應用</span></div><svg class="a" viewBox="0 0 120 90" style="right:4%;top:6%;width:52%;height:88%">${[[60,58,"#26C281","#1E9E69","#5BD9A0"],[60,38,"#FF9F43","#D9822B","#FFBE7D"],[60,18,"#5B8DEF","#3F6FCF","#8DB0F5"]].map(c=>`<g transform="translate(${c[0]} ${c[1]})"><polygon points="0,0 26,-13 52,0 26,13" transform="translate(-26 0)" fill="${c[4]}"/><polygon points="-26,0 0,13 0,30 -26,17" fill="${c[3]}"/><polygon points="0,13 26,0 26,17 0,30" fill="${c[2]}"/></g>`).join("")}</svg>`},
+/* ---------- 大膽前衛 ---------- */
+{id:"S21",fam:"bold",zh:"新粗獷",en:"Neo-Brutalism",tone:"vivid",occ:["social","workshop","launch"],
+desc:"粗黑框線、硬陰影、高彩度色塊，直接而有個性。",
+look:"淡黃底，元素都有粗黑框與向右下偏移的實心黑色陰影；標題在粉紅色塊上，旁邊有青綠按鈕與黃色標籤。",
+pal:[["#FFF4D6","奶油黃"],["#111111","粗框黑"],["#FF6B6B","西瓜紅"],["#4ECDC4","薄荷綠"]],font:["思源黑體 Black","思源黑體 Bold"],
+steps:["框線 3 至 4 px 純黑","陰影是實心黑色偏移，不模糊","色塊選高彩度但不超過三色"],avoid:"加入漸層或柔和陰影，失去粗獷感。",
+pv:`${B("#FFF4D6")}<div class="a k900" style="left:7%;top:16%;background:#FF6B6B;border:.5cqw solid #111;box-shadow:1.2cqw 1.2cqw 0 #111;padding:1.6cqw 3cqw;font-size:6cqw;color:#111">做就對了</div><div class="a k900" style="left:7%;top:58%;background:#4ECDC4;border:.5cqw solid #111;box-shadow:.8cqw .8cqw 0 #111;padding:1cqw 2.4cqw;font-size:2.6cqw;color:#111">開始練習 →</div><div class="a k900" style="right:8%;top:22%;background:#FFE66D;border:.5cqw solid #111;padding:.8cqw 1.6cqw;font-size:2cqw;rotate:8deg;color:#111">新手友善</div><i class="a" style="right:12%;bottom:14%;width:12cqw;height:12cqw;border-radius:50%;background:#fff;border:.5cqw solid #111;box-shadow:.8cqw .8cqw 0 #111"></i>`},
+{id:"S22",fam:"bold",zh:"孟菲斯",en:"Memphis",tone:"vivid",occ:["social","workshop","teach"],
+desc:"幾何碎形、波浪線、圓點與撞色，活潑俏皮。",
+look:"白底，四周散布粉紅三角形、黃色圓點、青綠波浪線與紫色半圓，中央黑色粗體標題，整體活潑但留有閱讀空間。",
+pal:[["#FFFFFF","白"],["#FF6F91","桃紅"],["#FFC75F","芒果黃"],["#00C9A7","青綠"]],font:["思源黑體 Black","jf 粉圓或思源黑體"],
+steps:["幾何裝飾放在四周，不壓文字","使用三到四種撞色","加入波浪線與圓點圖樣"],avoid:"裝飾佈滿中央，文字被淹沒。",
+pv:`${B("#fff")}<svg class="a" viewBox="0 0 160 90" style="inset:0;width:100%;height:100%"><polygon points="14,14 30,10 22,26" fill="#FF6F91"/><circle cx="140" cy="18" r="7" fill="#FFC75F"/><path d="M118 74 q5 -6 10 0 t10 0 t10 0" stroke="#00C9A7" stroke-width="2.4" fill="none"/><path d="M12 70 a10 10 0 0 1 20 0 z" fill="#845EC2"/>${[0,1,2,3,4].map(i=>`<circle cx="${50+i*6}" cy="78" r="1.4" fill="#111"/>`).join("")}<rect x="128" y="40" width="10" height="10" fill="none" stroke="#111" stroke-width="1.4" transform="rotate(20 133 45)"/></svg><div class="a k900" style="left:0;right:0;top:36%;text-align:center;font-size:6.4cqw;color:#111">創意工作坊</div>`},
+{id:"S23",fam:"bold",zh:"普普撞色",en:"Pop Art",tone:"vivid",occ:["social","launch"],
+desc:"網點背景、爆炸對話框、黑色粗輪廓，像漫畫封面。",
+look:"黃色底鋪滿紅色網點，中央一個紅色爆炸形狀對話框，內有白色粗體字與黑色描邊，旁邊藍色小標籤。",
+pal:[["#FFE600","普普黃"],["#E10600","漫畫紅"],["#0055FF","漫畫藍"],["#111111","描邊黑"]],font:["思源黑體 Black","思源黑體 Bold"],
+steps:["背景加網點圖樣","重點字放在爆炸對話框內","所有形狀加上黑色粗描邊"],avoid:"用在嚴肅的財務或公部門報告。",
+pv:`<div class="a" style="inset:0;background:radial-gradient(circle,#E10600 22%,transparent 26%) 0 0/2.4cqw 2.4cqw,#FFE600"></div><svg class="a" viewBox="0 0 100 70" style="left:18%;top:10%;width:64%;height:80%"><polygon points="50,2 58,18 76,8 72,26 96,26 80,38 94,54 72,50 70,68 56,56 44,68 40,50 18,56 26,40 4,30 26,26 18,8 40,16" fill="#E10600" stroke="#111" stroke-width="1.6"/></svg><div class="a k900" style="left:0;right:0;top:36%;text-align:center;font-size:7cqw;color:#fff;-webkit-text-stroke:.3cqw #111">爆量！</div><div class="a k900" style="right:6%;bottom:8%;background:#0055FF;color:#fff;border:.4cqw solid #111;padding:.6cqw 1.6cqw;font-size:2cqw">限時三天</div>`},
+{id:"S24",fam:"bold",zh:"黑白高反差",en:"High Contrast",tone:"dark",occ:["launch","brand","pitch"],
+desc:"純黑純白、斜切分割，強烈而直接。",
+look:"畫面以一條斜線分成黑白兩半，黑底區白色大字、白底區黑色大字，兩句形成對比。",
+pal:[["#000000","純黑"],["#FFFFFF","純白"],["#7A7A7A","中灰"],["#FF0000","極少量紅"]],font:["思源黑體 Black","思源黑體 Regular"],
+steps:["只用黑白，最多加一個極小的紅點","利用分割線製造對比","標題兩兩對照，例如過去與現在"],avoid:"加入灰階照片與多餘元素，稀釋張力。",
+pv:`${B("#fff")}<div class="a" style="inset:0;background:#000;clip-path:polygon(0 0,62% 0,38% 100%,0 100%)"></div><div class="a k900" style="left:6%;top:30%;font-size:6.4cqw;color:#fff;line-height:1.1">過去<br>靠經驗</div><div class="a k900" style="right:6%;top:46%;font-size:6.4cqw;color:#000;line-height:1.1;text-align:right">現在<br>靠數據</div>`},
+{id:"S25",fam:"bold",zh:"包浩斯",en:"Bauhaus",tone:"vivid",occ:["brand","teach","social"],
+desc:"紅黃藍三原色、圓方三角、粗黑線條與幾何構成。",
+look:"米白底，左側紅色大圓、藍色方塊與黃色三角形組成構圖，搭配粗黑線條；右側黑色無襯線大字標題靠左對齊。",
+pal:[["#F2EBDD","米白"],["#D62828","包浩斯紅"],["#1D4E89","包浩斯藍"],["#F4B400","包浩斯黃"]],font:["思源黑體 Black","思源黑體 Medium"],
+steps:["只用圓、方、三角三種形狀","色彩限定紅黃藍加黑","幾何構圖與文字分區，不互相重疊"],avoid:"使用漸層或圓角，失去幾何純粹感。",
+pv:`${B("#F2EBDD")}<i class="a" style="left:6%;top:12%;width:24cqw;height:24cqw;border-radius:50%;background:#D62828"></i><i class="a" style="left:24%;top:46%;width:16cqw;height:16cqw;background:#1D4E89"></i><svg class="a" viewBox="0 0 20 18" style="left:8%;top:60%;width:14cqw;height:12cqw"><polygon points="10,0 20,18 0,18" fill="#F4B400"/></svg><i class="a" style="left:4%;top:44%;width:42%;height:1.2cqw;background:#111"></i><div class="a k900" style="left:52%;top:28%;font-size:6cqw;color:#111;line-height:1.1">形隨<br>機能</div><div class="a" style="left:52%;top:60%;font-size:1.8cqw;color:#333">設計基礎三講</div>`},
+/* ---------- 復古 ---------- */
+{id:"S26",fam:"retro",zh:"Riso 印刷",en:"Risograph",tone:"vivid",occ:["social","brand","workshop"],
+desc:"兩色疊印、顆粒質感、輕微錯版，獨立出版的味道。",
+look:"紙白底帶細顆粒，粉紅與藍色兩個色版重疊印刷，重疊處變成深紫，標題字有輕微錯位與網點質感。",
+pal:[["#F7F3EA","紙白"],["#FF48B0","螢光粉"],["#0078BF","Riso 藍"],["#3D2B6B","疊印紫"]],font:["思源黑體 Black","思源黑體 Regular"],
+steps:["只用兩個色版，重疊處以色彩相乘","加入紙張顆粒或網點","標題刻意錯位一點點"],avoid:"顏色超過三種，失去印刷限制的美感。",
+pv:`<div class="a" style="inset:0;background:radial-gradient(rgba(0,0,0,.06) 1px,transparent 1.2px) 0 0/1cqw 1cqw,#F7F3EA"></div><i class="a" style="left:12%;top:14%;width:36cqw;height:36cqw;border-radius:50%;background:#FF48B0;mix-blend-mode:multiply;opacity:.9"></i><i class="a" style="left:34%;top:26%;width:36cqw;height:30cqw;background:#0078BF;mix-blend-mode:multiply;opacity:.85;rotate:-8deg"></i><div class="a k900" style="right:6%;top:58%;font-size:7cqw;color:#0078BF;mix-blend-mode:multiply">ZINE</div><div class="a k900" style="right:6.6%;top:57%;font-size:7cqw;color:#FF48B0;mix-blend-mode:multiply">ZINE</div>`},
+{id:"S27",fam:"retro",zh:"七〇年代",en:"Retro 70s",tone:"vivid",occ:["brand","social"],
+desc:"暖橘棕彩虹弧線、圓潤粗字，懷舊溫暖。",
+look:"米黃底，左下角四道同心彩虹弧線，顏色依序為深棕、焦橘、橘、芥末黃；右上方圓潤粗體標題。",
+pal:[["#F4E1C1","奶茶"],["#6E2C00","可可棕"],["#D35400","焦橘"],["#F1C40F","芥末黃"]],font:["jf 粉圓或思源黑體 Black","思源黑體 Medium"],
+steps:["使用暖色彩虹弧線作為主視覺","字體選圓潤粗體","色彩維持暖色調，不加冷色"],avoid:"加入螢光色，破壞復古氛圍。",
+pv:`${B("#F4E1C1")}${["#6E2C00","#D35400","#E67E22","#F1C40F"].map((c,i)=>`<i class="a" style="left:${-16+i*4}cqw;bottom:${-30+i*4}cqw;width:${72-i*8}cqw;height:${72-i*8}cqw;border-radius:50%;border:4cqw solid ${c}"></i>`).join("")}<div class="a k900" style="right:6%;top:14%;font-size:7cqw;color:#6E2C00;text-align:right;line-height:1.1">好日子<br><span style="color:#D35400">慢慢來</span></div>`},
+{id:"S28",fam:"retro",zh:"蒸汽波",en:"Vaporwave",tone:"vivid",occ:["social","brand"],
+desc:"粉藍漸層天空、條紋夕陽、網格地面，懷舊數位感。",
+look:"上方粉紅到淡紫的漸層天空，中央一顆帶橫條紋的夕陽，下半部是青色透視網格地面，白色標題帶粉色投影。",
+pal:[["#FF71CE","蒸汽粉"],["#01CDFE","電子藍"],["#05FFA1","薄荷螢光"],["#B967FF","紫"]],font:["思源黑體 Black","JetBrains Mono"],
+steps:["天空使用粉紫漸層","夕陽加水平條紋","地面使用透視網格"],avoid:"用在需要專業可信度的提案。",
+pv:`<div class="a" style="inset:0;background:linear-gradient(#2B0B3F,#B967FF 45%,#FF71CE 60%)"></div><div class="a" style="left:50%;top:18%;width:30cqw;height:30cqw;margin-left:-15cqw;border-radius:50%;background:linear-gradient(#FFE66D,#FF71CE);-webkit-mask:linear-gradient(#000 55%,transparent 55% 60%,#000 60% 68%,transparent 68% 72%,#000 72% 80%,transparent 80% 84%,#000 84%);mask:linear-gradient(#000 55%,transparent 55% 60%,#000 60% 68%,transparent 68% 72%,#000 72% 80%,transparent 80% 84%,#000 84%)"></div><div class="a" style="left:-20%;right:-20%;bottom:0;height:40%;background:linear-gradient(#01CDFE 1px,transparent 1px) 0 0/100% 3cqw,linear-gradient(90deg,#01CDFE 1px,transparent 1px) 0 0/5cqw 100%,#1A0533;transform:perspective(30cqw) rotateX(55deg);transform-origin:center top"></div><div class="a k900" style="left:0;right:0;top:42%;text-align:center;font-size:6cqw;color:#fff;text-shadow:.5cqw .5cqw 0 #FF71CE">夏日回憶</div>`},
+{id:"S29",fam:"retro",zh:"像素遊戲",en:"Pixel 8-bit",tone:"dark",occ:["teach","workshop","social"],
+desc:"像素字體、愛心生命值、關卡進度，把學習變成闖關。",
+look:"深藍紫底，上方像素字體標題，左上角三顆紅色像素愛心，下方以關卡格子表示進度，目前關卡亮黃色。",
+pal:[["#222034","夜空"],["#E43B44","生命紅"],["#FEE761","金幣黃"],["#63C74D","草地綠"]],font:["Press Start 2P / 俐方體 11 號","思源黑體 Medium"],
+steps:["英數使用像素字體，中文用粗黑體","以關卡、經驗值包裝學習進度","色彩限定在 8 色左右的調色盤"],avoid:"中文長段落用像素字體，難以閱讀。",
+pv:`${B("#222034")}<div class="a" style="left:5%;top:7%;display:flex;gap:1cqw">${[0,1,2].map(()=>`<svg viewBox="0 0 7 6" style="width:3cqw;height:2.6cqw" shape-rendering="crispEdges"><path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z" fill="#E43B44"/></svg>`).join("")}</div><div class="a px" style="right:5%;top:8%;font-size:1.8cqw;color:#FEE761">SCORE 0420</div><div class="a px" style="left:0;right:0;top:28%;text-align:center;font-size:4.6cqw;color:#fff;line-height:1.4">LEVEL 3</div><div class="a k900" style="left:0;right:0;top:44%;text-align:center;font-size:3.4cqw;color:#63C74D">自動化工作流</div><div class="a" style="left:15%;right:15%;bottom:12%;display:grid;grid-template-columns:repeat(5,1fr);gap:1.2cqw">${[1,1,2,0,0].map(s=>`<i style="height:5cqw;background:${s==2?"#FEE761":s?"#63C74D":"#3A3858"};box-shadow:inset -.6cqw -.6cqw 0 rgba(0,0,0,.25)"></i>`).join("")}</div>`},
+{id:"S30",fam:"retro",zh:"裝飾藝術",en:"Art Deco",tone:"dark",occ:["brand","launch"],
+desc:"對稱構圖、放射扇形、金色細線，1920 年代的華麗感。",
+look:"深海軍藍底，中央上方金色放射扇形線條，下方對稱的金色框線，裡面是大寫襯線標題與一行副標。",
+pal:[["#0E1A2B","海軍藍"],["#D4AF37","古金"],["#F4EBD0","香檳白"],["#1F3A5F","藍灰"]],font:["Playfair Display / 思源宋體 Heavy","思源宋體 Regular"],
+steps:["構圖左右對稱","使用放射線與階梯狀框線","金色細線與大寫字母搭配"],avoid:"線條粗細不一，失去精緻感。",
+pv:`${B("#0E1A2B")}<svg class="a" viewBox="0 0 100 50" style="left:20%;top:4%;width:60%;height:50%">${Array.from({length:13},(_,i)=>{const a=Math.PI*(i/12);return `<line x1="50" y1="48" x2="${50-46*Math.cos(a)}" y2="${48-46*Math.sin(a)}" stroke="#D4AF37" stroke-width=".4"/>`}).join("")}<path d="M10 48 A40 40 0 0 1 90 48" fill="none" stroke="#D4AF37" stroke-width=".6"/></svg><div class="a" style="left:22%;right:22%;top:52%;bottom:12%;border:.25cqw solid #D4AF37;outline:.25cqw solid #D4AF37;outline-offset:.8cqw;display:grid;place-items:center;text-align:center"><div><div class="pf" style="font-size:5cqw;color:#F4EBD0;letter-spacing:.2em;font-weight:700">GATSBY</div><div style="font-size:1.6cqw;color:#D4AF37;letter-spacing:.4em">年度晚宴</div></div></div>`},
+/* ---------- 手作插畫 ---------- */
+{id:"S31",fam:"hand",zh:"手繪筆記",en:"Sketchnote",tone:"light",occ:["teach","workshop","social"],
+desc:"手寫字、塗鴉箭頭、螢光筆，像上課筆記一樣親切。",
+look:"方格紙底，手寫風標題，下方以手繪框框住三個重點，框之間用彎曲箭頭連接，關鍵字畫上黃色螢光筆。",
+pal:[["#FFFFFF","方格紙"],["#2D3142","鉛筆灰"],["#F9D86B","螢光黃"],["#EF8354","紅筆橘"]],font:["霞鶩文楷 / 芫荽","霞鶩文楷"],
+steps:["標題與重點使用手寫字體","以手繪框、箭頭連接概念","螢光筆只標關鍵字"],avoid:"手寫字用在長段落，閱讀吃力。",
+pv:`<div class="a" style="inset:0;background:linear-gradient(#E6ECF5 1px,transparent 1px) 0 0/100% 3cqw,linear-gradient(90deg,#E6ECF5 1px,transparent 1px) 0 0/3cqw 100%,#fff"></div><div class="a hw" style="left:6%;top:8%;font-size:5.4cqw;color:#2D3142;font-weight:700">今天學會的<span style="background:linear-gradient(transparent 55%,#F9D86B 55%)">三件事</span></div><div class="a" style="left:6%;right:6%;top:42%;display:flex;justify-content:space-between;align-items:center">${["寫清楚","給範例","要回饋"].map((t,i)=>`<span class="hw" style="border:.35cqw solid #2D3142;border-radius:${["40% 60% 55% 45%","55% 45% 40% 60%","45% 55% 60% 40%"][i]}/${["50% 45% 55% 50%","45% 55% 50% 50%","55% 45% 45% 55%"][i]};padding:2cqw 3cqw;font-size:3cqw;color:#2D3142;font-weight:700">${t}</span>${i<2?`<svg viewBox="0 0 30 12" style="width:7cqw;height:3cqw"><path d="M2 8 C 10 2, 18 2, 26 6 M26 6 l-5 -3 M26 6 l-4 4" fill="none" stroke="#EF8354" stroke-width="1.6" stroke-linecap="round"/></svg>`:""}`).join("")}</div>`},
+{id:"S32",fam:"hand",zh:"黑板粉筆",en:"Chalkboard",tone:"dark",occ:["teach","workshop"],
+desc:"墨綠黑板與粉筆字，回到教室的上課感。",
+look:"墨綠色黑板底帶粉筆擦痕，白色粉筆手寫標題，黃色粉筆底線，下方以粉筆畫出簡單的流程圖。",
+pal:[["#2F4F3E","黑板綠"],["#F2F2EB","粉筆白"],["#F7E07B","粉筆黃"],["#F4A7B9","粉筆粉"]],font:["霞鶩文楷","霞鶩文楷"],
+steps:["背景加入輕微擦痕質感","文字使用手寫字並降低一點不透明度","重點用黃色或粉色粉筆標出"],avoid:"使用純黑背景或電腦感圖示，失去黑板味道。",
+pv:`<div class="a" style="inset:0;background:radial-gradient(ellipse at 30% 40%,rgba(255,255,255,.07),transparent 60%),radial-gradient(ellipse at 75% 70%,rgba(255,255,255,.05),transparent 50%),#2F4F3E;border:1.4cqw solid #6B4A2E"></div><div class="a hw" style="left:8%;top:12%;font-size:5.4cqw;color:#F2F2EB;opacity:.92;font-weight:700">提示詞公式</div><i class="a" style="left:8%;top:27%;width:30%;height:.5cqw;background:#F7E07B;opacity:.85;border-radius:1cqw;rotate:-1deg"></i><div class="a hw" style="left:8%;right:8%;top:44%;font-size:3.6cqw;color:#F2F2EB;opacity:.9;font-weight:700">角色 <span style="color:#F7E07B">+</span> 任務 <span style="color:#F7E07B">+</span> 格式 <span style="color:#F4A7B9">=</span> 好結果</div>`},
+{id:"S33",fam:"hand",zh:"紙張拼貼",en:"Paper Collage",tone:"vivid",occ:["brand","social","workshop"],
+desc:"牛皮紙、撕邊紙片、紙膠帶與剪貼字，手作溫度。",
+look:"牛皮紙底，幾張撕邊彩色紙片微微傾斜疊放，用半透明紙膠帶固定，標題像剪報字母一樣大小不一。",
+pal:[["#D8C3A5","牛皮紙"],["#E85D75","莓果紅"],["#F6F1E7","白紙"],["#4A6FA5","剪報藍"]],font:["思源宋體 Heavy / 剪貼字","思源黑體 Regular"],
+steps:["紙片保留撕邊與微傾斜","用紙膠帶當作固定與裝飾","標題字刻意大小、底色不一"],avoid:"所有紙片整齊對齊，失去手作感。",
+pv:`${B("#D8C3A5")}<div class="a" style="left:10%;top:14%;width:48%;height:58%;background:#F6F1E7;rotate:-4deg;clip-path:polygon(0 2%,6% 0,14% 3%,22% 0,34% 2%,48% 0,62% 3%,76% 0,88% 2%,100% 0,98% 100%,84% 97%,70% 100%,52% 97%,36% 100%,20% 97%,4% 100%);box-shadow:0 .6cqw 1.4cqw rgba(0,0,0,.2)"></div><div class="a" style="left:52%;top:30%;width:36%;height:48%;background:#E85D75;rotate:5deg"></div><i class="a" style="left:44%;top:10%;width:16%;height:6%;background:rgba(255,240,180,.75);rotate:-12deg"></i><div class="a" style="left:16%;top:30%;display:flex;flex-wrap:wrap;gap:.6cqw;width:40%">${[["手","#111","#fff",6],["作","#4A6FA5","#fff",5],["的","#F6F1E7","#111",4],["溫","#E85D75","#fff",6],["度","#111","#F6D365",5]].map(c=>`<span class="serif" style="background:${c[1]};color:${c[2]};font-size:${c[3]}cqw;font-weight:900;padding:0 .6cqw;rotate:${(c[3]-5)*3}deg">${c[0]}</span>`).join("")}</div>`},
+{id:"S34",fam:"hand",zh:"便利貼工作坊",en:"Sticky Notes",tone:"light",occ:["workshop","teach"],
+desc:"白板與彩色便利貼，適合腦力激盪與分組討論。",
+look:"白板底，上方麥克筆寫的題目，下方三欄分別貼著黃、粉、藍色便利貼，每張微微傾斜並有手寫短句。",
+pal:[["#F8F9FA","白板"],["#FFE873","便利貼黃"],["#FFB3C7","便利貼粉"],["#A0D8F1","便利貼藍"]],font:["霞鶩文楷","思源黑體 Regular"],
+steps:["每張便利貼只寫一個想法","用顏色區分類別或小組","便利貼微傾斜並加淡陰影"],avoid:"便利貼上寫長句，失去快速討論的意義。",
+pv:`${B("#F8F9FA")}<div class="a hw" style="left:6%;top:6%;font-size:3.6cqw;color:#1C3D8C;font-weight:700">如何讓會議更有效率？</div><div class="a" style="left:6%;right:6%;top:26%;bottom:8%;display:grid;grid-template-columns:repeat(4,1fr);gap:2cqw">${[["#FFE873","先寄議程",-3],["#FFB3C7","限時 30 分",2],["#A0D8F1","指定記錄",-2],["#FFE873","會後寄摘要",3],["#A0D8F1","站著開",-1],["#FFB3C7","不帶筆電",2]].map(n=>`<div class="hw" style="background:${n[0]};rotate:${n[2]}deg;padding:1.4cqw;font-size:2.2cqw;color:#222;box-shadow:0 .6cqw 1cqw rgba(0,0,0,.15);font-weight:700;min-height:11cqw">${n[1]}</div>`).join("")}</div>`},
+{id:"S35",fam:"hand",zh:"水彩插畫",en:"Watercolor",tone:"light",occ:["brand","teach","social"],
+desc:"柔和暈染的水彩色塊，溫柔有人味。",
+look:"白底，左上與右下各有一團淡綠與淡粉的水彩暈染，邊緣不規則；中央以手寫感襯線字寫標題。",
+pal:[["#FFFFFF","畫紙白"],["#A8D5BA","水彩綠"],["#F7C6C7","水彩粉"],["#5B6C8F","墨藍"]],font:["霞鶩文楷 / 思源宋體","思源黑體 Light"],
+steps:["色塊邊緣保持不規則與漸淡","顏色選低彩度、高明度","文字用深墨藍，不用純黑"],avoid:"暈染蓋住文字，可讀性下降。",
+pv:`${B("#fff")}<i class="a" style="left:-6%;top:-14%;width:44cqw;height:34cqw;border-radius:46% 54% 60% 40%/50% 40% 60% 50%;background:radial-gradient(circle at 40% 40%,rgba(168,213,186,.85),rgba(168,213,186,.25) 70%,transparent 72%);filter:blur(.4cqw)"></i><i class="a" style="right:-8%;bottom:-18%;width:48cqw;height:36cqw;border-radius:58% 42% 45% 55%/45% 55% 45% 55%;background:radial-gradient(circle at 55% 50%,rgba(247,198,199,.9),rgba(247,198,199,.25) 70%,transparent 72%);filter:blur(.4cqw)"></i><div class="a hw" style="left:0;right:0;top:36%;text-align:center;font-size:6cqw;color:#5B6C8F;font-weight:700">慢慢長大的品牌</div>`},
+/* ---------- 自然東方 ---------- */
+{id:"S36",fam:"natural",zh:"大地色系",en:"Earth Tone",tone:"light",occ:["brand","teach"],
+desc:"沙、陶、木的暖色調，溫潤踏實。",
+look:"淺沙色底，右側一個陶土色拱形色塊，左側深棕色襯線標題與兩行說明，小圓角卡片使用淺木色。",
+pal:[["#EDE0D4","沙"],["#B08968","陶土"],["#7F5539","木"],["#DDB892","麥"]],font:["思源宋體 Bold","思源黑體 Regular"],
+steps:["全份使用三到四種暖色","形狀使用拱形、圓角等柔和輪廓","照片選自然光、暖色調"],avoid:"加入冷藍或螢光色，破壞溫潤感。",
+pv:`${B("#EDE0D4")}<div class="a" style="right:8%;top:14%;width:30%;height:76%;background:#B08968;border-radius:16cqw 16cqw 0 0"></div><div class="a" style="left:7%;top:28%;width:50%;display:grid;gap:1.4cqw"><div class="serif" style="font-size:5.4cqw;color:#7F5539;font-weight:900">好好吃飯</div><div style="font-size:2cqw;color:#7F5539;opacity:.8">在地食材與季節料理</div><div style="margin-top:1cqw;display:inline-block;background:#DDB892;color:#5A3A22;border-radius:5cqw;padding:.8cqw 2cqw;font-size:1.8cqw;justify-self:start">秋季菜單</div></div>`},
+{id:"S37",fam:"natural",zh:"莫蘭迪",en:"Morandi",tone:"light",occ:["brand","report","teach"],
+desc:"灰調低彩度色塊，安靜優雅、耐看不刺眼。",
+look:"灰米色底，畫面以三塊不同灰調色塊（灰粉、灰綠、灰藍）分割，深灰色標題放在最大的色塊上。",
+pal:[["#E3DCD2","灰米"],["#C9B6B6","灰粉"],["#9AA5A0","灰綠"],["#8E9AAF","灰藍"]],font:["思源黑體 Medium","思源黑體 Light"],
+steps:["所有顏色都加入灰調，彩度降低","文字使用深灰而非純黑","色塊比例保持平衡"],avoid:"加入一個高彩度強調色，破壞整體灰調。",
+pv:`${B("#E3DCD2")}<div class="a" style="left:0;top:0;bottom:0;width:58%;background:#C9B6B6"></div><div class="a" style="left:58%;top:0;right:0;height:55%;background:#9AA5A0"></div><div class="a" style="left:58%;bottom:0;right:0;height:45%;background:#8E9AAF"></div><div class="a" style="left:7%;top:34%;display:grid;gap:1.2cqw"><b style="font-size:5cqw;color:#4A4A48;font-weight:500">安靜的力量</b><span style="font-size:1.9cqw;color:#5E5A57">年度品牌回顧</span></div>`},
+{id:"S38",fam:"natural",zh:"植物清新",en:"Botanical",tone:"light",occ:["brand","teach","social"],
+desc:"淡綠底、葉片形狀與自然綠，清新健康。",
+look:"極淡綠底，右上與左下有深綠與草綠的葉片形狀，中央深綠色標題，下方一行說明與一個綠色圓角標籤。",
+pal:[["#F4F9F4","晨霧綠"],["#2F6B4F","森林綠"],["#A7C957","嫩芽綠"],["#F2E8CF","米白"]],font:["思源宋體 Bold","思源黑體 Regular"],
+steps:["以葉片、枝條形狀作為裝飾","綠色分深淺兩階使用","大量留白營造呼吸感"],avoid:"葉片裝飾過多，像壁紙。",
+pv:`${B("#F4F9F4")}${[[74,4,26,"#2F6B4F",35],[82,22,18,"#A7C957",-20],[-4,64,24,"#A7C957",30],[6,74,18,"#2F6B4F",-40]].map(l=>`<i class="a" style="left:${l[0]}%;top:${l[1]}%;width:${l[2]}cqw;height:${l[2]/2}cqw;border-radius:0 100% 0 100%;background:${l[3]};rotate:${l[4]}deg"></i>`).join("")}<div class="a" style="left:0;right:0;top:34%;text-align:center"><div class="serif" style="font-size:5.4cqw;color:#2F6B4F;font-weight:900">城市裡的森林</div><div style="font-size:1.9cqw;color:#5C7A6B;margin-top:1cqw">都市綠化提案</div></div>`},
+{id:"S39",fam:"natural",zh:"水墨新中式",en:"Ink Wash",tone:"light",occ:["brand","launch"],
+desc:"宣紙底、墨韻筆觸、直排標題與朱紅印章。",
+look:"米白宣紙底，畫面左側一道濃淡變化的水墨筆觸，右側直排襯線粗體標題，下方一枚朱紅方印。",
+pal:[["#F5F1E8","宣紙"],["#1C1C1C","濃墨"],["#8A8A8A","淡墨"],["#B23A2E","朱砂"]],font:["思源宋體 Heavy / 書法字","思源宋體 Regular"],
+steps:["以水墨筆觸作為唯一主視覺","標題直排並拉開字距","朱紅印章作為點睛，只用一次"],avoid:"同時加入金色、紅色、龍紋等元素，流於俗套。",
+pv:`${B("#F5F1E8")}<i class="a" style="left:6%;top:30%;width:52%;height:28%;border-radius:50%/40%;background:radial-gradient(ellipse at 30% 50%,rgba(28,28,28,.9),rgba(28,28,28,.5) 45%,rgba(28,28,28,.08) 70%,transparent 72%);rotate:-8deg;filter:blur(.3cqw)"></i><div class="a serif" style="right:14%;top:10%;writing-mode:vertical-rl;font-size:6.4cqw;font-weight:900;letter-spacing:.2em;color:#1C1C1C">山水有相逢</div><div class="a serif" style="right:26%;top:14%;writing-mode:vertical-rl;font-size:1.8cqw;letter-spacing:.3em;color:#8A8A8A">東方美學講座</div><div class="a serif" style="right:8%;bottom:10%;width:6cqw;height:6cqw;background:#B23A2E;color:#F5F1E8;display:grid;place-items:center;font-size:2.4cqw;font-weight:900">雅</div>`},
+{id:"S40",fam:"hand",zh:"扁平插畫",en:"Flat Illustration",tone:"vivid",occ:["teach","social","pitch"],
+desc:"簡化的幾何人物與物件，友善易懂，適合教學與說明。",
+look:"淺藍底，右側以扁平幾何圖形畫出一個人坐在筆電前，旁邊有對話框與齒輪；左側粗體標題與說明。",
+pal:[["#EAF4FB","淺天藍"],["#4C6EF5","主藍"],["#FFB703","向日葵"],["#FB8500","橘"]],font:["思源黑體 Bold / jf 粉圓","思源黑體 Regular"],
+steps:["插畫風格統一：線寬、圓角、配色","人物與物件簡化為幾何形狀","插畫用來說明概念，不只是裝飾"],avoid:"混用不同來源、風格不一的插畫。",
+pv:`${B("#EAF4FB")}<div class="a" style="left:6%;top:30%;width:42%;display:grid;gap:1.2cqw"><b class="k900" style="font-size:4.6cqw;color:#1D2B53">一個人也能<br>做行銷</b><span style="font-size:1.9cqw;color:#5B6B8C">用 AI 分擔重複工作</span></div><svg class="a" viewBox="0 0 100 70" style="right:4%;top:10%;width:46%;height:82%"><rect x="20" y="58" width="64" height="4" rx="2" fill="#1D2B53"/><rect x="40" y="38" width="34" height="20" rx="2" fill="#4C6EF5"/><rect x="36" y="56" width="42" height="3" rx="1.5" fill="#1D2B53"/><circle cx="26" cy="26" r="7" fill="#F4C7A1"/><path d="M14 58 C 14 40, 20 36, 26 36 C 32 36, 38 40, 40 50 L40 58 Z" fill="#FB8500"/><rect x="52" y="6" width="30" height="16" rx="4" fill="#fff"/><path d="M58 22 l-2 5 l7 -5" fill="#fff"/><rect x="56" y="11" width="18" height="2" rx="1" fill="#4C6EF5"/><rect x="56" y="15" width="12" height="2" rx="1" fill="#FFB703"/><circle cx="88" cy="40" r="5" fill="none" stroke="#FFB703" stroke-width="3" stroke-dasharray="2.4 1.6"/></svg>`}
+];
+const store={get(k,d){try{const v=localStorage.getItem("slidestyle-"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("slidestyle-"+k,JSON.stringify(v))}catch(e){}}};
+const S={occ:"all",fam:"all",tone:"all",q:"",sel:new Set(store.get("sel",[]).filter(id=>ST.some(s=>s.id===id))),open:null};
+const $=id=>document.getElementById(id);
+const byId=id=>ST.find(s=>s.id===id);
+$("topic").value=store.get("topic","");
+function topic(){return $("topic").value.trim()||"【請填入簡報主題】"}
+function promptOf(s){
+  return `請用「${s.zh}」（${s.en}）風格，幫我設計「${topic()}」這份 16:9 簡報。
+
+【風格描述】${s.look}
+【配色】${s.pal.map(p=>`${p[1]} ${p[0]}`).join("、")}
+【字體】標題：${s.font[0]}；內文：${s.font[1]}
+【版面要點】
+${s.steps.map((t,i)=>`${i+1}. ${t}`).join("\n")}
+【請避免】${s.avoid}
+【適用場合】${s.occ.map(k=>OCC[k]).join("、")}
+
+請依序輸出：
+1. 整份簡報的風格指引：色票用途、字級（標題、副標、內文）、版面網格與留白規則
+2. 封面頁的文字內容與版面配置
+3. 一頁內容頁的文字內容與版面配置
+4. 若要用 PowerPoint 或 Google 簡報製作，母片應如何設定`;
+}
+function comboPrompt(){
+  const list=ST.filter(s=>S.sel.has(s.id));
+  return `我正在為「${topic()}」挑選簡報風格。請用以下 ${list.length} 種風格，各設計一張 16:9 封面頁，方便我比較：
+
+${list.map((s,i)=>`${i+1}. ${s.zh}（${s.en}）：${s.look} 配色 ${s.pal.map(p=>p[0]).join(" ")}；字體 ${s.font[0]}。`).join("\n")}
+
+每種風格請輸出：封面文字內容、版面配置說明、配色用途、適合與不適合的場合。
+最後依這份簡報的主題與觀眾，推薦最適合的一種，並說明理由。`;
+}
+function match(s,skip){
+  if(skip!=="occ"&&S.occ!=="all"&&!s.occ.includes(S.occ))return false;
+  if(skip!=="fam"&&S.fam!=="all"&&s.fam!==S.fam)return false;
+  if(skip!=="tone"&&S.tone!=="all"&&s.tone!==S.tone)return false;
+  if(S.q){const q=S.q.toLowerCase();return [s.id,s.zh,s.en,s.desc,s.look,FAM[s.fam],TONE[s.tone],s.occ.map(k=>OCC[k]).join(" "),s.pal.map(p=>p.join(" ")).join(" ")].join(" ").toLowerCase().includes(q)}
+  return true;
+}
+function chips(el,label,key,dict){
+  const pool=ST.filter(s=>match(s,key));
+  const n=k=>k==="all"?pool.length:pool.filter(s=>key==="occ"?s.occ.includes(k):s[key]===k).length;
+  $(el).innerHTML=`<span class="lbl">${label}</span>`+[["all","全部"],...Object.entries(dict)].map(([k,v])=>`<button class="chip" type="button" data-k="${key}" data-v="${k}" aria-pressed="${S[key]===k}">${v}<small>${n(k)}</small></button>`).join("");
+}
+function card(s){
+  const on=S.sel.has(s.id);
+  return `<article class="card${on?" is-picked":""}" data-id="${s.id}">
+  <div class="pv" role="button" tabindex="0" aria-label="查看「${s.zh}」風格"><div class="s">${s.pv}</div></div>
+  <div class="meta">
+    <div class="row1"><span class="no">${s.id}</span><span class="mini-pal">${s.pal.map(p=>`<i style="background:${p[0]}"></i>`).join("")}</span></div>
+    <h3>${s.zh}</h3><p class="code">${s.en}</p>
+    <p class="desc">${s.desc}</p>
+    <div class="tags"><span class="tag src">${FAM[s.fam]}</span><span class="tag">${TONE[s.tone]}</span>${s.occ.map(k=>`<span class="tag">${OCC[k]}</span>`).join("")}</div>
+    <div class="acts"><label class="pick"><input type="checkbox" id="pick-${s.id}" data-pick="${s.id}"${on?" checked":""}> 加入比稿</label><button class="btn primary" type="button" data-copy="${s.id}">複製提示詞</button></div>
+  </div></article>`;
+}
+function render(){
+  chips("fOcc","場合","occ",OCC);chips("fFam","風格類型","fam",FAM);chips("fTone","色調","tone",TONE);
+  const list=ST.filter(s=>match(s));
+  $("grid").innerHTML=list.map(card).join("");
+  $("empty").hidden=list.length>0;
+  $("count").textContent=`${list.length} ／ ${ST.length} 種`;
+  tray();
+}
+function tray(){
+  const n=S.sel.size;$("tray").hidden=n===0;
+  $("trayCount").textContent=`已選 ${n} 種`;
+  $("trayNames").textContent=ST.filter(s=>S.sel.has(s.id)).map(s=>s.zh).join("、");
+  store.set("sel",[...S.sel]);
+}
+function pick(id,on){
+  on?S.sel.add(id):S.sel.delete(id);
+  document.querySelectorAll(`[data-pick="${id}"]`).forEach(x=>x.checked=on);
+  const c=document.querySelector(`.card[data-id="${id}"]`);if(c)c.classList.toggle("is-picked",on);
+  if(S.open===id)$("dPick").checked=on;
+  tray();
+}
+function openD(id,fromHash){
+  const s=byId(id);if(!s)return;S.open=id;
+  $("dPv").innerHTML=`<div class="s">${s.pv}</div>`;
+  $("dNo").textContent=s.id;$("dTitle").textContent=s.zh;$("dEn").textContent=s.en;$("dDesc").textContent=s.desc;
+  $("dTags").innerHTML=`<span class="tag src">${FAM[s.fam]}</span><span class="tag">${TONE[s.tone]}</span>${s.occ.map(k=>`<span class="tag">${OCC[k]}</span>`).join("")}`;
+  $("dPal").innerHTML=s.pal.map(p=>`<button class="sw" type="button" data-hex="${p[0]}"><i style="background:${p[0]}"></i><span>${p[1]}<br><code>${p[0]}</code></span></button>`).join("");
+  $("dFont").textContent=`標題：${s.font[0]}　內文：${s.font[1]}`;
+  $("dSteps").innerHTML=s.steps.map((t,i)=>`<li><b>${"➊➋➌"[i]}</b><span>${t}</span></li>`).join("");
+  $("dAvoid").textContent=s.avoid;$("dPrompt").textContent=promptOf(s);$("dPick").checked=S.sel.has(id);
+  $("detail").hidden=false;document.documentElement.style.overflow="hidden";
+  if(!fromHash){try{history.replaceState(null,"","#style-"+id)}catch(x){}}
+  $("dClose").focus({preventScroll:true});
+}
+function closeD(){
+  const id=S.open;S.open=null;$("detail").hidden=true;document.documentElement.style.overflow="";
+  try{history.replaceState(null,"",location.pathname+location.search)}catch(x){}
+  const pv=document.querySelector(`.card[data-id="${id}"] .pv`);if(pv)pv.focus({preventScroll:true});
+}
+function step(d){const l=ST.filter(s=>match(s));const arr=l.length?l:ST;const i=arr.findIndex(s=>s.id===S.open);openD(arr[(i+d+arr.length)%arr.length].id)}
+let tt;function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,1800)}
+function copy(txt,msg){
+  const fb=()=>{$("fbText").value=txt;$("fallback").hidden=false;$("fbText").focus();$("fbText").select()};
+  try{if(!navigator.clipboard||!navigator.clipboard.writeText){fb();return}navigator.clipboard.writeText(txt).then(()=>toast(msg),fb)}catch(x){fb()}
+}
+$("topic").addEventListener("input",e=>{store.set("topic",e.target.value);if(S.open)$("dPrompt").textContent=promptOf(byId(S.open))});
+document.querySelector(".bar").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;S[b.dataset.k]=b.dataset.v;render()});
+$("q").addEventListener("input",e=>{S.q=e.target.value.trim();render()});
+$("reset").addEventListener("click",()=>{S.occ=S.fam=S.tone="all";S.q="";$("q").value="";render()});
+$("grid").addEventListener("click",e=>{
+  const c=e.target.closest("[data-copy]");if(c){const x=byId(c.dataset.copy);copy(promptOf(x),`已複製「${x.zh}」提示詞`);return}
+  const pv=e.target.closest(".pv");if(pv)openD(pv.closest(".card").dataset.id);
+});
+$("grid").addEventListener("change",e=>{const p=e.target.closest("[data-pick]");if(p)pick(p.dataset.pick,p.checked)});
+$("grid").addEventListener("keydown",e=>{const pv=e.target.closest(".pv");if(pv&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openD(pv.closest(".card").dataset.id)}});
+$("dPal").addEventListener("click",e=>{const b=e.target.closest("[data-hex]");if(b)copy(b.dataset.hex,`已複製色碼 ${b.dataset.hex}`)});
+$("dClose").addEventListener("click",closeD);$("dPrev").addEventListener("click",()=>step(-1));$("dNext").addEventListener("click",()=>step(1));
+$("dCopy").addEventListener("click",()=>copy(promptOf(byId(S.open)),"已複製提示詞"));
+$("dPick").addEventListener("change",e=>pick(S.open,e.target.checked));
+$("detail").addEventListener("click",e=>{if(e.target===$("detail"))closeD()});
+$("trayClear").addEventListener("click",()=>[...S.sel].forEach(id=>pick(id,false)));
+$("trayCopy").addEventListener("click",()=>copy(comboPrompt(),`已複製 ${S.sel.size} 種風格的比稿提示詞`));
+$("fbClose").addEventListener("click",()=>$("fallback").hidden=true);
+$("fallback").addEventListener("click",e=>{if(e.target===$("fallback"))$("fallback").hidden=true});
+document.addEventListener("keydown",e=>{
+  if(!$("fallback").hidden&&e.key==="Escape"){$("fallback").hidden=true;return}
+  if($("detail").hidden)return;
+  if(e.key==="Escape")closeD();else if(e.key==="ArrowRight")step(1);else if(e.key==="ArrowLeft")step(-1);
+});
+function fromHash(){const m=location.hash.match(/^#style-(S\d{2})$/);if(m&&byId(m[1]))openD(m[1],true);else if(S.open)closeD()}
+window.addEventListener("hashchange",fromHash);
+$("stats").innerHTML=`<span><b>${ST.length}</b>種風格</span><span><b>${Object.keys(FAM).length}</b>大類型</span><span><b>${ST.reduce((n,s)=>n+s.pal.length,0)}</b>組色票</span>`;
+render();fromHash();
+</script>
+
+</body>
+</html>

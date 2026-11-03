@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="101 項影片特效附循環動態示意、指令與 AI 提示詞，另含 319 項網頁動態索引。">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>動態技法圖鑑｜J3M 教學資源站</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout：型錄式目錄。標頭與使用步驟 → 分頁（影片特效／網頁動態索引）→ 篩選列 → 卡片網格；卡片上方是循環播放的 16:9 動態示意 */
+:root{
+  --bg:#EEF0F3; --surface:#FFFFFF; --ink:#14171C; --muted:#5D6674; --line:#D6DCE4; --chip:#E3E7ED;
+  --accent:#F5B800; --accent-ink:#14171C; --accent-text:#8A6400; --overlay:rgba(14,18,24,.6);
+  --ok:#1F8A4C; --spec:#6B7280; --warn:#B45309;
+  /* 影片畫面固定色票：示意的是成片，不隨介面主題反轉 */
+  --st-bg:#0E1B33; --st-bg2:#1B2B4A; --st-ink:#FFFFFF; --st-a:#F5B800; --st-r:#E2553F; --st-b:#4C8DFF;
+  --st-g:#8A97AB; --st-paper:#FBFAF6; --st-skin:#E8C6A4; --st-shirt:#3B6FD8;
+  --f-disp:"Noto Serif TC","Songti TC",serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1216; --surface:#171B21; --ink:#E8EBF0; --muted:#98A2AF; --line:#2A313B; --chip:#222831;
+    --accent:#F5B800; --accent-ink:#14171C; --accent-text:#F5C933; --overlay:rgba(0,0,0,.7);
+    --ok:#4ADE80; --spec:#9CA3AF; --warn:#FBBF24;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1216; --surface:#171B21; --ink:#E8EBF0; --muted:#98A2AF; --line:#2A313B; --chip:#222831;
+  --accent:#F5B800; --accent-ink:#14171C; --accent-text:#F5C933; --overlay:rgba(0,0,0,.7);
+  --ok:#4ADE80; --spec:#9CA3AF; --warn:#FBBF24;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1280px;margin:0 auto}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header.top{padding-block:48px 24px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:40px;align-items:end}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.eyebrow a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line)}
+h1{font-family:var(--f-disp);font-weight:900;font-size:clamp(36px,6vw,64px);line-height:1.08;margin:10px 0 14px;text-wrap:balance}
+h1 .hl{background:linear-gradient(transparent 62%,var(--accent) 62%,var(--accent) 92%,transparent 92%);padding-inline:2px}
+.lede{color:var(--muted);max-width:36em;margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;font-size:13px;color:var(--muted)}
+.stats b{display:block;font-family:var(--f-mono);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:baseline}
+.steps b{font-size:18px;color:var(--accent-text);font-weight:500}
+.setup{margin-top:18px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 10px;align-items:end}
+.setup label{font-size:13px;color:var(--muted);grid-column:1/-1}
+.field{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;font-size:15px}
+.field::placeholder{color:var(--muted);opacity:.8}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:9px 12px;font-size:13px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-top:8px;overflow-x:auto}
+.tab{border:0;background:transparent;padding:12px 16px;font-size:15px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap;color:var(--muted)}
+.tab[aria-selected="true"]{border-color:var(--accent);color:var(--ink)}
+.tab small{font-family:var(--f-mono);font-weight:400;margin-left:6px;font-size:12px}
+
+.bar{background:var(--bg);padding-block:14px;border-bottom:1px solid var(--line);display:grid;gap:10px;z-index:5}
+@media (min-width:860px){.bar{position:sticky;top:env(safe-area-inset-top,0px)}}
+.bar-row{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.bar-row .lbl{font-size:12px;color:var(--muted);min-width:4.5em}
+.search{flex:1 1 260px;max-width:440px}
+.count{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+.chip{border:1px solid transparent;background:var(--chip);border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer;line-height:1.5;display:inline-flex;gap:6px;align-items:center}
+.chip:hover{border-color:var(--line)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chip small{font-family:var(--f-mono);font-size:11px;opacity:.65}
+
+main{padding-block:26px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:22px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-width:0;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 28px -16px rgba(0,0,0,.35)}
+.card.is-picked{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.pv{cursor:zoom-in;display:block}
+.meta{padding:14px 16px 16px;display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.row1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.no{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.st{font-size:11px;font-weight:700;border-radius:4px;padding:1px 7px;border:1px solid currentColor;white-space:nowrap}
+.st.ok{color:var(--ok)} .st.spec{color:var(--spec)} .st.near{color:var(--warn)} .st.ext{color:var(--accent-text)}
+.card h3{font-family:var(--f-disp);font-weight:900;font-size:19px;line-height:1.3;margin:2px 0 0}
+.code{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin:0;overflow-wrap:anywhere}
+.desc{margin:4px 0 0;font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.tag{font-size:11px;border:1px solid var(--line);color:var(--muted);border-radius:4px;padding:0 6px}
+.tag.src{background:var(--chip);border-color:transparent;color:var(--ink)}
+.acts{margin-top:auto;padding-top:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pick{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer}
+.pick input{accent-color:var(--accent-text);width:16px;height:16px}
+.btn{border:1px solid var(--line);background:transparent;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.btn.primary:hover{filter:brightness(1.06)}
+.empty{padding:60px 20px;text-align:center;color:var(--muted)}
+
+/* 網頁動態索引 */
+.ml{display:grid;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ml-row{display:grid;grid-template-columns:64px minmax(0,1.3fr) minmax(0,2fr) 92px 92px 118px;gap:12px;align-items:center;padding:12px 16px;border-top:1px solid var(--line)}
+.ml-row:first-child{border-top:0}
+.ml-head{font-size:12px;color:var(--muted);background:var(--chip)}
+.ml-row .nm b{display:block;font-weight:700}
+.ml-row .nm span{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.ml-row .ds{font-size:14px}
+.tech{font-family:var(--f-mono);font-size:12px}
+.more{display:flex;justify-content:center;padding:18px}
+.ref-note{font-size:13px;color:var(--muted);margin:0 0 14px;max-width:70ch}
+.ref-note a{color:var(--accent-text)}
+@media (max-width:760px){
+  .ml-row{grid-template-columns:52px minmax(0,1fr) auto;row-gap:4px}
+  .ml-row .ds{grid-column:2/-1}
+  .ml-row .tech,.ml-row .when{grid-column:2/3;font-size:12px}
+  .ml-row .go{grid-column:3/4;grid-row:1/2}
+  .ml-head{display:none}
+}
+
+/* Detail */
+.overlay{position:fixed;inset:0;background:var(--overlay);z-index:20;display:grid;place-items:center;
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.panel{background:var(--surface);border-radius:14px;width:min(1120px,100%);max-height:100%;overflow:auto;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.panel .stage{background:var(--chip);padding:26px;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.nav{display:flex;justify-content:space-between;gap:8px}
+.panel .info{padding:26px;display:flex;flex-direction:column;gap:13px;min-width:0}
+.panel h2{font-family:var(--f-disp);font-weight:900;font-size:28px;line-height:1.25;margin:0}
+.panel h4{font-size:12px;letter-spacing:.12em;color:var(--muted);margin:0 0 4px;font-weight:500}
+.panel p{margin:0}
+.rule{border-left:3px solid var(--accent);padding-left:10px;color:var(--muted);font-size:14px}
+pre.cmd{font-family:var(--f-mono);font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.prompt{font-family:var(--f-body);font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;white-space:pre-wrap;margin:0;max-height:220px;overflow:auto;line-height:1.6}
+.x{margin-left:auto;border:0;background:var(--chip);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1}
+.src-info{font-size:13px;color:var(--muted)}
+@media (max-width:860px){
+  .panel{grid-template-columns:minmax(0,1fr)}
+  .panel .stage,.panel .info{padding:18px}
+  header.top{grid-template-columns:minmax(0,1fr);gap:24px;padding-block:32px 18px}
+}
+.tray{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--ink);color:var(--bg);
+  padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.tray-in{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tray .names{flex:1 1 240px;font-size:13px;opacity:.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tray .btn{border-color:rgba(127,127,127,.5);color:var(--bg)}
+.tray .btn.primary{color:var(--accent-ink)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px}
+.fb textarea{width:100%;min-height:220px;font-size:13px}
+
+/* ================= 影片畫面示意 ================= */
+@property --num{syntax:'<integer>';inherits:false;initial-value:0}
+.v{--T:3.6s;position:relative;width:100%;max-width:100%;aspect-ratio:16/9;container-type:inline-size;overflow:hidden;
+  background:radial-gradient(circle at 70% 20%,var(--st-bg2),var(--st-bg) 70%);color:var(--st-ink);font-family:var(--f-body);line-height:1.25;isolation:isolate}
+.v *{box-sizing:border-box}
+.v .a{position:absolute}
+.v .c{position:absolute;left:0;right:0;text-align:center}
+.v .mid{top:50%;margin-top:-.62em}
+.v .h{font-weight:900;letter-spacing:.01em}
+.v .gold{color:var(--st-a)} .v .red{color:var(--st-r)}
+.v .cap{left:8%;right:8%;bottom:9%;text-align:center;font-size:3.4cqw;font-weight:700;text-shadow:0 .2cqw .8cqw rgba(0,0,0,.6)}
+.v .scr{background:#26385A;border-radius:1cqw;border:1px solid rgba(255,255,255,.12)}
+.v .ln{display:block;height:1.1cqw;border-radius:1cqw;background:rgba(255,255,255,.22)}
+.v .ln.d{background:#D9DEE6}
+.v .box{border-radius:1.2cqw;padding:2cqw}
+.v .chip{position:static;background:var(--st-a);color:#14171C;border-radius:5cqw;padding:.8cqw 2.4cqw;font-weight:900;font-size:2.4cqw;display:inline-block}
+.v .card2{background:#fff;color:#1B1F24;border-radius:1.2cqw;box-shadow:0 1.2cqw 3cqw rgba(0,0,0,.35)}
+.v .room{background:linear-gradient(180deg,#3A4D70,#22314F)}
+.v .mono{font-family:var(--f-mono)}
+.v .serif{font-family:var(--f-disp)}
+/* 人物示範：J3M 數字人去背照 */
+.v .man{--mw:26cqw;position:absolute;left:50%;bottom:0;width:var(--mw);height:calc(var(--mw)*1.38);margin-left:calc(var(--mw)/-2);z-index:2}
+.v .man{background:url(data:image/webp;base64,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) center bottom/contain no-repeat}
+.v .man.bw{filter:grayscale(1) contrast(1.1)}
+.v .scene{background:linear-gradient(180deg,#8FB0D4,#E6ECF2 70%)}
+.v .scene::before{content:"";position:absolute;left:0;right:0;bottom:0;height:55%;background:#56677F;clip-path:polygon(0 100%,0 55%,14% 30%,28% 52%,46% 8%,63% 44%,78% 22%,100% 50%,100% 100%)}
+.v .scene.sun{background:linear-gradient(180deg,#F0A06A,#FBE3C4 72%)}
+.v .scene.sun::before{background:#7A5A6E}
+.v .scene.city{background:linear-gradient(180deg,#1C2340,#4B3A6A)}
+.v .scene.city::before{background:#0E1426;clip-path:polygon(0 100%,0 40%,8% 40%,8% 20%,16% 20%,16% 50%,24% 50%,24% 10%,32% 10%,32% 45%,42% 45%,42% 28%,52% 28%,52% 60%,60% 60%,60% 15%,70% 15%,70% 50%,80% 50%,80% 30%,90% 30%,90% 55%,100% 55%,100% 100%)}
+.v svg{overflow:visible}
+
+/* 動態原語：所有循環共用 var(--T) 週期，--dl 控制延遲，基準狀態即完成畫面 */
+.a-pop{animation:a-pop var(--T) var(--dl,0s) infinite both}
+.a-drop{animation:a-drop var(--T) var(--dl,0s) infinite both}
+.a-up{animation:a-up var(--T) var(--dl,0s) infinite both}
+.a-left{animation:a-left var(--T) var(--dl,0s) infinite both}
+.a-right{animation:a-right var(--T) var(--dl,0s) infinite both}
+.a-fade{animation:a-fade var(--T) var(--dl,0s) infinite both}
+.a-wipe{animation:a-wipe var(--T) var(--dl,0s) infinite both}
+.a-draw{stroke-dasharray:var(--len,1);animation:a-draw var(--T) var(--dl,0s) infinite both}
+.a-zoom{animation:a-zoom var(--T) var(--dl,0s) infinite both}
+.a-push{animation:a-push calc(var(--T)*1.4) var(--dl,0s) ease-in-out infinite alternate both}
+.a-spin{animation:a-spin var(--S,10s) linear infinite}
+.a-pulse{animation:a-pulse 1.4s var(--dl,0s) ease-out infinite both}
+.a-shake{animation:a-shake var(--T) var(--dl,0s) infinite both}
+.a-blink{animation:a-blink 1s steps(1) infinite}
+.a-float{animation:a-float 1.8s var(--dl,0s) ease-in-out infinite alternate both}
+.a-type{display:inline-block;overflow:hidden;white-space:nowrap;vertical-align:bottom;width:calc(var(--n)*1em);animation:a-type var(--T) var(--dl,0s) steps(var(--n)) infinite both}
+.a-count{animation:a-count var(--T) var(--dl,0s) ease-out infinite both;counter-reset:n var(--num)}
+.a-count::before{content:counter(n)}
+.a-flip{animation:a-flip var(--T) var(--dl,0s) infinite both}
+.a-stamp{animation:a-stamp var(--T) var(--dl,0s) infinite both}
+.a-glitch{animation:a-glitch var(--T) var(--dl,0s) infinite both}
+.a-sweep{animation:a-sweep var(--T) var(--dl,0s) infinite both}
+.a-sx{transform-origin:left center;animation:a-sx var(--T) var(--dl,0s) infinite both}
+.a-sy{transform-origin:center top;animation:a-sy var(--T) var(--dl,0s) infinite both}
+.a-sb{transform-origin:center bottom;animation:a-sy var(--T) var(--dl,0s) infinite both}
+.a-first{animation:a-first var(--T) var(--dl,0s) infinite both}
+.a-second{animation:a-second var(--T) var(--dl,0s) infinite both}
+.a-third{animation:a-third var(--T) var(--dl,0s) infinite both}
+.a-out{animation:a-out var(--T) var(--dl,0s) infinite both}
+.a-in{animation:a-in var(--T) var(--dl,0s) infinite both}
+.a-ring3d{transform-style:preserve-3d;animation:a-ring3d var(--S,9s) linear infinite}
+
+@keyframes a-pop{0%{opacity:0;scale:.3}12%{opacity:1;scale:1.12}18%{scale:1}88%{opacity:1;scale:1}100%{opacity:0;scale:1}}
+@keyframes a-drop{0%{opacity:0;translate:0 -160%}10%{opacity:1}15%{translate:0 0}19%{translate:0 -12%}23%{translate:0 0}88%{opacity:1;translate:0 0}100%{opacity:0;translate:0 0}}
+@keyframes a-up{0%{opacity:0;translate:0 40%}16%{opacity:1;translate:0 0}88%{opacity:1;translate:0 0}100%{opacity:0;translate:0 0}}
+@keyframes a-left{0%{opacity:0;translate:-40% 0}16%{opacity:1;translate:0 0}88%{opacity:1;translate:0 0}100%{opacity:0;translate:0 0}}
+@keyframes a-right{0%{opacity:0;translate:40% 0}16%{opacity:1;translate:0 0}88%{opacity:1;translate:0 0}100%{opacity:0;translate:0 0}}
+@keyframes a-fade{0%{opacity:0}16%{opacity:1}88%{opacity:1}100%{opacity:0}}
+@keyframes a-wipe{0%{clip-path:inset(0 100% 0 0)}25%{clip-path:inset(0 0 0 0)}90%{clip-path:inset(0 0 0 0);opacity:1}100%{clip-path:inset(0 0 0 0);opacity:0}}
+@keyframes a-draw{0%{stroke-dashoffset:var(--len,1)}35%{stroke-dashoffset:0}90%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
+@keyframes a-zoom{0%,10%{scale:1}26%,74%{scale:var(--z,1.35)}90%,100%{scale:1}}
+@keyframes a-push{0%{scale:1}100%{scale:var(--z,1.1)}}
+@keyframes a-spin{to{rotate:360deg}}
+@keyframes a-pulse{0%{scale:.8;opacity:.9}100%{scale:2.3;opacity:0}}
+@keyframes a-shake{0%,30%{translate:0 0}32%{translate:-4% 0}34%{translate:4% 2%}36%{translate:-3% -2%}38%{translate:3% 0}40%,100%{translate:0 0}}
+@keyframes a-blink{0%{opacity:1}50%{opacity:0}}
+@keyframes a-float{0%{translate:0 0}100%{translate:0 -4%}}
+@keyframes a-type{0%{width:0}50%,92%{width:calc(var(--n)*1em);opacity:1}100%{width:calc(var(--n)*1em);opacity:0}}
+@keyframes a-count{0%{--num:0}42%,100%{--num:var(--to)}}
+@keyframes a-flip{0%,30%{rotate:y 0deg}42%,80%{rotate:y 180deg}92%,100%{rotate:y 360deg}}
+@keyframes a-stamp{0%,20%{opacity:0;scale:2.8}26%{opacity:1;scale:.92}30%{scale:1}88%{opacity:1;scale:1}100%{opacity:0;scale:1}}
+@keyframes a-glitch{0%,40%,52%,100%{translate:0 0;clip-path:inset(0 0 0 0)}42%{translate:-5% 0;clip-path:inset(10% 0 55% 0)}44%{translate:5% 0;clip-path:inset(50% 0 20% 0)}46%{translate:-3% 0;clip-path:inset(30% 0 40% 0)}48%{translate:4% 0;clip-path:inset(0 0 70% 0)}50%{translate:0 0;clip-path:inset(0 0 0 0)}}
+@keyframes a-sweep{0%{background-position:160% 0}45%,100%{background-position:-60% 0}}
+@keyframes a-sx{0%{scale:0 1}30%{scale:1 1}90%{scale:1 1;opacity:1}100%{scale:1 1;opacity:0}}
+@keyframes a-sy{0%{scale:1 0}35%{scale:1 1}90%{scale:1 1;opacity:1}100%{scale:1 1;opacity:0}}
+@keyframes a-first{0%,42%{opacity:1}50%,92%{opacity:0}100%{opacity:1}}
+@keyframes a-second{0%,42%{opacity:0}50%,92%{opacity:1}100%{opacity:0}}
+@keyframes a-third{0%{opacity:0;rotate:x -80deg}4%,30%{opacity:1;rotate:x 0deg}33%,100%{opacity:0;rotate:x 0deg}}
+@keyframes a-out{0%,40%{opacity:1;scale:1;translate:0 0;filter:blur(0)}52%{opacity:0;scale:var(--os,1);translate:var(--ox,0) 0;filter:blur(var(--ob,0px))}99%{opacity:0}100%{opacity:1;scale:1;translate:0 0;filter:blur(0)}}
+@keyframes a-in{0%,40%{opacity:0;scale:var(--is,1);translate:var(--ix,0) 0;filter:blur(var(--ib,0px))}54%,92%{opacity:1;scale:1;translate:0 0;filter:blur(0)}100%{opacity:0}}
+@keyframes a-ring3d{from{rotate:y 0deg}to{rotate:y 360deg}}
+.v:not(.run) *,.v:not(.run) *::before,.v:not(.run) *::after{animation-play-state:paused!important}
+@media (prefers-reduced-motion:reduce){
+  .v *,.v *::before,.v *::after{animation:none!important}
+  .v .a-count{--num:var(--to)}
+  .v .a-second,.v .a-in{opacity:0}
+  .card{transition:none}
+}
+</style>
+</head>
+<body>
+<style>
+/* 個別效果專用的動態 */
+.a-flash{animation:a-flash var(--T) var(--dl,0s) infinite both}
+.a-pull{animation:a-pull var(--T) var(--dl,0s) cubic-bezier(.2,.7,.2,1) infinite both}
+.a-scroll{animation:a-scroll var(--T) var(--dl,0s) ease-in-out infinite both}
+.a-grade{animation:a-grade calc(var(--T)*2) var(--dl,0s) steps(1) infinite both}
+.a-swipe{animation:a-swipe var(--T) var(--dl,0s) ease-in-out infinite both}
+.a-handle{animation:a-handle var(--T) var(--dl,0s) ease-in-out infinite both}
+.a-shrink{animation:a-shrink var(--T) var(--dl,0s) ease-in-out infinite both}
+.a-tunnel{animation:a-tunnel 2.4s var(--dl,0s) linear infinite both}
+.a-lower{animation:a-lower var(--T) var(--dl,0s) ease-in-out infinite both}
+.a-play{animation:a-play var(--T) var(--dl,0s) linear infinite both}
+.a-fan{animation:a-fan var(--T) var(--dl,0s) ease-out infinite both}
+.a-toggle{animation:a-toggle var(--T) var(--dl,0s) infinite both}
+.a-cut{animation:a-cut var(--T) var(--dl,0s) ease-in-out infinite both}
+@keyframes a-flash{0%{opacity:.95}8%,100%{opacity:0}}
+@keyframes a-pull{0%{scale:3;opacity:1}38%{scale:1}90%{scale:1;opacity:1}100%{scale:1;opacity:0}}
+@keyframes a-scroll{0%,15%{translate:0 0}45%,70%{translate:0 -38%}92%,100%{translate:0 0}}
+@keyframes a-grade{0%{filter:none}20%{filter:saturate(.7) brightness(.75) hue-rotate(-12deg)}40%{filter:grayscale(1) contrast(1.1)}60%{filter:sepia(.55) saturate(1.4)}80%{filter:saturate(1.2) hue-rotate(160deg) brightness(.9)}}
+@keyframes a-swipe{0%,12%{clip-path:inset(0 0 0 100%)}50%,62%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(0 0 0 100%)}}
+@keyframes a-handle{0%,12%{left:100%}50%,62%{left:0%}100%{left:100%}}
+@keyframes a-shrink{0%,14%{scale:1;border-radius:0;translate:0 0}38%,86%{scale:.56;border-radius:3cqw;translate:0 -6%}100%{scale:1;border-radius:0;translate:0 0}}
+@keyframes a-tunnel{0%{scale:1.5;rotate:0deg;opacity:0}12%{opacity:1}100%{scale:.04;rotate:110deg;opacity:1}}
+@keyframes a-lower{0%,14%{translate:0 0}34%,88%{translate:0 34%}100%{translate:0 0}}
+@keyframes a-play{0%{left:2%}100%{left:97%}}
+@keyframes a-fan{0%{rotate:0deg;opacity:0}8%{opacity:1}32%,88%{rotate:var(--r)}100%{rotate:var(--r);opacity:0}}
+@keyframes a-toggle{0%,20%{translate:0 0}30%,88%{translate:2.8cqw 0}100%{translate:0 0}}
+@keyframes a-cut{0%,28%{flex-grow:1;opacity:1}44%,86%{flex-grow:.0001;opacity:0;margin:0 -.3cqw}100%{flex-grow:1;opacity:1}}
+@media (prefers-reduced-motion:reduce){.v .a-swipe{clip-path:inset(0 0 0 50%)}.v .a-handle{left:50%}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow"><a href="../">J3M 教學資源站</a> · 影片製作 · Motion Craft Library</div>
+      <h1>動態技法圖鑑<span class="hl">．</span></h1>
+      <p class="lede">把散在各個製作流程裡的動態效果收在同一處。每一項都有循環播放的畫面示意、用途、實作要點與指令，以及可以直接交給 Claude 執行的提示詞。</p>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div>
+      <ol class="steps">
+        <li><b>➊</b><span>依「影片段落」與「用途」篩選，例如開場 Hook × 人物疊層</span></li>
+        <li><b>➋</b><span>點開示意，查看實作要點、安裝或執行指令與使用規則</span></li>
+        <li><b>➌</b><span>複製提示詞，或勾選多項組成整支影片的特效時間軸</span></li>
+      </ol>
+      <div class="setup">
+        <label for="topic">影片主題與格式（會自動帶入所有提示詞）</label>
+        <input class="field" id="topic" type="text" placeholder="例如：三分鐘學會 Claude 排程任務" autocomplete="off">
+        <div class="seg" role="group" aria-label="影片格式"><button type="button" data-fmt="short" aria-pressed="true">短片 9:16</button><button type="button" data-fmt="long" aria-pressed="false">長片 16:9</button></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-video" aria-selected="true" type="button">影片特效<small id="nVideo"></small></button>
+    <button class="tab" role="tab" id="tab-web" aria-selected="false" type="button">網頁動態索引<small id="nWeb"></small></button>
+  </div>
+
+  <section id="paneVideo">
+    <div class="bar">
+      <div class="bar-row"><input class="field search" id="q" type="search" placeholder="搜尋效果、指令名稱，例如：去背、the-bill、數字" autocomplete="off" aria-label="搜尋影片特效"><span class="count" id="count"></span></div>
+      <div class="bar-row" id="fState" role="group" aria-label="影片段落"></div>
+      <div class="bar-row" id="fCat" role="group" aria-label="用途"></div>
+      <div class="bar-row" id="fSrc" role="group" aria-label="來源"></div>
+    </div>
+    <main>
+      <div class="grid" id="grid"></div>
+      <div class="empty" id="empty" hidden><p>找不到符合的效果。試著換個關鍵字，或清除篩選條件。</p><button class="btn" id="reset" type="button">清除篩選</button></div>
+    </main>
+  </section>
+
+  <section id="paneWeb" hidden>
+    <div class="bar">
+      <div class="bar-row"><input class="field search" id="wq" type="search" placeholder="搜尋網頁動態，例如：按鈕、捲動、粒子" autocomplete="off" aria-label="搜尋網頁動態"><span class="count" id="wcount"></span></div>
+      <div class="bar-row" id="wTech" role="group" aria-label="技術"></div>
+      <div class="bar-row" id="wWhen" role="group" aria-label="觸發時機"></div>
+    </div>
+    <main>
+      <p class="ref-note">此索引整理自 <a href="https://kittenjam-motion-library.vercel.app/" target="_blank" rel="noopener">Motion Library</a>，適用於網頁、互動頁與影片字卡。這裡只收錄名稱與說明；要看實際效果，請到原站依編號試玩，再複製下方提示詞交給 AI。</p>
+      <div class="ml" id="ml"></div>
+      <div class="more"><button class="btn" id="wMore" type="button" hidden>顯示更多</button></div>
+    </main>
+  </section>
+</div>
+
+<div class="tray" id="tray" hidden>
+  <div class="tray-in">
+    <strong id="trayCount"></strong>
+    <span class="names" id="trayNames"></span>
+    <button class="btn" id="trayClear" type="button">清除</button>
+    <button class="btn primary" id="trayCopy" type="button">複製特效時間軸提示詞</button>
+  </div>
+</div>
+
+<div class="overlay" id="detail" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <div class="stage">
+      <div id="dPv"></div>
+      <div class="nav"><button class="btn" id="dPrev" type="button">← 上一個</button><button class="btn" id="dNext" type="button">下一個 →</button></div>
+      <p class="src-info" id="dSrcFull"></p>
+    </div>
+    <div class="info">
+      <div class="row1"><span class="no" id="dNo"></span><button class="x" id="dClose" type="button" aria-label="關閉">×</button></div>
+      <div><div class="tags" id="dTags"></div><h2 id="dTitle" style="margin-top:6px"></h2><p class="code" id="dCode"></p></div>
+      <p id="dDesc"></p>
+      <div><h4>實作要點</h4><p id="dHow"></p></div>
+      <div id="dCmdWrap"><h4>指令</h4><pre class="cmd" id="dCmd"></pre></div>
+      <div><h4>使用規則</h4><p class="rule" id="dRule"></p></div>
+      <div><h4>AI 提示詞</h4><pre class="prompt" id="dPrompt"></pre></div>
+      <div class="acts" style="padding-top:0"><label class="pick"><input type="checkbox" id="dPick"> 加入時間軸</label><button class="btn primary" id="dCopy" type="button">複製提示詞</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay fb" id="fallback" hidden>
+  <div class="panel" style="grid-template-columns:minmax(0,1fr);max-width:640px">
+    <div class="info">
+      <div class="row1"><strong>請手動複製</strong><button class="x" id="fbClose" type="button" aria-label="關閉">×</button></div>
+      <p style="color:var(--muted)">此環境不允許自動寫入剪貼簿。文字已全選，請按 Ctrl＋C 或 ⌘＋C。</p>
+      <textarea class="field" id="fbText" readonly></textarea>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<script>
+const ML=[["001","閃電砸落","Lightning Strike","CSS","","伴隨閃電閃光重重砸下"],["002","雷射切斷","Laser Cut","CSS","","雷射把文字一刀兩斷"],["003","硬幣翻轉","Coin Flip","CSS","循環待機","文字像硬幣一樣翻轉彈跳"],["004","爆炸四散","Explode Out","CSS","","文字向四面八方炸飛"],["005","粒子消散","Disintegrate","CSS","","文字化為粒子消散"],["006","心跳放大","Heartbeat Zoom","CSS","循環待機","隨心跳放大並擴散波紋"],["007","文字萬花筒","Text Kaleido","CSS","循環待機","文字萬花筒旋轉"],["008","倒數砸落","Number Slam","CSS","","倒數數字重重砸下"],["009","波浪文字","Wave Letters","CSS","循環待機","文字像波浪上下起伏"],["010","定格晃動","Stop Motion","CSS","循環待機","定格動畫般喀喀晃動"],["011","文字雨","Letter Rain","CSS","循環待機","文字如雨般落下"],["012","放大鏡","Magnifier Lens","CSS","循環待機","用放大鏡放大文字"],["013","亂碼解讀","Scramble Decode","CSS","","從亂碼解讀成正確文字"],["014","骨牌倒下","Domino Letters","CSS","","文字像骨牌一樣倒下"],["015","漸層流動","Gradient Flow","CSS","循環待機","漸層在文字中流動"],["016","圓環文字","Circle Text","CSS","循環待機","文字圓環反向旋轉"],["017","水面倒影","Water Reflection","CSS","循環待機","在水面搖曳的倒影"],["018","逐字彈跳","Letter Bounce","CSS","循環待機","文字逐字彈跳"],["019","文字旗幟","Text Flag","CSS","循環待機","文字像旗子般飄揚"],["020","重力反轉","Gravity Flip","CSS","循環待機","重力反轉往上彈"],["021","磁鐵吸附","Magnet Pull","CSS","","文字像被磁鐵吸過來"],["022","脈動格子","Word Pulse Grid","CSS","循環待機","格狀文字隨波膨脹"],["023","字重變粗","Weight Grow","CSS","循環待機","細字逐漸變粗"],["024","文字扇","Text Fan","CSS","","同一字像扇子般展開"],["025","卡拉OK小球","Karaoke Ball","CSS","循環待機","小球跳動，逐字點亮"],["026","鐘擺搖晃","Swing Letters","CSS","循環待機","從上方一點如鐘擺搖晃"],["027","像素溶解","Pixel Dissolve","CSS","","化成方塊溶解消失再復原"],["028","圓環換字","Rotating Words","CSS","","在圓環中切換單字"],["029","殘影疾走","Blur Trail","CSS","","拖著殘影疾馳而過"],["030","棋盤翻轉","Checker Words","CSS","循環待機","棋盤格文字依波浪翻轉"],["031","∞ 軌道","Roller Path","CSS","循環待機","文字沿 ∞ 軌道奔馳"],["032","洗牌重排","Shuffle Letters","CSS","循環待機","文字互換位置後排整齊"],["033","文字漩渦","Text Spiral","CSS","循環待機","文字沿漩渦旋轉"],["034","顫抖穩定","Jitter Settle","CSS","循環待機","顫抖後慢慢穩定"],["035","彈性拉伸","Elastic Wave Stretch","CSS","循環待機","文字縱向拉伸成波浪"],["036","墨水暈開","Ink Bleed","CSS","","墨水暈開成形"],["037","文字聚集","Letter Assemble","CSS","","散落的文字聚集"],["038","字體樣本","Text Mosaic","CSS","循環待機","不同字體依序發光"],["039","Crumble Down","Crumble Down","CSS","","文字崩塌掉落"],["040","Float Drift","Float Drift","CSS","循環待機","輕飄飄地浮動"],["041","文字爆開","Word Burst","CSS","","單字咚一聲彈出來"],["042","逐字敲擊","Letter Sequence","CSS","","一個字一個字砸上來"],["043","Text Stamp","Text Stamp","CSS","","像蓋章一樣一個個蓋上去"],["044","衝擊放大","Punch Zoom","CSS","","從深處飛出、後面拖著殘影"],["045","動態堆疊","Kinetic Stack","CSS","","詞一個個飛進來疊起來"],["046","穿越放大","Text Zoom Through","CSS","","衝進字裡，接到下一個詞"],["047","擠壓彈跳","Text Squeeze","CSS","","像橡皮一樣壓扁再換字"],["048","巨字滑過","Huge Text Scroll","CSS","循環待機","超大字一快一慢橫越畫面"],["049","直書逆走","Vertical Typography","CSS","循環待機","直排文字往反方向流"],["050","斜線帶","Diagonal Text Bands","CSS","循環待機","斜斜的帶子，文字反向跑"],["051","Text Ribbon","Text Ribbon","CSS","循環待機","文字沿著波浪線流動"],["052","跑馬燈","Marquee","CSS","循環待機","字體、速度都不同的帶子疊在一起"],["053","直書三層","Parallax Columns","CSS","循環待機","三層直排文字一起流動"],["054","封鎖膠帶","Tape Cross","CSS","循環待機","寫著字的膠帶交叉成 X"],["055","文字隧道","Text Tunnel","CSS","循環待機","從文字中間穿過去"],["056","文字走廊","Text Corridor","CSS","循環待機","地板牆壁都是字，一路往前"],["057","Text Cylinder","Text Cylinder","CSS","循環待機","文字圓柱反向旋轉"],["058","圓環隧道","Ring Text Tunnel","CSS","循環待機","一圈圈文字撲面而來"],["059","Text Orbit","Text Orbit","CSS","循環待機","單字帶著景深繞圈"],["060","Text Cube","Text Cube","CSS","","四面寫字的方塊直向翻轉"],["061","立體字","Extrude Text","CSS","循環待機","立體字的厚度方向轉一圈"],["062","Split Flap","Split Flap","CSS","","像車站時刻表一樣翻到定位"],["063","Flip Cards","Flip Cards","CSS","","一張張翻面換字"],["064","打字機","Typewriter","CSS","","一個字一個字打出來再換掉"],["065","Slot Text","Slot Text","CSS","","滾輪轉一轉停下來"],["066","計數器","Odometer","CSS","","數字滾動往上加"],["067","標題切換","Headline Swap","CSS","","新聞標題一個換一個"],["068","LED 看板","LED Text","CSS","循環待機","點點組成的電子字"],["069","空心字","Outline Text","CSS","循環待機","空心字一行一行被填滿"],["070","故障切片","Glitch Slices","CSS","","大字被切成好幾條錯開"],["071","圖案遮罩","Text Mask Pattern","CSS","循環待機","文字變成窗，條紋從裡面流過"],["072","長陰影","Long Shadow","CSS","循環待機","長長的影子轉一圈"],["073","液體填滿","Liquid Fill","CSS","循環待機","空心字被液體慢慢裝滿"],["074","螢光筆","Highlight Text","CSS","","螢光筆從字後面劃過"],["075","斜線反轉","Split Invert","CSS","","斜線掃過，兩區互換"],["076","逐字升起","Split Rise","GSAP","","每個字從遮罩下方滑上來"],["077","亂碼揭示","Scramble Reveal","GSAP","","亂碼逐步解出正確文字"],["078","打字換句","Typing Swap","GSAP","","打字、刪除、換下一句"],["079","彈性落下","Elastic Drop","GSAP","","字從天而降並彈性晃動"],["080","3D 翻字","3D Char Flip","GSAP","","每個字沿 X 軸翻轉登場"],["081","隨機散聚","Random Scatter","GSAP","","字從四處飛來再散開"],["082","格狀擴散","Grid Stagger","GSAP","循環待機","格子從中心向外一波波縮放"],["083","遮罩換詞","Word Rotator","GSAP","","固定前綴、後面的詞輪播替換"],["084","數字累加","Number Counter","GSAP","","數字滾動累加並同步進度條"],["085","磁力文字","Magnetic Letters","GSAP","懸停・點擊","游標靠近時字被推開"],["086","逐行揭示","Line Reveal","GSAP","","一行行從遮罩下翻上來"],["087","壓扁彈跳","Squash Bounce","GSAP","","落地壓扁、回彈伸展"],["088","手繪圈重點","Draw Highlight","GSAP","","手繪圓圈與底線畫出來"],["089","形狀變形","Shape Morph","GSAP","","圓、星、心、雲朵互相變形"],["090","路徑飛行","Path Flight","GSAP","循環待機","紙飛機沿曲線飛行並轉向"],["091","版面重排","Flip Layout","GSAP","","格狀與橫排之間平滑重排"],["092","捲動揭示","Scroll Reveal","GSAP","捲動觸發","捲到時淡入、進度條同步"],["093","橫向捲動","Horizontal Scroll","GSAP","捲動觸發","往下捲、內容往左滑"],["094","視差圖層","Parallax Layers","GSAP","捲動觸發","遠中近景以不同速度移動"],["096","游標跟隨","Cursor Follower","GSAP","懸停・點擊","拖尾圓點與反相圓圈"],["097","拖曳甩動","Drag & Toss","GSAP","拖曳手勢","卡片可拖曳並帶慣性甩出"],["098","發牌展開","Card Deal","GSAP","","卡片從底部發牌成扇形"],["099","彩紙爆發","Confetti Burst","GSAP","","受重力影響的彩紙噴發"],["100","滾輪加速跑馬燈","Velocity Marquee","GSAP","捲動觸發","滾輪或拖曳讓跑馬燈加速傾斜"],["101","捲動導覽點","Scroll Spy Dot Nav","GSAP","捲動觸發","側邊導覽點隨捲動亮起，點了跳到該段"],["104","卡片依序浮現","Staggered Card Reveal","GSAP","","一組卡片從左上往右下依序浮上、由模糊變清楚"],["105","3D 傾斜視差圖片","Tilt Parallax Image","GSAP","懸停・點擊","hover 時圖片跟著游標 3D 傾斜，景物分層視差、反光與說明滑出"],["106","流動光暈漸層","Aurora Gradient","CSS","循環待機","幾團模糊光暈緩慢漂移交融，像極光一樣流動"],["107","聚光網格","Spotlight Grid","CSS","懸停・點擊","細格線背景，游標附近的格線被點亮並帶柔光"],["108","粒子連線","Particle Network","Canvas","循環待機","漂浮的粒子靠近時自動連線，游標會吸引附近粒子"],["112","卡片浮起","Hover Lift Card","CSS","懸停・點擊","hover 時卡片上浮、陰影加深，縮圖在框內放大"],["113","光暈邊框卡片","Spotlight Card","CSS","懸停・點擊","游標經過時，卡片邊框與內部被一團光照亮"],["114","骨架載入","Skeleton Shimmer","CSS","循環待機","內容載入前顯示骨架，光澤掃過後淡入真正內容"],["115","圖片遮罩揭示","Image Clip Reveal","CSS","","圖片從下往上被揭開，同時由放大慢慢縮回原尺寸"],["116","前後對比滑桿","Before / After Slider","CSS","拖曳手勢","拖曳中間的把手，左右比較兩張圖的差異"],["117","導覽列捲動縮小","Shrinking Sticky Header","CSS","捲動觸發","往下捲時導覽列變矮、Logo 縮小，並加上毛玻璃底"],["118","通知堆疊","Toast Stack","CSS","","通知從右下角依序彈入堆疊，幾秒後滑出消失"],["119","懸停放大游標","Hover Expand Cursor","CSS","懸停・點擊","小圓點游標移到作品上時放大成寫著文字的圓"],["120","清單懸停預覽圖","Hover Image Reveal","CSS","懸停・點擊","滑過作品清單時，預覽圖跟著游標浮出並隨移動傾斜"],["121","游標拖尾軌跡","Cursor Trail","Canvas","懸停・點擊","游標後面拖著一條漸細漸淡的線條"],["122","點擊漣漪","Click Ripple","CSS","懸停・點擊","在畫面任何位置點擊，都會從點擊處擴散出波紋"],["123","旋轉文字環游標","Rotating Text Cursor","CSS","懸停・點擊","一圈環狀文字繞著游標持續旋轉"],["124","手電筒探照","Flashlight Reveal","CSS","懸停・點擊","畫面一片暗，只有游標附近像手電筒一樣照出隱藏內容"],["125","柔和上浮","Gentle Fade Up","GSAP","","區塊內元素依閱讀順序由上到下輕輕浮現"],["126","逐行淡入","Soft Line Fade","GSAP","","段落一行一行從微模糊變清楚，帶出閱讀節奏"],["127","時間軸延伸","Timeline Draw","GSAP","捲動觸發","一條線往下延伸，碰到哪個步驟就出現哪一步"],["128","Z 字閱讀動線","Z-pattern Reveal","GSAP","","首頁版面依 Z 字閱讀順序依序出現"],["129","步驟依序連接","Connected Steps","GSAP","","步驟卡之間的連接線畫過去後，下一步才出現"],["130","行動按鈕提示","Gentle CTA Cue","GSAP","","內容出現後，按鈕外圍輕輕擴散光暈，把視線帶到按鈕"],["131","柔邊遮罩揭示","Soft Mask Reveal","GSAP","","圖片由左到右被一道柔和的漸層邊緣揭開"],["132","左右交錯淡入","Zigzag Cascade","GSAP","捲動觸發","圖文列表左右交錯出現，視線呈 Z 字往下走"],["133","上傳 SVG 描繪","Draw Your SVG","GSAP","","上傳自己的線條 SVG，看它像用筆一筆一筆畫出來"],["134","手寫簽名","Signature Writing","GSAP","","一顆筆尖沿著簽名路徑書寫，最後補上一道底線"],["135","線條插畫逐筆描繪","Line Illustration Draw","GSAP","","線條插畫一筆一筆畫完，最後主體淡淡浮現"],["136","圖示描邊 hover","Icon Stroke Redraw","GSAP","懸停・點擊","滑過線條圖示時，筆畫重新描一次並微微上浮"],["137","流程連線流動","Flowing Connectors","CSS","循環待機","節點之間的虛線持續流動，小圓點沿線傳遞"],["138","波浪分隔線","Wave Divider","CSS","循環待機","區塊底部多層波浪以不同速度緩慢流動"],["139","圓環進度","Circular Progress","GSAP","","圓環描到指定百分比，中間數字同步累加"],["140","打勾完成","Success Checkmark","GSAP","","先畫一個圓，再打勾並輕彈，最後浮出成功訊息"],["141","開關切換","Toggle Switch","CSS","懸停・點擊","圓鈕滑到另一側時略微拉長，軌道跟著切換狀態"],["142","下拉重新整理","Pull to Refresh","GSAP","拖曳手勢","往下拉列表，轉圈圖示出現，放開後載入並彈回"],["143","底部抽屜","Bottom Sheet","GSAP","","背景變暗，選單從底部帶一點彈性滑上來"],["144","底部導覽列切換","Tab Bar Indicator","GSAP","懸停・點擊","點選分頁時，膠囊指示器拉長滑到新位置，圖示輕彈"],["145","滑動刪除","Swipe to Delete","GSAP","拖曳手勢","列表項目往左滑露出刪除，滑到底就收合移除"],["147","數量步進器","Number Stepper","CSS","懸停・點擊","按加減時按鈕回饋，數字往上或往下滾動切換"],["148","輸入框浮動標籤","Floating Label Input","CSS","懸停・點擊","點進輸入框時，提示文字縮小浮到上方，底線從中間展開"],["149","星星評分","Star Rating","CSS","懸停・點擊","點選評分時，星星由左到右依序點亮並彈跳"],["150","啟動頁轉場","Splash to Home","GSAP","","啟動 Logo 彈出呼吸，再放大穿過畫面進入首頁"],["151","錯誤震動提示","Shake on Error","CSS","懸停・點擊","輸入錯誤時欄位左右震動，下方滑出錯誤訊息"],["152","捲動逐字點亮","Scroll Text Reveal","GSAP","捲動觸發","段落的字隨著捲動一個個由淡轉亮"],["153","捲動放大全幅圖片","Scroll Zoom to Full","GSAP","捲動觸發","小圖隨捲動放大到充滿畫面，最後浮出標題"],["154","黏著堆疊卡片","Sticky Stacking Cards","GSAP","捲動觸發","卡片一張張捲上來疊住，下面那張縮小變暗"],["155","數據捲到才計數","Count Up on Scroll","GSAP","捲動觸發","數據區塊捲進畫面時，數字才從零開始累加"],["156","往下捲隱藏導覽列","Hide Header on Scroll","GSAP","捲動觸發","往下捲時導覽列收起，往回捲時立刻滑出"],["157","捲動繪製路徑","Scroll Draw Path","GSAP","捲動觸發","一條曲線隨捲動一路畫下去，串起各個段落"],["158","圖框內視差","Image Parallax in Frame","GSAP","捲動觸發","圖片在框裡移動得比捲動慢，產生深度"],["159","捲動橫移大字","Scroll Marquee Text","GSAP","捲動觸發","三行大字隨捲動左右反向移動，中間一行空心"],["160","章節主題切換","Section Theme Switch","GSAP","捲動觸發","捲到不同章節時，整個頁面背景與文字配置跟著切換"],["161","圓形擴張轉場","Circle Reveal Transition","GSAP","捲動觸發","捲動時圓形遮罩從中央擴大，揭開下一章"],["162","連結底線滑入","Underline Slide Link","CSS","懸停・點擊","滑過連結時底線從左長出，離開時往右收走"],["163","空心字填滿","Outline Text Fill","CSS","懸停・點擊","滑過空心大字時，從左到右被填滿成實心"],["164","卡片 3D 翻面","Flip Card","CSS","懸停・點擊","滑過卡片時 3D 翻到背面，顯示更多資訊"],["165","圖片圓形展開","Circle to Card Image","CSS","懸停・點擊","圓形縮圖在滑過時展開成直式圓角卡片並浮出標題"],["166","Dock 放大選單","Dock Magnify","CSS","懸停・點擊","游標掃過一排圖示時，靠近的圖示放大並推開鄰居"],["167","選單滑塊跟隨","Sliding Nav Highlight","CSS","懸停・點擊","滑過選單項目時，背景膠囊滑塊跟著移到該項目"],["168","展開式圖片面板","Expanding Panels","CSS","懸停・點擊","一排窄圖片面板，滑過的那一片展開變寬並顯示標題"],["169","提示框彈出","Tooltip Pop","CSS","懸停・點擊","滑過圖示時，提示框從下方帶彈性彈出"],["170","逐字跳動","Letter Hover Bounce","CSS","懸停・點擊","滑過文字時，碰到的每個字各自彈跳一下"],["171","邊框描繪按鈕","Border Draw Button","CSS","懸停・點擊","滑過按鈕時，四條邊框依序畫出圍住按鈕"],["172","星空穿越","Warp Speed","Canvas","循環待機","星星從中心往外飛成光線，游標移入時加速"],["173","流場線條","Flow Field","Canvas","循環待機","上千條細線順著看不見的氣流緩慢流動，游標會攪動氣流"],["174","飄落花瓣","Falling Petals","Canvas","循環待機","花瓣緩緩旋轉飄落，游標經過會把花瓣吹開"],["175","數字雨","Matrix Rain","Canvas","循環待機","一行行字元像下雨一樣往下落，帶殘影拖尾"],["176","融合球","Metaballs","Canvas","循環待機","幾顆圓球漂浮移動，靠近時像液體一樣黏在一起"],["177","文字粒子化","Particle Text","Canvas","懸停・點擊","文字由許多小點組成，游標靠近會被吹散，離開後聚回"],["178","磁力點陣","Magnetic Dot Grid","Canvas","懸停・點擊","滿版小圓點，游標經過時被推開並放大"],["179","水波漣漪","Water Ripple","Canvas","懸停・點擊","游標滑過或點擊的地方，畫面像水面一樣泛起漣漪"],["180","刮刮樂揭示","Scratch Reveal","Canvas","拖曳手勢","用游標或手指刮開表層，露出底下的內容"],["181","Fireworks","Fireworks","Canvas","懸停・點擊","點擊的位置升起煙火並炸開，沒操作時自動施放"],["182","Breathe","Breathe","CSS","循環待機","元素緩慢放大縮小，像在呼吸一樣循環"],["183","Drift","Drift","CSS","","文字從側邊淡入後持續緩慢漂移，再淡出"],["184","Pan","Pan","CSS","","圖片帶動態模糊從側邊快速滑入，停留後滑出另一側"],["185","Tumble","Tumble","CSS","","每個字從縮小狀態旋轉翻滾著登場"],["186","霓虹閃爍","Neon Flicker","CSS","循環待機","文字像霓虹燈管一樣不規則閃爍後點亮"],["187","剪貼簿","Scrapbook","CSS","","照片、膠帶、貼紙和標題一個個歪歪地貼上來"],["188","Merge","Merge","CSS","","文字上下兩半分別從左右滑入，合成完整的字"],["189","Spread","Spread","CSS","","字疊在一起從模糊中往兩側展開成正常字距"],["190","Skate","Skate","CSS","","文字像溜冰一樣斜著滑進來，煞車後擺正"],["191","緩慢推鏡","Ken Burns","CSS","循環待機","圖片持續緩慢放大並微微平移，像紀錄片的推鏡"],["192","Logo 組合登場","Logo Build Reveal","GSAP","","標誌的圓、方塊、圓點依序畫出組合，再滑出品牌名"],["193","音訊波形","Audio Waveform","GSAP","循環待機","一排長條像音訊波形一樣隨機跳動"],["194","漸層光流線條","Flowing Gradient Stroke","CSS","循環待機","線條上的漸層持續流動，一道光點沿線繞行"],["195","液體填充圖示","Liquid Fill Icon","GSAP","循環待機","圖示內的液面帶著波浪慢慢上升，百分比同步增加"],["196","雷達掃描","Radar Sweep","CSS","循環待機","掃描扇形持續繞圈，掃過的位置亮起光點"],["197","折線圖繪製","Line Chart Draw","GSAP","捲動觸發","折線由左到右畫出，資料點依序彈出，下方面積淡入"],["198","長條圖成長","Bar Chart Grow","GSAP","捲動觸發","長條依序由下往上長出並略微回彈，數值同步累加"],["199","圓餅圖分段","Donut Chart Segments","GSAP","捲動觸發","環圈圖一段接一段畫出，圖例依序滑入"],["200","幾何載入動畫","Geometric Loader","CSS","循環待機","圓形、方形、三角形依序彈跳翻轉，作為載入中提示"],["201","SVG 濾鏡水波扭曲","Turbulence Distortion","CSS","循環待機","文字像隔著水面一樣持續波動扭曲"],["202","頁面轉場簾幕","Curtain Page Transition","GSAP","","切換頁面時三片簾幕依序落下蓋住，再往下收走露出新頁"],["203","漢堡選單展開","Hamburger Menu Reveal","CSS","懸停・點擊","三條線變成叉叉，全螢幕選單從按鈕處圓形擴散展開"],["204","側邊抽屜推移","Push Side Drawer","CSS","懸停・點擊","開啟選單時整個內容頁縮小推到右側，露出底下的選單"],["205","彈出視窗","Modal Dialog","CSS","","背景模糊變暗，視窗從稍小稍低的位置彈性浮出"],["206","手風琴問答","Accordion FAQ","CSS","懸停・點擊","點開問題時答案區平滑展開，加號轉成叉叉，同時收起其他題"],["207","分頁標籤切換","Directional Tabs","GSAP","","底線指示器滑到新分頁，內容依切換方向左右滑動交替"],["208","作品篩選重排","Filterable Grid","GSAP","","切換分類時，不符合的作品縮小消失，其他作品平滑補位"],["209","Bento 格局展開","Bento Grid Expand","CSS","懸停・點擊","滑過便當盒格局的某一格，那一格變大、其他格同步讓位"],["210","左右分割捲動","Split Screen Scroll","GSAP","捲動觸發","右側文字往下捲，左側固定的圖片跟著切換對應的段落"],["211","回到頂部進度環","Back to Top Progress","GSAP","捲動觸發","捲動後右下角浮出按鈕，外圈顯示閱讀進度，點了回到頂部"],["212","焦點卡片輪播","Focus Carousel","CSS","循環待機","中間的卡片放大清楚，兩側縮小變淡，左右切換"],["213","左右滑卡","Swipe Card Stack","GSAP","拖曳手勢","最上面的卡片可以拖曳甩出，下一張補上來"],["214","疊卡散開","Stack Fan Out","CSS","懸停・點擊","一疊微歪的卡片，滑過時向兩側散開成一排"],["215","價格方案切換","Pricing Toggle","GSAP","","月付／年付切換時，各方案價格滾動更新，推薦方案突出"],["216","卡片展開詳情","Card Expand Detail","GSAP","","點擊卡片時它平滑放大成詳情面板，其他卡片淡出"],["217","無限捲動卡片牆","Infinite Card Wall","CSS","循環待機","兩排卡片朝相反方向無限移動，滑鼠移上去就暫停"],["218","評論輪播","Testimonial Slider","GSAP","循環待機","引言淡出上移換下一則，頭像跟著切換，進度條計時"],["219","瀑布流依序落下","Masonry Cascade","GSAP","","高低不一的瀑布流卡片，一排排帶微微旋轉落下就位"],["220","聚焦淡化其他","Focus Dim Siblings","CSS","懸停・點擊","滑過某張卡片時它浮起，其他卡片變淡、縮小"],["221","加入購物車飛入","Add to Cart Fly","GSAP","懸停・點擊","點加入購物車，商品縮圖以弧線飛進購物車，數字跳一下"],["222","顆粒漸層","Grain Gradient","CSS","循環待機","柔和的大片漸層緩慢流動，上面疊一層細微跳動的底片顆粒"],["223","復古透視網格","Retro Grid Horizon","CSS","循環待機","地平線上一顆條紋夕陽，透視網格地板不斷往前推進"],["224","散景光點","Bokeh Lights","CSS","循環待機","大小不一的柔焦光點緩緩上飄、淡入淡出"],["226","同心圓擴散","Pulse Rings","CSS","循環待機","中心點規律脈動，一圈圈圓環向外擴散後淡出"],["227","旋轉光芒","Sunburst Rays","CSS","循環待機","放射狀光芒在標題後方緩緩旋轉，中心最亮往外淡出"],["228","閃爍星空","Twinkling Sky","Canvas","循環待機","滿天星星各自閃爍，偶爾劃過一道流星，游標移動時星空微微視差"],["229","景深視差圖層","Depth Parallax","CSS","懸停・點擊","前中後三層圖形依距離不同幅度跟著游標反向移動，產生立體感"],["230","起伏線條","Wavy Lines","Canvas","循環待機","一整片細線像布料般起伏，游標經過的地方被輕輕拱起"],["231","漂浮幾何","Floating Shapes","GSAP","循環待機","圓形、方塊、三角形、圓環等幾何圖形在背景隨機緩慢漂浮旋轉"],["232","立體按壓按鈕","3D Press Button","CSS","懸停・點擊","按鈕下方有一層厚度，按下時整顆往下壓、厚度消失，像實體按鍵"],["233","果凍彈跳按鈕","Jelly Button","CSS","懸停・點擊","滑過或點擊時按鈕像果凍一樣被壓扁、拉長再彈回"],["234","按鈕漣漪回饋","Ripple Click","CSS","懸停・點擊","從手指點下的位置擴散出一圈漣漪，Material Design 經典回饋"],["235","滑動確認","Slide to Confirm","GSAP","拖曳手勢","拖曳圓鈕滑到底才確認，未到底會彈回，文字有流光提示"],["236","長按確認","Hold to Confirm","CSS","懸停・點擊","按住不放時進度慢慢填滿，放開就退回，填滿才執行，適合刪除等危險操作"],["237","箭頭接力按鈕","Icon Slide Button","CSS","懸停・點擊","滑過時右側箭頭往右滑出，同時新箭頭從左側滑入、文字讓位"],["238","霓虹呼吸按鈕","Neon Glow Button","CSS","循環待機","外框與光暈像呼吸般忽明忽暗，滑過時填滿並大量發光"],["239","複製成功回饋","Copy Feedback","CSS","","按下複製後圖示旋轉變成打勾，上方彈出「已複製」小提示"],["240","展開文字按鈕","Expanding Button","CSS","懸停・點擊","平常只有圓形「+」圖示，滑過時向右展開出文字、加號旋轉"],["241","紙飛機送出","Send Plane Button","GSAP","懸停・點擊","按下送出，紙飛機從按鈕飛走，文字換成「已送出」再恢復"],["242","勾選框打勾","Animated Checkbox","CSS","","勾選時方框彈一下、勾勾像用筆畫出來，項目文字加上刪除線"],["243","分段控制器","Segmented Control","CSS","","一排選項底下有一塊滑塊，點哪個就帶點彈性滑過去並改變寬度"],["244","密碼強度條","Password Strength","CSS","","輸入密碼時下方的強度條逐格長出，依強弱改變並顯示提示"],["245","滑桿數值氣泡","Range Slider Bubble","CSS","拖曳手勢","拖曳滑桿時上方彈出數值氣泡，跟著把手移動，放開時縮回"],["246","驗證碼輸入","OTP Input","CSS","","四格驗證碼，輸入一格自動跳下一格；正確時依序跳起，錯誤時整排抖動"],["247","展開搜尋框","Expanding Search","CSS","","平常只有一個放大鏡圓鈕，點下後向左展開成搜尋框"],["248","下拉選單展開","Dropdown Reveal","CSS","","點開下拉選單時面板從上方彈出，選項一個接一個滑入，箭頭翻轉"],["249","標籤輸入","Tag Input","CSS","","輸入文字按 Enter 變成彈出的標籤，按 × 或倒退鍵時標籤縮小消失"],["250","水滴單選","Liquid Radio","GSAP","","切換單選項時，選中的圓點被拉長成水滴滑到新選項，再彈回圓形"],["251","拖放上傳","File Drop Upload","GSAP","拖曳手勢","檔案拖進區塊時框線亮起、圖示上浮；放下後出現檔案列，進度條跑完打勾"],["252","反色混合游標","Blend Difference Cursor","CSS","懸停・點擊","一顆圓形游標，經過文字時放大，重疊的地方顏色反轉"],["253","黏性游標","Sticky Cursor","GSAP","懸停・點擊","游標靠近按鈕時被吸附，變形包住整顆按鈕，按鈕也被輕輕拉動"],["254","速度拉伸游標","Velocity Stretch Cursor","CSS","懸停・點擊","圓形游標依移動速度沿著方向拉長，停下來時恢復圓形"],["255","情境標籤游標","Contextual Cursor","CSS","懸停・點擊","游標移到不同內容上，變成對應動作的大圓圈加文字，例如播放、查看、拖曳"],["256","十字準星座標","Crosshair Cursor","CSS","懸停・點擊","橫豎兩條細線跟著游標，旁邊即時顯示座標數字"],["257","眼睛跟隨","Following Eyes","CSS","懸停・點擊","一對大眼睛的眼珠一直盯著游標轉，偶爾眨眼"],["258","放大鏡游標","Magnifier Lens","CSS","懸停・點擊","游標變成圓形放大鏡，鏡片裡的內容放大顯示"],["260","黏液拖尾","Gooey Trail","CSS","懸停・點擊","一串圓球跟著游標，彼此像黏液一樣融合拉絲"],["261","點擊噴出小物","Click Confetti Pop","GSAP","懸停・點擊","在畫面任何地方點擊，就從那裡噴出愛心星星等小圖案再落下"],["262","框內微放大","Hover Zoom in Frame","CSS","懸停・點擊","滑過圖片時，圖片在固定的框內慢慢微放大，標題從底部浮上來"],["263","滑過放大檢視","Hover Zoom & Pan","CSS","懸停・點擊","滑過圖片時放大兩倍，放大的位置跟著游標移動，看商品細節"],["264","低飽和喚醒","Saturate on Hover","CSS","懸停・點擊","圖片平常是低飽和、偏暗，滑過時恢復鮮豔並微微放大"],["265","商品圖切換","Image Swap on Hover","CSS","懸停・點擊","電商商品卡片滑過時，換成第二張角度的照片，下方圓點跟著切換"],["266","滑過預覽影片","Hover to Play Video","CSS","懸停・點擊","影片縮圖平常靜止，滑過時播放鍵縮小消失、畫面開始播放、進度條前進"],["267","點圖放大燈箱","Lightbox Zoom","GSAP","","點一下縮圖，它從原位置平滑放大到畫面中央，背景變暗；再點縮回"],["269","切片轉場","Slice Transition","GSAP","循環待機","圖片被切成直條，一條上一條下依序滑走，露出下一張"],["270","拍立得洗牌","Photo Stack Shuffle","GSAP","","一疊微歪的拍立得照片，點一下最上面那張被抽走、塞回最底下"],["271","故障錯位圖片","Glitch Image","CSS","懸停・點擊","滑過時圖片分出兩層色版左右錯位、一段段閃爍，像訊號不良"],["272","捲動翻轉卡片","Scroll Flip Card","GSAP","捲動觸發","往下捲時卡片立體翻轉到背面，同時微微放大"],["273","捲動旋轉立方體","Scroll Rotating Cube","GSAP","捲動觸發","一個 3D 立方體隨捲動旋轉，每一面寫著不同的關鍵字"],["274","穿越大字轉場","Zoom Through Text","GSAP","捲動觸發","巨大的標題隨捲動不斷放大，鏡頭像穿過字母進入下一個畫面"],["275","捲動速度傾斜","Scroll Velocity Skew","GSAP","捲動觸發","圖片列表在快速捲動時跟著速度歪斜，停下來就回正"],["276","散落文字聚合","Scattered Assemble","GSAP","捲動觸發","散落在四處、翻轉縮放的字母，隨著捲動飛回原位組成標題"],["277","捲動形狀變形","Scroll Shape Morph","GSAP","捲動觸發","一個圖形隨捲動依序變形成星星、愛心、方塊，邊變邊轉"],["278","捲動扇形展開","Scroll Fan Out","GSAP","捲動觸發","疊在一起的卡片隨捲動展開成一把扇子"],["279","模糊對焦","Blur to Focus","GSAP","捲動觸發","段落標題捲進畫面時由模糊變清楚，捲出時又慢慢糊掉"],["280","沿曲線跑的文字","Text Along Path","GSAP","捲動觸發","一行文字沿著彎曲的線條移動，捲動決定它跑到哪裡"],["281","對開門轉場","Split Doors Reveal","GSAP","捲動觸發","整個畫面從中間切開成左右兩扇門，隨捲動往兩側拉開，露出下一段"],["282","上下切開文字","Split Text Hover","CSS","懸停・點擊","滑過時標題沿水平中線切成上下兩半，往反方向錯開，中間露出一行小字"],["283","字距展開","Letter Spacing Expand","CSS","懸停・點擊","滑過時字母間距慢慢拉開、字重變粗，像深呼吸一樣"],["284","清單列滑入填滿","List Row Fill","CSS","懸停・點擊","滑過清單某一列時，底色從左邊刷進來，文字往右讓位、箭頭滑出"],["285","圖示微動畫","Icon Micro-animations","CSS","懸停・點擊","滑過圖示時各自做出符合意思的小動作：鈴鐺搖、愛心跳、齒輪轉、垃圾桶掀蓋"],["286","資訊面板滑上","Card Info Slide Up","CSS","懸停・點擊","圖片卡片平常只露出標題，滑過時資訊面板從底部滑上來，圖片同時上移放大"],["287","社群圖示填滿","Social Icon Fill","CSS","懸停・點擊","圓形社群圖示滑過時底色從下往上填滿，圖示往上換成另一個、按鈕微微浮起"],["288","螢光筆劃記","Highlighter Hover","CSS","懸停・點擊","段落中的重點詞滑過時，背後像用螢光筆由左往右劃過一道"],["289","全息閃卡","Holographic Card","CSS","懸停・點擊","收藏卡跟著游標立體傾斜，表面的炫彩箔光和反光跟著角度流動"],["290","連結預覽卡","Link Preview Popover","CSS","懸停・點擊","滑過文章中的連結時，上方彈出一張小卡，預覽連結頁面的圖片與標題"],["291","表格十字高亮","Table Crosshair Highlight","CSS","懸停・點擊","滑過表格某一格時，整列與整欄淡淡亮起，該格放大突顯"],["292","手寫描繪","Handwriting Draw","GSAP","循環待機","文字的筆畫像用筆一筆一筆寫出來，寫完後填滿"],["293","字重波浪","Weight Wave","CSS","循環待機","每個字的粗細輪流變化，像一道波浪從左掃到右"],["294","光源投影字","Light Source Shadow","CSS","懸停・點擊","游標像一盞燈，文字的長陰影永遠朝游標的反方向延伸"],["295","圖片填字","Image Filled Text","CSS","循環待機","大字裡面填的是一張風景圖片，圖片在字裡緩慢平移縮放"],["296","逐字模糊浮現","Blur In Letters","GSAP","","每個字從模糊、略大的狀態依序變清楚並落定"],["297","劃掉改寫","Strike & Rewrite","GSAP","","一個詞被一筆劃掉，上面再用手寫字一個字一個字寫出新的詞"],["298","聊天訊息出現","Chat Message Pop","GSAP","循環待機","對方先出現「輸入中」的三個點，接著變成訊息，再彈出你的回覆"],["299","殘影堆疊","Echo Stack","CSS","循環待機","文字後面疊著好幾層空心的複製，依序往斜後方展開再收回"],["301","多語問候切換","Multilingual Greeting","GSAP","循環待機","不同語言的「你好」輪流出現，模糊淡入淡出，外框寬度平滑跟著變"],["302","拖曳排序清單","Drag to Reorder","GSAP","拖曳手勢","拖住某一列上下移動，其他列自動讓位，放開時彈回定位並更新編號"],["304","多選卡片","Selectable Cards","CSS","","點卡片選取時出現框線與打勾，底部彈出「已選 N 項」的操作列"],["305","邊框聚光網格","Border Spotlight Grid","CSS","懸停・點擊","游標在卡片群之間移動時，靠近的卡片邊框和內部被一團光照亮"],["306","3D 環形輪播","3D Ring Carousel","GSAP","循環待機","卡片圍成一圈在 3D 空間緩慢旋轉，可以用滑鼠左右拖轉"],["307","翻牌配對遊戲","Memory Match","CSS","","點兩張卡片翻開，一樣就留下並彈一下，不一樣就翻回去"],["308","數據儀表卡片","Stat Cards","GSAP","","三張數據卡片依序浮上來，數字累加、迷你折線圖畫出、成長率淡入"],["309","翻頁書","Page Flip Book","GSAP","","點一下書頁就以書脊為軸立體翻到左邊，翻完再一起翻回第一頁"],["310","照片堆展開","Stack to Grid","GSAP","","一疊散亂的照片，點一下平滑排成整齊的網格，再點收回成一疊"],["311","對折邀請卡","Folding Card","GSAP","","像實體卡片一樣，封面以左邊為軸立體打開，露出裡面的圖片和文字"],["312","頂部載入進度條","Top Loading Bar","GSAP","","換頁時頁面頂端一條細線快速跑到一半、慢慢爬，載完衝到底消失，內容再依序浮現"],["313","步驟進度條","Step Progress","CSS","","多步驟表單上方的步驟圓點，完成的打勾、目前這步放大，連接線跟著填滿"],["314","大型下拉選單","Mega Menu","CSS","懸停・點擊","滑過導覽列項目時，下方展開一大塊多欄選單，各欄依序滑入"],["315","推入換頁","Push Navigation","GSAP","","點清單項目，新頁面從右邊推進來、舊頁面往左退並變暗；按返回則反向"],["316","空狀態插畫","Empty State","GSAP","","沒有搜尋結果時，空箱子彈跳落下、蓋子掀開冒出問號，文字與按鈕依序出現"],["317","Cookie 同意橫幅","Cookie Banner","GSAP","","底部彈出 Cookie 同意卡片，餅乾圖示晃一下；按下按鈕後縮回滑走"],["318","浮動按鈕展開選單","Speed Dial FAB","CSS","","右下角的「+」按鈕點開時轉成「×」，上方依序彈出幾個小動作按鈕和標籤"],["319","無限捲動載入","Infinite Scroll","GSAP","捲動觸發","捲到底時出現轉圈的「載入更多」，新內容接著一張張浮上來"],["320","側欄收合","Collapsible Sidebar","CSS","","後台側邊欄按一下收成只剩圖示，文字淡出，主內容區同步變寬"],["321","指令面板","Command Palette","GSAP","","按 ⌘K 跳出搜尋面板，邊打字邊篩選指令，選中的那項亮起、按 Enter 執行"],["322","地圖路線導航","Map Route","GSAP","循環待機","地圖上的地標針依序落下，路線從起點畫到終點，小圓點沿路線前進"],["323","即時時鐘","Analog Clock","CSS","循環待機","顯示現在時間的指針時鐘，秒針每秒跳一格並帶一點回彈"],["324","天氣圖示動畫","Animated Weather Icons","CSS","循環待機","晴天太陽緩轉、雲朵飄動、雨滴落下、閃電閃一下"],["325","選取框螞蟻線","Marching Ants Selection","CSS","循環待機","虛線選取框的線條持續流動，四角有控制點，框的大小改變時尺寸數字即時更新"],["326","有機流動色塊","Organic Blob","CSS","循環待機","一團不規則的柔軟色塊持續緩慢變形，後面還有一層淡淡的影子"],["327","成就徽章解鎖","Badge Unlock","GSAP","","六角形徽章描邊畫出、星星從大縮小蓋上去、四周光芒放射"],["328","心電圖線條","ECG Heartbeat Line","GSAP","循環待機","心電圖的波形由左往右畫出，發光的游標點沿線前進，旁邊心跳數字跳動"],["329","樹枝生長","Growing Plant","GSAP","","樹幹先長出來，再分出枝條，最後葉子一片片冒出"],["330","齒輪連動","Gear Train","GSAP","循環待機","三個大小不同的齒輪咬合在一起，依齒數比例以不同速度互相帶動"],["331","指紋掃描解鎖","Fingerprint Scan","GSAP","","指紋紋路一圈圈畫出，掃描光條上下掃過，成功後外框發光並打勾"]];
+/* ---------- 共用片段 ---------- */
+const M=(s="",c="")=>`<i class="man ${c}" style="${s}"></i>`;
+const L=(w,d)=>`<i class="ln${d?' d':''}" style="width:${w}%"></i>`;
+const ROOM=`<div class="a room" style="inset:0"></div>`;
+const HF=c=>`npx hyperframes add ${c} --json`;
+const FX=(fx,o="")=>`.venv/bin/python scripts/fx.py ${fx} <影片> <輸出>.mp4 --start 3 --end 6${o?" "+o:""}`;
+const CK=`<b class="gold">✓</b>`;
+
+const SRC={
+  lib:{name:"J3M 特效庫",full:"short-video-production 第七節｜特效庫 30 項",rule:"同一 cut 的特效不超過兩種；長片每 3 分鐘內最多三種不同特效。動態元素出現的時間，必須對應旁白講到該詞的時刻。"},
+  hf:{name:"HyperFrames 十二式",full:"short-video-production 第十五節｜十二式特效整合",rule:"短片每 cut 不超過兩種，長片每 3 分鐘不超過三種；同一效果在同一支影片中不超過三次；每段效果必須對應旁白內容，不作純裝飾。"},
+  hfx:{name:"去背與轉場",full:"short-video-production 第十四節｜真人去背與疊層效果（HyperFrames）",rule:"同一畫面的疊層不超過三層；去背效果以真人實拍為主；去背模型與元件安裝需要網路，首次下載前先取得同意。"},
+  ext:{name:"外部 51 式",full:"short-video-production 第十六節｜外部 51 式特效包（MIT 授權，作者 Vibha Ramprakash）",rule:"每個效果 1.5 至 4 秒，避免遮擋人臉；縮放不超過 2 倍；同一支影片每種效果不超過三次；不得與 HyperFrames 效果在同一段落重疊；片尾或說明欄標示作者出處。"},
+  end:{name:"片尾",full:"j3m-video-endcard｜J3M 影片片尾定案規格",rule:"橫版 1920×1080、30 fps、5 秒，無音樂與語音；CTA 最後一行停留至少 2 秒；不另加訂閱按鈕。"}
+};
+const CATS={text:"文字標題",emph:"強調重點",list:"清單步驟",data:"數據數字",ui:"介面示意",person:"人物疊層",trans:"轉場",draw:"手繪標註",grade:"調色鏡頭",cta:"結尾 CTA"};
+const STATES={hook:"開場 Hook",value:"價值說明",step:"操作步驟",data:"數據結果",chap:"章節卡",cta:"結尾 CTA"};
+
+const E=[
+/* ================= J3M 特效庫 30 ================= */
+{id:"F01",src:"lib",zh:"動態文字",code:"",cat:"text",st:["step","value"],status:"已實作",
+desc:"字幕逐字或逐詞出現，跟著旁白的節奏推進。",how:"依該句時長均分，逐字顯示；長片每行不超過 18 字。",
+pv:`<div class="a scr" style="inset:10% 12% 30%"></div><div class="a cap"><span class="a-type" style="--n:8">每一句都對上旁白</span></div>`},
+{id:"F02",src:"lib",zh:"標題字卡",code:"",cat:"text",st:["chap","hook"],status:"已實作",
+desc:"大字標題加強調色底條，用於章節、片頭或段落主題。",how:"底條由左向右展開，標題上浮出現，停留約 1.5 秒。",
+pv:`<div class="a a-sx" style="left:10%;top:38%;width:46%;height:17%;background:var(--st-a)"></div><div class="a mono a-fade" style="left:12%;top:28%;font-size:1.8cqw;letter-spacing:.2em;color:var(--st-a)">CHAPTER 01</div><div class="a h a-up" style="left:12%;top:39.5%;font-size:7cqw;color:#14171C;--dl:.25s">提示詞基礎</div>`},
+{id:"F03",src:"lib",zh:"打字機效果",code:"",cat:"text",st:["step"],status:"已實作",
+desc:"指令或引言逐字打出，結尾可加閃爍游標。",how:"依時間逐字推進，搭配第 29 項游標閃爍，只在打字期間顯示游標。",
+pv:`<div class="a box" style="left:12%;right:12%;top:24%;bottom:24%;background:#0A1222;border:1px solid rgba(255,255,255,.15);font-family:var(--f-mono)"><div style="display:flex;gap:1cqw;margin-bottom:3cqw"><i style="width:1.4cqw;height:1.4cqw;border-radius:50%;background:#FF5F57"></i><i style="width:1.4cqw;height:1.4cqw;border-radius:50%;background:#FEBC2E"></i><i style="width:1.4cqw;height:1.4cqw;border-radius:50%;background:#28C840"></i></div><div style="font-size:3.4cqw"><span class="gold">›</span> <span class="a-type" style="--n:8">整理會議紀錄重點</span><i class="a-blink" style="display:inline-block;width:.5em;height:1.1em;background:var(--st-a);vertical-align:bottom;margin-left:.15em"></i></div></div>`},
+{id:"F04",src:"lib",zh:"文字掉落",code:"",cat:"list",st:["step","value"],status:"規格",
+desc:"清單或比較項目由上方落下，帶一點彈跳。",how:"每項間隔 0.25 秒落下，落地回彈一次即可，不要連續彈跳。",
+pv:`<div class="a" style="left:0;right:0;top:36%;display:flex;justify-content:center;gap:3cqw">${["規劃","執行","檢查"].map((t,i)=>`<span class="h a-drop" style="--dl:${i*.25}s;font-size:6cqw;background:${i==1?"var(--st-a)":"rgba(255,255,255,.12)"};color:${i==1?"#14171C":"#fff"};padding:1.4cqw 3cqw;border-radius:1cqw;display:inline-block">${t}</span>`).join("")}</div>`},
+{id:"F05",src:"lib",zh:"文字遮罩",code:"",cat:"emph",st:["value","data"],status:"規格",
+desc:"以遮罩由左到右揭開答案或重點。",how:"遮罩揭開約 0.6 秒，揭開後下方畫一道強調色細線收尾。",
+pv:`<div class="c mid h a-wipe" style="font-size:8cqw">答案是：流程</div><div class="a a-sx" style="left:22%;right:22%;top:64%;height:.8cqw;background:var(--st-a);--dl:.5s"></div>`},
+{id:"F06",src:"lib",zh:"故障效果",code:"",cat:"emph",st:["value","step"],status:"規格",
+desc:"橫向切片與色差，表達錯誤或警示。",how:"切片位移加紅青色差，持續 0.3 秒內，同一支影片最多兩次。",
+pv:`<div class="a mono" style="left:0;right:0;top:24%;text-align:center;font-size:2cqw;letter-spacing:.3em;color:var(--st-r)">WARNING</div><div class="c mid h a-glitch" style="font-size:8cqw;text-shadow:.6cqw 0 #FF3B5C,-.6cqw 0 #22D3EE">常見錯誤</div>`},
+{id:"F07",src:"lib",zh:"重點字標亮",code:"",cat:"emph",st:["value","step"],status:"已實作",
+desc:"關鍵字加上強調色底色、掃光與放大彈跳。",how:"底色由左掃入，文字 pop 1.0 → 1.15 → 1.0；每句最多兩個重點字。",
+pv:`<div class="c" style="top:42%;font-size:4.6cqw;font-weight:700">先定義 <span style="position:relative;display:inline-block"><i class="a a-sx" style="inset:-.1em -.25em;background:var(--st-a);border-radius:.2em"></i><span class="a-pop" style="position:relative;display:inline-block;color:#14171C;--dl:.25s">目標</span></span> 再下指令</div>`},
+{id:"F08",src:"lib",zh:"截圖彈出",code:"",cat:"ui",st:["step"],status:"已實作",
+desc:"操作截圖以白框、陰影、微旋轉彈出並輕微浮動。",how:"白色外框、±3 度旋轉、輕微浮動；截圖先遮罩個資。手機版改用 B02。",
+pv:`<div class="a a-pop" style="left:22%;top:14%;width:56%;height:66%"><div class="a-float" style="width:100%;height:100%;background:#fff;padding:1.2cqw;border-radius:.6cqw;box-shadow:0 2cqw 4cqw rgba(0,0,0,.45);rotate:-3deg"><div style="height:100%;background:#EEF2F7;display:grid;grid-template-columns:24% 1fr;gap:1cqw;padding:1cqw"><i style="background:#1B2B4A;border-radius:.4cqw"></i><div style="display:grid;gap:1.2cqw;align-content:start">${L(60,1)}${L(90,1)}<i style="height:14cqw;background:#fff;border-radius:.4cqw;display:block"></i></div></div></div></div>`},
+{id:"F09",src:"lib",zh:"打勾清單",code:"",cat:"list",st:["step","cta"],status:"規格",
+desc:"列出完成項目，每項延遲出現並打勾。",how:"每項間隔約 0.5 秒，勾勾在旁白講到該項時出現。",
+pv:`<div class="a" style="left:24%;top:20%;display:grid;gap:3cqw">${["建立知識庫","撰寫提示詞","設定排程"].map((t,i)=>`<div style="display:flex;align-items:center;gap:2cqw;font-size:3.6cqw;font-weight:700"><span style="width:4.6cqw;height:4.6cqw;border:.4cqw solid var(--st-a);border-radius:.8cqw;display:grid;place-items:center"><b class="a-pop gold" style="--dl:${.3+i*.5}s;font-size:3cqw;display:inline-block">✓</b></span>${t}</div>`).join("")}</div>`},
+{id:"F10",src:"lib",zh:"留言 CTA",code:"",cat:"cta",st:["cta"],status:"規格",
+desc:"模擬留言框的小卡片，引導觀眾留言。",how:"放在影片最後約 3 秒，留言框內文字以打字方式出現。",
+pv:`<div class="c h a-fade" style="top:16%;font-size:5cqw">你會怎麼做？</div><div class="a card2 a-up" style="left:16%;right:16%;bottom:16%;padding:2.4cqw;display:flex;align-items:center;gap:2cqw"><i style="width:6cqw;height:6cqw;border-radius:50%;background:var(--st-b);flex:none"></i><div style="flex:1;min-width:0"><div style="font-size:1.8cqw;color:#6B7280">留言分享你的做法</div><div style="font-size:3cqw;font-weight:700"><span class="a-type" style="--n:6;--dl:.4s">我都先寫大綱</span></div></div><span class="chip" style="background:var(--st-b);color:#fff">留言</span></div>`},
+{id:"F11",src:"lib",zh:"雜誌封面",code:"",cat:"text",st:["value","chap"],status:"規格",
+desc:"大標與小標混排的概念卡，標籤使用強調色色塊。",how:"刊頭、主標、標籤三層依序出現；實拍人物版改用 H03。",
+pv:`<div class="a" style="inset:6% 24%;background:var(--st-paper);color:#14171C;padding:2.4cqw"><div class="serif a-fade" style="font-size:4.6cqw;font-weight:900;letter-spacing:.08em;border-bottom:.3cqw solid #14171C;padding-bottom:.6cqw">AI WEEKLY</div><div class="h a-up" style="font-size:5.4cqw;margin-top:2.4cqw;line-height:1.15;--dl:.2s">提示詞的<br>五個層次</div><div style="margin-top:2cqw"><span class="chip a-pop" style="--dl:.5s;font-size:2cqw">本期特輯</span></div></div>`},
+{id:"F12",src:"lib",zh:"畫中畫",code:"",cat:"ui",st:["step"],status:"規格",
+desc:"主畫面與小畫面同時呈現，例如操作畫面加講者。",how:"小畫面延遲出現，可自由縮放；放在不遮擋操作區的角落。",
+pv:`<div class="a scr" style="inset:8% 6%"><div style="padding:3cqw;display:grid;gap:1.8cqw">${L(40)}${L(80)}${L(70)}${L(55)}</div></div><div class="a a-pop" style="right:9%;bottom:12%;width:30%;aspect-ratio:16/9;border:.4cqw solid #fff;border-radius:1cqw;overflow:hidden;--dl:.4s;box-shadow:0 1cqw 3cqw rgba(0,0,0,.5)"><div class="room" style="position:absolute;inset:0"></div>${M("--mw:12cqw")}</div>`},
+{id:"F13",src:"lib",zh:"文字變形",code:"",cat:"text",st:["value"],status:"規格",
+desc:"一個詞漸變成另一個詞，表達觀念轉換。",how:"舊詞淡出、新詞以強調色淡入，約 0.6 秒。",
+pv:`<div class="c mono" style="top:22%;font-size:2cqw;letter-spacing:.2em;color:var(--st-g)">FROM → TO</div><div class="c mid h a-first" style="font-size:9cqw">提示詞</div><div class="c mid h gold a-second" style="font-size:9cqw">工作流</div>`},
+{id:"F14",src:"lib",zh:"箭頭指示",code:"",cat:"ui",st:["step"],status:"規格",
+desc:"箭頭由外向內指向介面上的目標位置。",how:"箭頭滑入後停住，目標加一圈脈衝光環（F24）效果更明確。",
+pv:`<div class="a scr" style="inset:12% 34% 12% 8%;padding:3cqw;display:grid;gap:2cqw;align-content:start">${L(60)}${L(85)}${L(70)}</div><span class="a chip" style="left:14%;top:62%">送出</span><svg class="a a-right" viewBox="0 0 40 20" style="left:36%;top:60%;width:16cqw;height:8cqw;--dl:.2s"><path d="M38 10 H6 M14 2 L4 10 L14 18" fill="none" stroke="#F5B800" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`},
+{id:"F15",src:"lib",zh:"手繪標註",code:"",cat:"draw",st:["step","value"],status:"規格",
+desc:"以手繪感線條圈選、畫底線或寫字。",how:"線條逐筆畫出，同一畫面不超過 3 筆。",
+pv:`<div class="c" style="top:38%;font-size:6cqw;font-weight:900">關鍵在<span style="position:relative;display:inline-block;margin-left:.3em">提示詞<svg class="a" viewBox="0 0 100 40" preserveAspectRatio="none" style="left:-14%;top:-34%;width:128%;height:168%"><path class="a-draw" pathLength="1" d="M8 22 C 10 4, 90 2, 94 18 C 98 34, 20 40, 6 26 C 2 18, 30 6, 60 8" fill="none" stroke="#E2553F" stroke-width="2.4" stroke-linecap="round"/></svg></span></div>`},
+{id:"F16",src:"lib",zh:"震動強調",code:"",cat:"data",st:["data"],status:"規格",
+desc:"數字或結論出現時短暫震動。",how:"幅度 6 px 以內，持續 0.2 秒。",
+pv:`<div class="c mid h a-shake" style="font-size:12cqw"><span class="gold">3</span> 倍</div><div class="c" style="top:74%;font-size:2.6cqw;color:var(--st-g)">處理速度提升</div>`},
+{id:"F17",src:"lib",zh:"滑動轉場",code:"",cat:"trans",st:["step","chap"],status:"已實作",
+desc:"段落或 cut 之間以滑動切換。",how:"邊界前後各 0.25 秒，共 0.5 秒；進階轉場見 T01 至 T05。",
+pv:`<div class="a scene a-out" style="inset:0;--ox:-100%"><b class="a h" style="left:6%;top:8%;font-size:4cqw;color:#14171C">段落 A</b></div><div class="a scene city a-in" style="inset:0;--ix:100%"><b class="a h" style="left:6%;top:8%;font-size:4cqw">段落 B</b></div>`},
+{id:"F18",src:"lib",zh:"超大字幕",code:"",cat:"emph",st:["hook","value"],status:"規格",
+desc:"一句話放大到畫面寬度八成，一次一句。",how:"字幕放大至畫布寬 80%，只用在最需要記住的一句。",
+pv:`${ROOM}${M("--mw:30cqw")}<div class="c h a-pop" style="top:26%;font-size:18cqw;text-shadow:0 .6cqw 2cqw rgba(0,0,0,.6);z-index:3">先問目的</div>`},
+{id:"F19",src:"lib",zh:"環繞文字",code:"",cat:"text",st:["value"],status:"規格",
+desc:"關聯詞沿圓弧排列，繞著概念中心緩慢旋轉。",how:"文字沿圓形路徑排列，轉速放慢，一圈約 12 秒。",
+pv:`<svg class="a a-spin" viewBox="0 0 100 100" style="left:50%;top:50%;width:46cqw;height:46cqw;margin:-23cqw 0 0 -23cqw;--S:12s"><defs><path id="rp19" d="M50 50 m-38 0 a38 38 0 1 1 76 0 a38 38 0 1 1 -76 0"/></defs><text font-size="7.2" fill="#F5B800" font-weight="700" letter-spacing="2"><textPath href="#rp19">資料 · 提示詞 · 模型 · 工具 · 回饋 · 驗收 ·</textPath></text></svg><div class="c mid h" style="font-size:5cqw">AI 工作流</div>`},
+{id:"F20",src:"lib",zh:"形狀放大",code:"",cat:"emph",st:["value","step"],status:"規格",
+desc:"圖形或卡片由 0.8 放大到 1.0，帶一點彈性。",how:"放大約 0.4 秒，彈性幅度小，避免卡通感。",
+pv:`<div class="a a-pop box" style="left:30%;right:30%;top:22%;bottom:22%;background:#fff;color:#14171C;display:grid;place-items:center;text-align:center"><div><div class="h" style="font-size:5cqw">三步驟</div><div style="font-size:2cqw;color:#6B7280;margin-top:1cqw">定義・拆解・驗收</div></div></div>`},
+{id:"F21",src:"lib",zh:"刪除線",code:"",cat:"emph",st:["value","step"],status:"已實作",
+desc:"錯誤寫法灰化並劃上紅線，再帶出正確做法。",how:"文字灰化後，紅線由左至右劃過約 1 秒，正確寫法接著出現。",
+pv:`<div class="c" style="top:28%;font-size:5cqw;font-weight:700;color:var(--st-g)"><span style="position:relative;display:inline-block">幫我寫一篇文章<i class="a a-sx" style="left:-2%;right:-2%;top:50%;height:.5cqw;background:var(--st-r)"></i></span></div><div class="c h gold a-up" style="top:56%;font-size:5cqw;--dl:.6s">寫給新手的 300 字導讀</div>`},
+{id:"F22",src:"lib",zh:"圖層堆疊",code:"",cat:"list",st:["value"],status:"已實作",
+desc:"概念分層呈現，例如上層設定與下層指令。",how:"下層先出現，上層由上方滑入並亮起強調色。",
+pv:`<div class="a box a-up" style="left:24%;right:24%;top:52%;height:22%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);font-size:3cqw;font-weight:700;display:flex;align-items:center">下層｜指令</div><div class="a box a-drop" style="left:24%;right:24%;top:26%;height:22%;background:var(--st-a);color:#14171C;font-size:3cqw;font-weight:900;display:flex;align-items:center;--dl:.5s">上層｜角色設定</div>`},
+{id:"F23",src:"lib",zh:"標籤逐一出現",code:"",cat:"list",st:["value","step"],status:"已實作",
+desc:"列出 2 至 4 個條件或要素，逐一彈出。",how:"每個標籤延遲 0.5 秒出現，由 0.8 放大至 1.0。",
+pv:`<div class="c h" style="top:24%;font-size:4cqw">好提示詞的三要素</div><div class="a" style="left:0;right:0;top:50%;display:flex;justify-content:center;gap:2cqw">${["角色","任務","格式"].map((t,i)=>`<span class="chip a-pop" style="--dl:${.2+i*.5}s;font-size:3.2cqw">${t}</span>`).join("")}</div>`},
+{id:"F24",src:"lib",zh:"脈衝光環",code:"",cat:"emph",st:["step","cta"],status:"規格",
+desc:"強調色光環由內向外擴散，圈住關鍵詞或按鈕。",how:"循環約 1 秒，同一畫面不超過 2 次。",
+pv:`<div class="a" style="left:50%;top:50%;width:0;height:0">${[0,.45,.9].map(d=>`<i class="a a-pulse" style="left:-10cqw;top:-10cqw;width:20cqw;height:20cqw;border-radius:50%;border:.5cqw solid var(--st-a);--dl:${d}s"></i>`).join("")}<span class="a chip" style="left:0;top:0;translate:-50% -50%;font-size:3.2cqw;white-space:nowrap">立即試用</span></div>`},
+{id:"F25",src:"lib",zh:"數字跳動",code:"",cat:"data",st:["data"],status:"規格",
+desc:"數字、百分比或時間由 0 滾動到目標值。",how:"約 0.8 秒滾動到位，結束時輕微放大。",
+pv:`<div class="c mid h" style="font-size:16cqw"><span class="a-count gold mono" style="--to:87"></span>%</div><div class="c" style="top:76%;font-size:2.6cqw;color:var(--st-g)">任務自動化比例</div>`},
+{id:"F26",src:"lib",zh:"卡片翻轉",code:"",cat:"emph",st:["value"],status:"規格",
+desc:"卡片沿 Y 軸翻面，呈現問題與答案。",how:"翻轉約 0.5 秒，正反面字級一致。",
+pv:`<div class="a" style="left:32%;right:32%;top:16%;bottom:16%;perspective:80cqw"><div class="a-flip" style="position:relative;width:100%;height:100%;transform-style:preserve-3d"><div class="box" style="position:absolute;inset:0;background:#fff;color:#14171C;backface-visibility:hidden;display:grid;place-items:center;text-align:center"><div><div class="mono" style="font-size:1.8cqw;color:#6B7280">Q</div><div class="h" style="font-size:3.6cqw">什麼是 MCP？</div></div></div><div class="box" style="position:absolute;inset:0;background:var(--st-a);color:#14171C;backface-visibility:hidden;transform:rotateY(180deg);display:grid;place-items:center;text-align:center"><div><div class="mono" style="font-size:1.8cqw">A</div><div class="h" style="font-size:3.2cqw">AI 連接工具<br>的共通介面</div></div></div></div></div>`},
+{id:"F27",src:"lib",zh:"連線繪製",code:"",cat:"draw",st:["value","step"],status:"規格",
+desc:"兩個節點之間的線逐段畫出，表達流程或關係。",how:"線由起點畫到終點，箭頭在結束時出現。",
+pv:`<div class="a box" style="left:8%;top:41%;width:18%;text-align:center;background:#fff;color:#14171C;font-weight:900;font-size:2.6cqw;padding:1.6cqw">表單</div><div class="a box" style="right:8%;top:41%;width:18%;text-align:center;background:var(--st-a);color:#14171C;font-weight:900;font-size:2.6cqw;padding:1.6cqw">儀表板</div><svg class="a" viewBox="0 0 160 90" style="inset:0;width:100%;height:100%"><path class="a-draw" pathLength="1" d="M44 48 C 70 18, 90 78, 112 48" fill="none" stroke="#F5B800" stroke-width="1.6" style="--dl:.2s"/><path class="a-fade" d="M106 43 L113 48 L106 53" fill="none" stroke="#F5B800" stroke-width="1.6" style="--dl:1.1s"/></svg>`},
+{id:"F28",src:"lib",zh:"緩慢推近",code:"",cat:"grade",st:["hook","value"],status:"規格",
+desc:"背景或靜態圖慢速推近，避免畫面靜止。",how:"以 1.00 至 1.05 倍慢速推近，全程不超過 5%。",
+pv:`<div class="a scene sun a-push" style="inset:0;--z:1.08"></div><div class="a h" style="left:6%;bottom:10%;font-size:4.4cqw;text-shadow:0 .3cqw 1cqw rgba(0,0,0,.4)">靜態畫面也要有呼吸</div><div class="a mono" style="right:5%;top:6%;font-size:1.8cqw;color:#14171C">1.00 → 1.05</div>`},
+{id:"F29",src:"lib",zh:"游標閃爍",code:"",cat:"ui",st:["step"],status:"規格",
+desc:"打字機或指令輸入結尾的閃爍游標。",how:"0.5 秒週期閃爍，只在打字期間出現。",
+pv:`<div class="c mono" style="top:24%;font-size:2cqw;letter-spacing:.2em;color:var(--st-g)">SEARCH</div><div class="a card2" style="left:14%;right:14%;top:38%;padding:2.4cqw 3cqw;font-size:3.6cqw;font-weight:700">AI 自動化工作流<i class="a-blink" style="display:inline-block;width:.35cqw;height:1.1em;background:#1B1F24;vertical-align:middle;margin-left:.3em"></i></div>`},
+{id:"F30",src:"lib",zh:"掃光",code:"",cat:"emph",st:["hook","chap"],status:"規格",
+desc:"亮白光帶由左至右掃過標題或重點字。",how:"光帶掃過約 0.6 秒，同一標題只掃一次。",
+pv:`<div class="c mid h a-sweep" style="font-size:9cqw;background:linear-gradient(100deg,#F5B800 40%,#FFF7D6 50%,#F5B800 60%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent">年度精選</div>`},
+
+/* ================= HyperFrames 十二式 ================= */
+{id:"H01",src:"hf",zh:"標題牆",code:"mk-clone-wall-transition",cat:"text",st:["hook"],status:"近似",
+desc:"重複的文字列覆蓋整個畫面，再收斂到主標題。",how:"可作為標題序幕；文字列左右交錯滑入，主標最後彈出。",cmd:HF("mk-clone-wall-transition"),
+pv:`<div class="a" style="inset:-6% -12%;display:grid;gap:1.2cqw;rotate:-6deg">${[0,1,2,3,4,5,6].map(i=>`<div class="mono ${i%2?"a-right":"a-left"}" style="font-size:5cqw;font-weight:600;white-space:nowrap;color:${i==3?"#F5B800":"rgba(255,255,255,.16)"};--dl:${i*.08}s">AI WORKFLOW · AI WORKFLOW · AI WORKFLOW</div>`).join("")}</div><div class="c mid h a-pop" style="font-size:8cqw;--dl:.6s;text-shadow:0 .5cqw 2cqw rgba(0,0,0,.8)">AI 工作流</div>`},
+{id:"H02",src:"hf",zh:"破框而出",code:"去背層（14.5）",cat:"person",st:["hook"],status:"已有流程",
+desc:"人物的頭部或肩膀跨出框線，製造立體感。",how:"先去背取得 subject.webm，框線放在人物後方，讓頭部超出上緣；字幕仍在最上層。",cmd:"npx hyperframes remove-background talk.mp4 -o assets/subject.webm -b assets/bg-plate.webm --quality best --json",
+pv:`${ROOM}<div class="a" style="left:30%;right:30%;top:36%;bottom:-2%;border:.7cqw solid var(--st-a)"></div><div class="a h a-left" style="left:5%;top:40%;font-size:4cqw;line-height:1.3">主體<br><span class="gold">跨出邊界</span></div>${M("--mw:34cqw","a-up")}`},
+{id:"H03",src:"hf",zh:"雜誌封面",code:"caption-editorial-emphasis",cat:"person",st:["value","chap"],status:"已有流程",
+desc:"實拍人物搭配刊頭、大小字混排與閃光切換。",how:"組合 caption-editorial-emphasis、freeze-frame-dressing、editorial-flash-overlay；閃光切入只用一次。",cmd:[HF("caption-editorial-emphasis"),HF("freeze-frame-dressing"),HF("editorial-flash-overlay")].join("\n"),
+pv:`<div class="a" style="inset:0;background:#E9E4DA"></div><div class="c serif" style="top:3%;font-size:13cqw;font-weight:900;color:#B23A2E;letter-spacing:.06em;z-index:1">FOCUS</div>${M("--mw:30cqw")}<div class="a a-left" style="left:5%;top:52%;z-index:3"><span class="chip">AI 特輯</span></div><div class="a h a-right" style="right:5%;top:60%;font-size:3.6cqw;color:#14171C;text-align:right;z-index:3;--dl:.2s">一人公司<br>的工作流</div><div class="a a-flash" style="inset:0;background:#fff;z-index:4"></div>`},
+{id:"H04",src:"hf",zh:"環繞字",code:"規格實作",cat:"person",st:["value"],status:"規格",
+desc:"文字沿圓弧環繞在人物頭部周圍旋轉。",how:"沿用特效庫 F19 的圓形路徑，圓心對齊頭部；目錄無現成元件，需依規格自建。",
+pv:`${ROOM}${M("--mw:28cqw")}<svg class="a a-spin" viewBox="0 0 100 100" style="left:50%;top:6cqw;width:30cqw;height:30cqw;margin-left:-15cqw;z-index:3;--S:10s"><defs><path id="rpH04" d="M50 50 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"/></defs><text font-size="8.6" fill="#F5B800" font-weight="900" letter-spacing="3"><textPath href="#rpH04">AI 教學 · 一分鐘 · 學會一招 ·</textPath></text></svg>`},
+{id:"H05",src:"hf",zh:"綠幕換景",code:"remove-background（14.4）",cat:"person",st:["step","hook"],status:"已有流程",
+desc:"不需綠幕，直接把實拍人物放到另一個背景。",how:"AI 去背後疊在新背景上；頭髮邊緣有殘留時改輸出 ProRes 4444 的 .mov。",cmd:"npx hyperframes remove-background talk.mp4 -o assets/subject.webm --quality best --json",
+pv:`<div class="a scene a-first" style="inset:0"></div><div class="a scene city a-second" style="inset:0"></div>${M("--mw:30cqw")}<div class="a mono" style="left:4%;top:5%;font-size:1.8cqw;background:rgba(0,0,0,.5);padding:.6cqw 1.2cqw;border-radius:.6cqw;z-index:3">NO GREEN SCREEN</div>`},
+{id:"H06",src:"hf",zh:"碎紙拼貼",code:"paper-collage-reveal",cat:"trans",st:["chap","cta"],status:"已存在",
+desc:"撕碎的紙片拼貼覆蓋畫面，飛散後揭出內容。",how:"適合章節卡與結尾；紙片顏色沿用主題色。",cmd:HF("paper-collage-reveal"),
+pv:`${[[4,6,-8,"#FBFAF6"],[34,2,5,"#F5B800"],[64,8,-4,"#E8E2D4"],[6,50,6,"#F5B800"],[38,46,-6,"#FBFAF6"],[66,52,8,"#E8E2D4"]].map(p=>`<div class="a a-out" style="left:${p[0]}%;top:${p[1]}%;width:34%;height:48%;background:${p[3]};rotate:${p[2]}deg;--ox:${p[0]<30?-140:p[0]>50?140:0}%;--os:.5;box-shadow:0 .6cqw 1.6cqw rgba(0,0,0,.3);z-index:2"></div>`).join("")}<div class="c mid h a-in" style="font-size:8cqw">第二章</div>`},
+{id:"H07",src:"hf",zh:"鏤空字",code:"svg-stroke-trace",cat:"text",st:["hook","chap"],status:"近似",
+desc:"只有外框的文字，描邊沿路徑畫出。",how:"需先把文字輪廓轉成路徑，再以 svg-stroke-trace 描邊。",cmd:HF("svg-stroke-trace"),
+pv:`<svg class="a" viewBox="0 0 160 90" style="inset:0;width:100%;height:100%"><text x="80" y="58" text-anchor="middle" font-size="36" font-weight="900" font-family="Noto Sans TC,sans-serif" fill="none" stroke="#F5B800" stroke-width=".9" class="a-draw" style="--len:320">鏤空標題</text></svg>`},
+{id:"H08",src:"hf",zh:"貼紙輪播",code:"carousel-orbit-2",cat:"ui",st:["step","value"],status:"近似",
+desc:"圖片卡以貼紙風格在 3D 環上輪播。",how:"以 carousel-orbit-2 或 cuboid-carousel 為基礎，貼紙白邊與陰影需自訂樣式。",cmd:[HF("carousel-orbit-2"),HF("cuboid-carousel")].join("\n"),
+pv:`<div class="a" style="left:50%;top:50%;width:0;height:0;perspective:90cqw"><div class="a-ring3d" style="position:relative;--S:9s">${[["Claude","#F5B800"],["Gemini","#8FB0F5"],["Notion","#FFFFFF"],["Canva","#7FD6C2"],["Sheets","#9BE39B"],["GPT","#F3B0C3"]].map((s,i)=>`<div style="position:absolute;left:-8cqw;top:-8cqw;width:16cqw;height:16cqw;border-radius:2cqw;background:${s[1]};border:.7cqw solid #fff;transform:rotateY(${i*60}deg) translateZ(22cqw);display:grid;place-items:center;font-weight:900;font-size:2.4cqw;color:#14171C;box-shadow:0 .6cqw 1.4cqw rgba(0,0,0,.35)">${s[0]}</div>`).join("")}</div></div>`},
+{id:"H09",src:"hf",zh:"手繪塗鴉",code:"hw-underline · hw-arrow · hw-frame",cat:"draw",st:["step","cta"],status:"已存在",
+desc:"手繪底線、箭頭與框線依序畫出。",how:"三種元件可單獨或組合使用；同一畫面不超過 3 筆。",cmd:[HF("hw-underline"),HF("hw-arrow"),HF("hw-frame")].join("\n"),
+pv:`<div class="c" style="top:31%;font-size:6cqw;font-weight:900">先驗收，再交付</div><svg class="a" viewBox="0 0 160 90" style="inset:0;width:100%;height:100%"><path class="a-draw" pathLength="1" d="M44 48 C 60 51, 80 45, 98 49" stroke="#F5B800" stroke-width="1.6" fill="none" stroke-linecap="round"/><path class="a-draw" pathLength="1" d="M36 76 C 46 68, 54 62, 64 57 M64 57 l-7 0 M64 57 l-3 6" stroke="#fff" stroke-width="1.2" fill="none" stroke-linecap="round" style="--dl:.5s"/><path class="a-draw" pathLength="1" d="M24 22 L136 20 L138 54 L22 56 Z" stroke="#E2553F" stroke-width="1" fill="none" stroke-linejoin="round" style="--dl:1s"/></svg>`},
+{id:"H10",src:"hf",zh:"玻璃字",code:"glass-shard-title",cat:"text",st:["value","cta"],status:"已存在",
+desc:"玻璃碎片從四周飛入，拼合成標題。",how:"適合承諾與價值段落、結尾；碎片數量不宜過多。",cmd:HF("glass-shard-title"),
+pv:`${[[18,24,-80,"polygon(0 0,100% 20%,40% 100%)"],[40,18,0,"polygon(10% 0,100% 0,60% 100%)"],[62,26,80,"polygon(0 30%,100% 0,80% 100%)"],[24,50,-90,"polygon(0 0,100% 40%,20% 100%)"],[48,54,60,"polygon(30% 0,100% 60%,0 100%)"]].map((s,i)=>`<i class="a a-in" style="left:${s[0]}%;top:${s[1]}%;width:22%;height:26%;background:linear-gradient(135deg,rgba(255,255,255,.5),rgba(140,190,255,.15));border:1px solid rgba(255,255,255,.6);clip-path:${s[3]};--ix:${s[2]}%;--is:1.6"></i>`).join("")}<div class="c mid h a-in" style="font-size:8cqw;color:#DDEBFF;text-shadow:0 0 2cqw rgba(140,190,255,.8);--dl:.3s">透明工作流</div>`},
+{id:"H11",src:"hf",zh:"收據列印",code:"the-bill（X08）",cat:"data",st:["data"],status:"改用外部",
+desc:"成果以收據列印的方式逐行吐出。",how:"建議改用外部 51 式第 8 項 the-bill；與 X08 二選一，不要同時使用。",cmd:FX("the-bill",'--text "剪輯 4 支|字幕 12 份|省下 9 小時"'),
+pv:`<i class="a" style="left:30%;right:30%;top:0;height:3%;background:#0A1222;z-index:2"></i><div class="a" style="left:35%;width:30%;top:2%;height:80%"><div class="a-sy" style="background:var(--st-paper);color:#14171C;height:100%;padding:2.4cqw;font-family:var(--f-mono);font-size:1.9cqw;display:grid;gap:1.4cqw;align-content:start;clip-path:polygon(0 0,100% 0,100% 96%,95% 100%,90% 96%,85% 100%,80% 96%,75% 100%,70% 96%,65% 100%,60% 96%,55% 100%,50% 96%,45% 100%,40% 96%,35% 100%,30% 96%,25% 100%,20% 96%,15% 100%,10% 96%,5% 100%,0 96%)"><b style="text-align:center;font-size:2.4cqw">本週成果</b><span>剪輯 ........ 4</span><span>字幕 ....... 12</span><span>省下 ...... 9h</span><span style="border-top:1px dashed #999;padding-top:1cqw;font-weight:600">TOTAL ..... OK</span></div></div>`},
+{id:"H12",src:"hf",zh:"拉遠揭曉",code:"pull-back-reveal",cat:"data",st:["data","hook"],status:"已存在",
+desc:"鏡頭從特寫拉遠，揭示完整畫面與標題。",how:"適合數據結果與開場；拉遠過程約 1 秒。",cmd:HF("pull-back-reveal"),
+pv:`<div class="a a-pull" style="inset:0;transform-origin:62% 46%"><div class="a scene sun" style="left:30%;right:30%;top:16%;bottom:30%;border:.6cqw solid #fff;border-radius:1cqw;overflow:hidden"></div><div class="c h" style="top:74%;font-size:4.4cqw">完整成果在這裡</div></div>`},
+
+/* ================= 去背與轉場 ================= */
+{id:"B01",src:"hfx",zh:"字躲到人後面",code:"caption-parallax-layers",cat:"person",st:["hook","chap"],status:"已有流程",
+desc:"大字標題放在人物後方，人物站在字的前面，形成景深。",how:"合成順序由下到上：背景層、文字層、人物前景；文字在頭部或肩線處被遮擋。",cmd:"npx hyperframes remove-background talk.mp4 -o assets/subject.webm -b assets/bg-plate.webm --quality best --json\n"+HF("caption-parallax-layers"),
+pv:`${ROOM}<div class="c h a-drop" style="top:10%;font-size:22cqw;color:var(--st-a);z-index:1;letter-spacing:.04em">效率</div>${M("--mw:30cqw")}`},
+{id:"B02",src:"hfx",zh:"手機畫面",code:"device-frame-stage",cat:"ui",st:["step"],status:"已有流程",
+desc:"把截圖放進手機框，說明手機版操作或 App 介面。",how:"單一手機用 device-frame-stage；多裝置並列用 multi-device-splay；推入螢幕用 parallax-device-dive。截圖先遮罩個資。",cmd:[HF("device-frame-stage"),HF("multi-device-splay"),HF("parallax-device-dive")].join("\n"),
+pv:`<div class="a h a-left" style="left:8%;top:38%;font-size:4cqw;line-height:1.35">App 操作<br><span class="gold">一步一步看</span></div><div class="a a-up" style="left:56%;top:4%;width:25cqw;height:50cqw;background:#0A0F1A;border-radius:3.6cqw;padding:1cqw;box-shadow:0 2cqw 4cqw rgba(0,0,0,.5)"><div style="position:relative;height:100%;border-radius:2.8cqw;overflow:hidden;background:#F3F5F8"><div class="a-scroll" style="padding:2cqw;display:grid;gap:1.4cqw">${[0,1,2,3,4,5].map(i=>`<div style="background:#fff;border-radius:1cqw;padding:1.4cqw;display:grid;gap:.8cqw;box-shadow:0 .2cqw .6cqw rgba(0,0,0,.08)"><i style="width:${i%2?50:70}%;height:1cqw;border-radius:1cqw;background:${i==2?"var(--st-a)":"#C9D1DC"}"></i><i style="width:90%;height:1cqw;border-radius:1cqw;background:#E3E8EF"></i></div>`).join("")}</div></div></div>`},
+{id:"T01",src:"hfx",zh:"模糊轉場",code:"transitions-blur",cat:"trans",st:["step"],status:"已存在",
+desc:"前一段模糊淡出，下一段由模糊轉清楚。",how:"一般段落切換的預設選擇；同一支影片的轉場風格保持一致。",cmd:HF("transitions-blur"),
+pv:`<div class="a scene a-out" style="inset:0;--ob:2cqw"></div><div class="a scene sun a-in" style="inset:0;--ib:2cqw"></div><div class="a mono" style="left:4%;top:5%;font-size:1.8cqw;color:#14171C">BLUR</div>`},
+{id:"T02",src:"hfx",zh:"電影式推近",code:"cinematic-zoom",cat:"trans",st:["chap","hook"],status:"已存在",
+desc:"鏡頭快速推近後切入下一段。",how:"用於章節或重點段落開始。",cmd:HF("cinematic-zoom"),
+pv:`<div class="a scene a-out" style="inset:0;--os:1.8"></div><div class="a scene city a-in" style="inset:0;--is:.85"></div><div class="a mono" style="left:4%;top:5%;font-size:1.8cqw">ZOOM</div>`},
+{id:"T03",src:"hfx",zh:"穿越轉場",code:"zoom-through-transition",cat:"trans",st:["chap","step"],status:"已存在",
+desc:"鏡頭穿過一張卡片，進入下一段。",how:"適合由概念卡片進入實際操作畫面。",cmd:HF("zoom-through-transition"),
+pv:`<div class="a scene city a-in" style="inset:0;--is:1.3"></div><div class="a box a-out" style="left:34%;right:34%;top:30%;bottom:30%;background:var(--st-a);color:#14171C;display:grid;place-items:center;font-weight:900;font-size:3.6cqw;--os:7">進入實作</div>`},
+{id:"T04",src:"hfx",zh:"匹配剪接",code:"match-cut",cat:"trans",st:["chap","value"],status:"已存在",
+desc:"以相同形狀接續兩個畫面，例如圓形接圓形。",how:"兩段畫面中的主形狀位置與大小一致，切換時只換內容。",cmd:HF("match-cut"),
+pv:`<div class="a a-first" style="inset:0;background:#0E1B33"></div><div class="a a-second" style="inset:0;background:#F3EDE2"></div><i class="a a-first" style="left:50%;top:50%;width:24cqw;height:24cqw;margin:-12cqw 0 0 -12cqw;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFF6CC,#F5B800)"></i><div class="a a-second" style="left:50%;top:50%;width:24cqw;height:24cqw;margin:-12cqw 0 0 -12cqw;border-radius:50%;background:#fff;border:.8cqw solid #14171C"><i style="position:absolute;left:50%;top:18%;width:.8cqw;height:32%;margin-left:-.4cqw;background:#14171C"></i><i style="position:absolute;left:50%;top:50%;width:28%;height:.8cqw;margin-top:-.4cqw;background:#14171C"></i></div>`},
+{id:"T05",src:"hfx",zh:"速度匹配硬切",code:"cut-the-curve",cat:"trans",st:["step"],status:"已存在",
+desc:"主體運動方向連續時，以速度感硬切到下一段。",how:"兩段畫面的運動方向一致，切點落在速度最快的瞬間。",cmd:HF("cut-the-curve"),
+pv:`<div class="a scene a-out" style="inset:0;--ox:-60%;--ob:1.6cqw"></div><div class="a scene sun a-in" style="inset:0;--ix:60%;--ib:1.6cqw"></div><div class="a mono" style="left:4%;top:5%;font-size:1.8cqw;color:#14171C">WHIP →</div>`},
+
+/* ================= 外部 51 式 ================= */
+{id:"X01",src:"ext",zh:"影像堆疊",code:"noise",cat:"person",st:["hook"],status:"外部包",
+desc:"圖片在人物頭後快速堆疊，每 0.25 秒出現一張。",how:"選項 images、size；圖片主題要與旁白一致。",cmd:FX("noise","--opt images=a.jpg,b.jpg"),
+pv:`${ROOM}${[[14,8,-8,""],[60,4,6,"sun"],[34,2,3,"city"],[66,26,-5,""],[10,30,7,"sun"],[48,14,-3,"city"]].map((p,i)=>`<div class="a scene ${p[3]} a-pop" style="left:${p[0]}%;top:${p[1]}%;width:24cqw;height:15cqw;rotate:${p[2]}deg;border:.5cqw solid #fff;--dl:${i*.25}s;z-index:1;overflow:hidden"></div>`).join("")}${M("--mw:28cqw")}`},
+{id:"X02",src:"ext",zh:"弧形排列",code:"lineup",cat:"list",st:["value","step"],status:"外部包",
+desc:"編號方塊在頭上方排成弧形。",how:"text 以 | 分隔，每項一個方塊。",cmd:FX("lineup",'--text "選題|腳本|錄音|剪輯|上架"'),
+pv:`${ROOM}${M("--mw:26cqw")}${["選題","腳本","錄音","剪輯","上架"].map((t,i)=>`<div class="a a-pop" style="left:${[10,26,42,58,74][i]}%;top:${[30,14,6,14,30][i]}%;width:16%;--dl:${i*.2}s;z-index:3;background:#fff;color:#14171C;border-radius:1cqw;padding:1cqw;text-align:center;font-weight:900;font-size:2.4cqw;box-shadow:0 .6cqw 1.4cqw rgba(0,0,0,.35)"><span class="mono" style="display:block;font-size:1.6cqw;color:#8A6400">0${i+1}</span>${t}</div>`).join("")}`},
+{id:"X03",src:"ext",zh:"臉部鎖定",code:"locked-on",cat:"person",st:["hook"],status:"外部包",
+desc:"角落括弧吸附在臉部，鏡頭跟著推近。",how:"zoom 預設 1.35；效果等級小，重疊時優先排在前面。",cmd:FX("locked-on","--opt zoom=1.35"),
+pv:`<div class="a a-zoom" style="inset:0;--z:1.35;transform-origin:50% 45%">${ROOM}${M("--mw:26cqw")}<div class="a" style="left:41%;top:32%;width:18%;height:30%;z-index:3">${["left:0;top:0;border-width:.5cqw 0 0 .5cqw","right:0;top:0;border-width:.5cqw .5cqw 0 0","left:0;bottom:0;border-width:0 0 .5cqw .5cqw","right:0;bottom:0;border-width:0 .5cqw .5cqw 0"].map(s=>`<i class="a" style="${s};width:3cqw;height:3cqw;border-style:solid;border-color:var(--st-a)"></i>`).join("")}</div></div><div class="a mono" style="left:4%;top:5%;font-size:1.8cqw;color:var(--st-a)">● LOCKED</div>`},
+{id:"X04",src:"ext",zh:"環繞軌道",code:"orbit",cat:"person",st:["hook","value"],status:"外部包",
+desc:"圖片在頭部周圍繞行，經過前方時擋住人物、繞到後方時被遮住。",how:"選項 images、count、speed、size。",cmd:FX("orbit","--opt count=6"),
+pv:`${ROOM}<div class="a" style="inset:0;perspective:110cqw;transform-style:preserve-3d">${M("--mw:28cqw")}<div class="a" style="left:50%;top:30%;width:0;height:0;transform-style:preserve-3d;rotate:x -8deg"><div class="a-ring3d" style="position:relative;--S:6s">${["","sun","city","","sun","city"].map((c,i)=>`<div class="scene ${c}" style="position:absolute;left:-6cqw;top:-4cqw;width:12cqw;height:8cqw;border:.4cqw solid #fff;border-radius:.6cqw;overflow:hidden;transform:rotateY(${i*60}deg) translateZ(22cqw)"></div>`).join("")}</div></div></div>`},
+{id:"X05",src:"ext",zh:"快速推近",code:"lean-in",cat:"trans",st:["hook","value"],status:"外部包",
+desc:"講到一個詞時，鏡頭快速推近。",how:"zoom 預設 1.45，最大 2；效果等級小，適合穿插。",cmd:FX("lean-in","--opt zoom=1.45"),
+pv:`<div class="a a-zoom" style="inset:0;--z:1.45;transform-origin:50% 40%">${ROOM}${M("--mw:28cqw")}</div><div class="c h a-pop" style="top:72%;font-size:5cqw;z-index:3;--dl:.4s">就是<span class="gold">現在</span></div>`},
+{id:"X06",src:"ext",zh:"背後巨字",code:"backdrop-word",cat:"text",st:["hook","chap"],status:"外部包",
+desc:"巨大文字落入人物背後。",how:"選項 text、color、font（bold 或 serif）。與 B01 效果相近，二選一。",cmd:FX("backdrop-word",'--text "CLAUDE" --opt font=bold'),
+pv:`${ROOM}<div class="c h a-drop" style="top:12%;font-size:15cqw;color:#fff;z-index:1;letter-spacing:.02em">CLAUDE</div>${M("--mw:28cqw")}`},
+{id:"X07",src:"ext",zh:"聚光燈",code:"spotlight",cat:"grade",st:["hook","chap"],status:"外部包",
+desc:"周圍變暗，只保留人物打光，搭配標題。",how:"選項 text、color、push；look=sparkle 為閃光外觀版。",cmd:FX("spotlight",'--text "重點來了"'),
+pv:`${ROOM}${M("--mw:28cqw")}<div class="a a-fade" style="inset:0;z-index:3;background:radial-gradient(ellipse 20cqw 26cqw at 50% 66%,transparent 55%,rgba(0,0,0,.88))"></div><div class="c h a-up" style="top:10%;font-size:5.4cqw;z-index:4;--dl:.3s">重點來了</div>`},
+{id:"X08",src:"ext",zh:"收據列印",code:"the-bill",cat:"list",st:["data","value"],status:"外部包",
+desc:"收據從人物頭上方的牆面列印出來。",how:"text 以 | 分隔，每項一行；別名 bill。",cmd:FX("the-bill",'--text "剪輯 4 支|字幕 12 份|省下 9 小時"'),
+pv:`${ROOM}${M("--mw:24cqw")}<i class="a" style="left:58%;width:26%;top:4%;height:2.4%;background:#0A1222;z-index:3"></i><div class="a" style="left:60%;width:22%;top:6%;height:56%;z-index:3"><div class="a-sy" style="background:var(--st-paper);color:#14171C;height:100%;padding:1.6cqw;font-family:var(--f-mono);font-size:1.5cqw;display:grid;gap:1cqw;align-content:start"><b style="text-align:center">RECEIPT</b><span>剪輯 ... 4</span><span>字幕 .. 12</span><span>省下 .. 9h</span></div></div>`},
+{id:"X09",src:"ext",zh:"氛圍調色",code:"moody",cat:"grade",st:["hook","chap"],status:"外部包",
+desc:"整段套上氛圍調色。",how:"grade 可選 moody、bw、warm、cool、pop。",cmd:FX("moody","--opt grade=moody"),
+pv:`<div class="a a-grade" style="inset:0"><div class="a scene sun" style="inset:0"></div>${M("--mw:28cqw")}</div><div class="a mono" style="left:4%;top:5%;font-size:1.7cqw;background:rgba(0,0,0,.5);padding:.5cqw 1cqw;border-radius:.5cqw">moody · bw · warm · cool · pop</div>`},
+{id:"X10",src:"ext",zh:"前後對比滑桿",code:"swipe",cat:"grade",st:["value","data"],status:"外部包",
+desc:"對比滑桿掃過畫面，呈現調色前後差異。",how:"選項 grade，指定滑桿另一側的調色。",cmd:FX("swipe","--opt grade=pop"),
+pv:`<div class="a scene sun" style="inset:0"></div>${M("--mw:28cqw")}<div class="a a-swipe" style="inset:0;z-index:3;filter:grayscale(1) contrast(1.1)"><div class="a scene sun" style="inset:0"></div>${M("--mw:28cqw")}</div><i class="a a-handle" style="top:0;bottom:0;width:.5cqw;background:#fff;z-index:4;box-shadow:0 0 1cqw rgba(0,0,0,.4)"></i>`},
+{id:"X11",src:"ext",zh:"待辦清單",code:"todo",cat:"list",st:["step"],status:"外部包",
+desc:"清單卡放在人物旁，講到哪一項就勾哪一項。",how:"選項 text、ticks、title；別名 to-do。",cmd:FX("todo",'--text "開啟設定|貼上金鑰|測試連線" --opt title=今日步驟'),
+pv:`${ROOM}<div style="position:absolute;inset:0;left:22%">${M("--mw:26cqw")}</div><div class="a card2 a-left" style="left:5%;top:16%;width:38%;padding:2.4cqw;z-index:3"><b style="font-size:2.6cqw">今日步驟</b><div style="display:grid;gap:1.6cqw;margin-top:1.6cqw;font-size:2.2cqw">${["開啟設定","貼上金鑰","測試連線"].map((t,i)=>`<div style="display:flex;gap:1.2cqw;align-items:center"><span style="width:3cqw;height:3cqw;border:.3cqw solid #1B1F24;border-radius:.6cqw;display:grid;place-items:center"><b class="a-pop" style="--dl:${.4+i*.5}s;color:#1F8A4C;display:inline-block">✓</b></span>${t}</div>`).join("")}</div></div>`},
+{id:"X12",src:"ext",zh:"留言輸入",code:"comment-box",cat:"cta",st:["cta"],status:"外部包",
+desc:"社群留言列打出文字並送出。",how:"選項 text，放在影片結尾引導留言。",cmd:FX("comment-box",'--text "我想學這招"'),
+pv:`${ROOM}${M("--mw:28cqw")}<div class="a a-up" style="left:12%;right:12%;bottom:8%;z-index:3;background:#fff;color:#1B1F24;border-radius:6cqw;padding:1.6cqw 2.4cqw;display:flex;align-items:center;gap:1.6cqw;font-size:2.6cqw"><i style="width:4.4cqw;height:4.4cqw;border-radius:50%;background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF);flex:none"></i><span style="flex:1"><span class="a-type" style="--n:5;--dl:.3s">我想學這招</span></span><b style="color:#3897F0">送出</b></div>`},
+{id:"X13",src:"ext",zh:"追蹤按鈕",code:"tap",cat:"cta",st:["cta"],status:"外部包",
+desc:"追蹤按鈕彈出，按下後翻成已追蹤。",how:"選項 at、x、y、color；別名 follow。",cmd:FX("tap","--opt at=1.0"),
+pv:`${ROOM}${M("--mw:28cqw")}<div class="a a-pop" style="left:62%;top:58%;z-index:3"><span class="a-first" style="display:inline-block;background:#3897F0;color:#fff;font-weight:900;font-size:3cqw;padding:1.2cqw 3.6cqw;border-radius:1cqw">追蹤</span><span class="a-second" style="position:absolute;left:0;top:0;white-space:nowrap;background:#EFEFEF;color:#1B1F24;font-weight:900;font-size:3cqw;padding:1.2cqw 2.4cqw;border-radius:1cqw">已追蹤 ✓</span></div>`},
+{id:"X14",src:"ext",zh:"定格指示",code:"pause-point",cat:"draw",st:["hook","value"],status:"外部包",
+desc:"畫面定格，手繪箭頭指向人物並加上說明。",how:"選項 text、color、label_x；別名 pause。",cmd:FX("pause-point",'--text "這是我"'),
+pv:`<div class="a" style="inset:0;filter:saturate(.4) brightness(.85)">${ROOM}${M("--mw:28cqw")}</div><div class="a mono a-fade" style="left:4%;top:5%;font-size:2cqw">❚❚ PAUSE</div><svg class="a" viewBox="0 0 160 90" style="inset:0;width:100%;height:100%;z-index:3"><path class="a-draw" pathLength="1" d="M124 24 C 112 20, 100 26, 92 36 M92 36 l2 -7 M92 36 l7 -1" stroke="#F5B800" stroke-width="1.6" fill="none" stroke-linecap="round" style="--dl:.3s"/></svg><div class="a h gold a-fade serif" style="right:6%;top:14%;font-size:3.6cqw;z-index:3;--dl:.6s;rotate:-4deg">這是我</div>`},
+{id:"X15",src:"ext",zh:"故障卸載",code:"uninstall",cat:"trans",st:["value","chap"],status:"外部包",
+desc:"卸載進度條跑完後，畫面以故障方式破碎。",how:"選項 text，例如「解除安裝舊習慣」。",cmd:FX("uninstall",'--text "解除安裝舊習慣"'),
+pv:`<div class="a a-glitch" style="inset:0;--dl:.6s">${ROOM}${M("--mw:28cqw")}</div><div class="a" style="left:18%;right:18%;top:12%;z-index:3;background:rgba(10,15,26,.85);border:1px solid rgba(255,255,255,.2);border-radius:1cqw;padding:1.8cqw"><div style="font-size:2.2cqw;margin-bottom:1.2cqw">解除安裝舊習慣…</div><div style="height:1.6cqw;background:rgba(255,255,255,.15);border-radius:1cqw;overflow:hidden"><i class="a-sx" style="display:block;height:100%;background:var(--st-r)"></i></div></div>`},
+{id:"X16",src:"ext",zh:"Reel 卡片",code:"reel-frame",cat:"ui",st:["cta","hook"],status:"外部包",
+desc:"影片縮小成社群 Reel 卡片，下方顯示帳號。",how:"選項 text 填入帳號名稱。",cmd:FX("reel-frame",'--text "@J3M_AI"'),
+pv:`<div class="a" style="inset:0;background:linear-gradient(135deg,#1B2B4A,#0A1222)"></div><div class="a a-shrink" style="inset:0;overflow:hidden">${ROOM}${M("--mw:28cqw")}</div><div class="c mono a-fade" style="bottom:4%;font-size:2.2cqw;--dl:.6s">@J3M_AI · ♥ 1.2K</div>`},
+{id:"X17",src:"ext",zh:"快捷鍵雨",code:"shortcut-rain",cat:"text",st:["hook","step"],status:"外部包",
+desc:"鍵盤按鍵從上方落下，作為標題背景。",how:"text 以 | 分隔按鍵名稱，count 控制數量；別名 rain。",cmd:FX("shortcut-rain",'--text "⌘|C|V|Z|⇧" --opt count=12'),
+pv:`${ROOM}${["⌘","C","V","Z","⇧","K","⌥","S"].map((k,i)=>`<span class="a a-drop mono" style="left:${6+i*11.5}%;top:${[8,22,4,30,12,26,6,18][i]}%;--dl:${i*.18}s;z-index:1;width:7cqw;height:7cqw;background:#F3F5F8;color:#1B1F24;border-radius:1.2cqw;border-bottom:.8cqw solid #B9C2CF;display:grid;place-items:center;font-size:3.2cqw;font-weight:600">${k}</span>`).join("")}${M("--mw:26cqw")}`},
+{id:"X18",src:"ext",zh:"退件印章",code:"reject-stamp",cat:"emph",st:["value"],status:"外部包",
+desc:"紅色大印章重重蓋在畫面上。",how:"選項 text、color、angle、y；別名 stamp。",cmd:FX("reject-stamp",'--text "退件" --opt angle=-12'),
+pv:`${ROOM}${M("--mw:28cqw")}<div class="a a-stamp serif" style="left:50%;top:50%;margin:-7cqw 0 0 -18cqw;width:36cqw;height:14cqw;border:.9cqw solid var(--st-r);color:var(--st-r);display:grid;place-items:center;font-size:9cqw;font-weight:900;letter-spacing:.2em;rotate:-12deg;z-index:3;background:rgba(255,255,255,.08)">退件</div>`},
+{id:"X19",src:"ext",zh:"翻牌倒數",code:"countdown-flip",cat:"data",st:["hook"],status:"外部包",
+desc:"3、2、1 翻牌時鐘倒數。",how:"選項 from 設定起始數字；別名 countdown。",cmd:FX("countdown-flip","--opt from=3"),
+pv:`<div class="a" style="left:50%;top:50%;width:24cqw;height:30cqw;margin:-15cqw 0 0 -12cqw;perspective:60cqw">${[3,2,1].map((n,i)=>`<div class="a a-third mono" style="inset:0;--dl:calc(var(--T) * ${i} / 3);background:#1B1F24;border-radius:2cqw;display:grid;place-items:center;font-size:20cqw;font-weight:600;color:#fff;box-shadow:inset 0 -.3cqw 0 rgba(255,255,255,.1),0 1.6cqw 3cqw rgba(0,0,0,.5);transform-origin:center top">${n}</div>`).join("")}<i class="a" style="left:0;right:0;top:50%;height:.3cqw;background:#0A0F1A;z-index:2"></i></div>`},
+{id:"X20",src:"ext",zh:"兔子洞",code:"rabbit-hole",cat:"trans",st:["chap","hook"],status:"外部包",
+desc:"畫面向內旋轉，像穿越隧道。",how:"選項 ratio、speed、spin。",cmd:FX("rabbit-hole","--opt spin=1"),
+pv:`<div class="a" style="inset:0;background:#0A0F1A"></div>${[0,1,2,3,4,5].map(i=>`<i class="a a-tunnel" style="left:50%;top:50%;width:80cqw;height:45cqw;margin:-22.5cqw 0 0 -40cqw;border:.6cqw solid ${i%2?"#F5B800":"#4C8DFF"};border-radius:2cqw;--dl:${-i*.4}s"></i>`).join("")}`},
+{id:"X21",src:"ext",zh:"封面人物",code:"cover-star",cat:"person",st:["hook","chap"],status:"外部包",
+desc:"人物化為雜誌封面主角，標題在頭部後方。",how:"選項 text、lines、issue、color；look=editorial 為外觀版。與 H03 近似，二選一。",cmd:FX("cover-star",'--text "AI 人物誌" --opt issue=12'),
+pv:`<div class="a" style="inset:0;background:var(--st-a)"></div><div class="c h" style="top:4%;font-size:14cqw;color:#fff;z-index:1;letter-spacing:.02em">AI 人物誌</div>${M("--mw:30cqw")}<div class="a mono a-fade" style="left:5%;top:72%;font-size:1.8cqw;color:#14171C;z-index:3">ISSUE 12<br>2026 · NOV</div><div class="a h a-right" style="right:5%;top:62%;font-size:3cqw;color:#14171C;z-index:3;text-align:right">用 AI 經營<br>一人品牌</div>`},
+{id:"X22",src:"ext",zh:"彩色塗鴉",code:"scribble",cat:"draw",st:["hook","cta"],status:"外部包",
+desc:"彩色筆跡的塗鴉自動畫在人物周圍。",how:"選項 text、color。",cmd:FX("scribble",'--text "新手必看"'),
+pv:`${ROOM}${M("--mw:28cqw")}<svg class="a" viewBox="0 0 160 90" style="inset:0;width:100%;height:100%;z-index:3"><path class="a-draw" pathLength="1" d="M40 30 l4 -10 l4 10 l10 1 l-8 6 l3 10 l-9 -6 l-9 6 l3 -10 l-8 -6 z" stroke="#F5B800" stroke-width="1.4" fill="none" stroke-linejoin="round"/><path class="a-draw" pathLength="1" d="M110 20 c 10 -6, 22 4, 12 12 c -8 6, -18 -2, -8 -8 c 6 -4, 14 2, 8 6" stroke="#FF6FB5" stroke-width="1.4" fill="none" style="--dl:.3s"/><path class="a-draw" pathLength="1" d="M104 62 C 112 58, 122 66, 134 60" stroke="#4CD7F5" stroke-width="1.6" fill="none" stroke-linecap="round" style="--dl:.6s"/></svg><div class="a h a-fade" style="left:66%;top:44%;font-size:3cqw;color:#4CD7F5;z-index:3;--dl:.8s;rotate:-6deg">新手必看</div>`},
+{id:"X23",src:"ext",zh:"玻璃小元件",code:"glass-widgets",cat:"ui",st:["value","data"],status:"外部包",
+desc:"磨砂玻璃質感的小元件浮在頭部旁邊。",how:"選項 text、name、handle、look。",cmd:FX("glass-widgets",'--opt name=J3M --opt handle=@J3M_AI'),
+pv:`<div class="a scene sun" style="inset:0"></div>${M("--mw:28cqw")}<div class="a a-pop" style="left:6%;top:16%;width:30%;z-index:3"><div class="a-float" style="background:rgba(255,255,255,.28);backdrop-filter:blur(1.4cqw);-webkit-backdrop-filter:blur(1.4cqw);border:1px solid rgba(255,255,255,.6);border-radius:2cqw;padding:2cqw;color:#14171C"><b style="font-size:2.4cqw">J3M</b><div style="font-size:1.8cqw">@J3M_AI</div></div></div><div class="a a-pop" style="right:6%;top:30%;width:26%;z-index:3;--dl:.4s"><div class="a-float" style="background:rgba(255,255,255,.28);backdrop-filter:blur(1.4cqw);-webkit-backdrop-filter:blur(1.4cqw);border:1px solid rgba(255,255,255,.6);border-radius:2cqw;padding:2cqw;color:#14171C;--dl:.3s"><div style="font-size:1.6cqw">本週觀看</div><b class="mono" style="font-size:3.4cqw">+38%</b></div></div>`},
+{id:"X24",src:"ext",zh:"紅字拼貼",code:"red-collage",cat:"text",st:["hook","chap"],status:"外部包",
+desc:"黑白人物搭配巨大紅字。",how:"選項 text、lines、tag。",cmd:FX("red-collage",'--text "專注" --opt tag=EP.12'),
+pv:`<div class="a" style="inset:0;background:#EDEAE4"></div><div class="c h a-drop serif" style="top:2%;font-size:28cqw;color:#D7261E;z-index:1;letter-spacing:.06em">專注</div>${M("--mw:30cqw","bw")}<div class="a mono a-fade" style="left:4%;bottom:6%;z-index:3;background:#14171C;color:#fff;font-size:1.8cqw;padding:.6cqw 1.2cqw">EP.12</div>`},
+{id:"X25",src:"ext",zh:"分割標題",code:"split-headline",cat:"text",st:["hook","chap"],status:"外部包",
+desc:"標題卡從上方滑下，人物移到畫面下半部。",how:"選項 text、hl（標亮字）、pill。",cmd:FX("split-headline",'--text "三分鐘學會自動化" --opt hl=自動化'),
+pv:`${ROOM}<div class="a a-lower" style="inset:0">${M("--mw:28cqw")}</div><div class="a a-drop" style="left:0;right:0;top:0;height:44%;background:#fff;color:#14171C;display:grid;place-items:center;z-index:3"><div class="h" style="font-size:5cqw">三分鐘學會<span style="background:var(--st-a);padding:0 .2em">自動化</span></div></div>`},
+{id:"X26",src:"ext",zh:"粉彩大字",code:"pastel-word",cat:"text",st:["hook","cta"],status:"外部包",
+desc:"淺紫色背景搭配大字與名片。",how:"選項 text、name、handle。",cmd:FX("pastel-word",'--text "創作" --opt name=J3M --opt handle=@J3M_AI'),
+pv:`<div class="a" style="inset:0;background:#DCD0F7"></div><div class="c h a-up" style="top:6%;font-size:22cqw;color:#fff;z-index:1">創作</div>${M("--mw:28cqw")}<div class="a card2 a-right" style="right:6%;bottom:12%;padding:1.6cqw 2.4cqw;z-index:3;--dl:.4s"><b style="font-size:2.4cqw">J3M</b><div style="font-size:1.7cqw;color:#6B7280">@J3M_AI</div></div>`},
+{id:"X27",src:"ext",zh:"方格選項",code:"check-pills",cat:"ui",st:["step","value"],status:"外部包",
+desc:"方格紙背景上的選項膠囊，依序被點選成藍色。",how:"選項 text、images。",cmd:FX("check-pills",'--text "文案|剪輯|字幕|封面"'),
+pv:`<div class="a" style="inset:0;background:#F7F8FA repeating-linear-gradient(0deg,transparent 0 2.4cqw,#E1E6ED 2.4cqw 2.5cqw),repeating-linear-gradient(90deg,transparent 0 2.4cqw,#E1E6ED 2.4cqw 2.5cqw)"></div><div class="a" style="left:12%;right:12%;top:30%;display:flex;flex-wrap:wrap;gap:2cqw;justify-content:center">${["文案","剪輯","字幕","封面"].map((t,i)=>`<span style="position:relative;display:inline-block;border:.3cqw solid #B9C2CF;border-radius:5cqw;padding:1.4cqw 3cqw;font-size:3cqw;font-weight:700;color:#1B1F24">${t}<span class="a a-pop" style="inset:-.3cqw;border-radius:5cqw;background:#2D6BFF;color:#fff;display:grid;place-items:center;--dl:${.3+i*.45}s">✓ ${t}</span></span>`).join("")}</div>`},
+{id:"X28",src:"ext",zh:"剪輯時間軸",code:"timeline",cat:"ui",st:["step","hook"],status:"外部包",
+desc:"暗紅調色，搭配剪輯時間軸與錄影指示。",how:"選項 text、sub、tc（時間碼）。",cmd:FX("timeline",'--text "幕後剪輯" --opt tc=00:12:08'),
+pv:`<div class="a" style="inset:0;filter:sepia(.6) hue-rotate(-30deg) saturate(1.6) brightness(.7)">${ROOM}${M("--mw:28cqw")}</div><div class="a mono" style="left:4%;top:5%;font-size:2cqw;z-index:3"><b class="a-blink" style="color:#FF3B30">●</b> REC 00:12:08</div><div class="a" style="left:4%;right:4%;bottom:5%;height:20%;background:rgba(10,12,18,.85);border-radius:1cqw;z-index:3;padding:1.2cqw;display:grid;gap:.8cqw">${[[["#4C8DFF",30],["#4C8DFF",45],["#4C8DFF",20]],[["#F5B800",50],["#F5B800",40]]].map(r=>`<div style="display:flex;gap:.6cqw">${r.map(c=>`<i style="height:2.4cqw;flex:0 0 ${c[1]}%;background:${c[0]};border-radius:.4cqw;opacity:.85"></i>`).join("")}</div>`).join("")}<i class="a a-play" style="top:0;bottom:0;width:.4cqw;background:#FF3B30"></i></div>`},
+{id:"X29",src:"ext",zh:"雙行標題框",code:"headline-box",cat:"text",st:["hook"],status:"外部包",
+desc:"鏡頭推近，出現兩行標題，第二行為白底黑字。",how:"選項 text、zoom。",cmd:FX("headline-box",'--text "你還在手動整理？|試試這招"'),
+pv:`<div class="a a-zoom" style="inset:0;--z:1.18">${ROOM}${M("--mw:28cqw")}</div><div class="a" style="left:6%;top:14%;z-index:3;display:grid;gap:1cqw;justify-items:start"><span class="h a-left" style="font-size:4.4cqw;text-shadow:0 .3cqw 1cqw rgba(0,0,0,.6)">你還在手動整理？</span><span class="h a-left" style="font-size:4.4cqw;background:#fff;color:#14171C;padding:.4cqw 1.4cqw;--dl:.3s">試試這招</span></div>`},
+{id:"X30",src:"ext",zh:"作品牆",code:"profile-wall",cat:"data",st:["data","cta"],status:"外部包",
+desc:"你的 Reel 格子牆，搭配作品數量。",how:"選項 images、count、label。",cmd:FX("profile-wall","--opt count=128 --opt label=支作品"),
+pv:`<div class="a" style="left:30%;right:30%;top:6%;bottom:18%;display:grid;grid-template-columns:repeat(3,1fr);gap:.6cqw">${[0,1,2,3,4,5,6,7,8].map(i=>`<div class="scene ${["","sun","city"][i%3]} a-pop" style="position:relative;overflow:hidden;--dl:${i*.08}s"></div>`).join("")}</div><div class="c h" style="bottom:4%;font-size:3.6cqw"><span class="a-count gold mono" style="--to:128"></span> 支作品</div>`},
+{id:"X31",src:"ext",zh:"分級表",code:"tier-list",cat:"list",st:["value","data"],status:"外部包",
+desc:"分級表落入畫面，項目放進對應等級。",how:"選項 title、item、others。",cmd:FX("tier-list",'--opt title="AI 工具分級" --opt item=Claude'),
+pv:`<div class="a a-drop" style="left:16%;right:16%;top:8%;bottom:8%;display:grid;grid-template-rows:repeat(4,1fr);gap:.6cqw">${[["S","#FF7F7F"],["A","#FFBF7F"],["B","#FFDF7F"],["C","#BFFF7F"]].map((r,i)=>`<div style="display:flex;background:#1B2333;border-radius:.6cqw;overflow:hidden"><b style="width:9cqw;background:${r[1]};color:#14171C;display:grid;place-items:center;font-size:3.6cqw">${r[0]}</b><div style="flex:1;display:flex;gap:.8cqw;padding:.8cqw;align-items:center">${i==0?`<span class="a-pop" style="--dl:.7s;background:#fff;color:#14171C;border-radius:.6cqw;padding:.6cqw 1.4cqw;font-weight:900;font-size:2.2cqw">Claude</span>`:`<i style="width:7cqw;height:70%;background:rgba(255,255,255,.12);border-radius:.6cqw"></i>`}</div></div>`).join("")}</div>`},
+{id:"X32",src:"ext",zh:"上圖下人",code:"broll-split",cat:"person",st:["step","data"],status:"外部包",
+desc:"上方放 B-roll，下方放人物，加上價格貼紙。",how:"選項 images、text。",cmd:FX("broll-split",'--text "NT$ 990"'),
+pv:`<div class="a scene sun a-push" style="left:0;right:0;top:0;height:50%;--z:1.06;overflow:hidden"></div><div class="a" style="left:0;right:0;top:50%;bottom:0;overflow:hidden">${ROOM}${M("--mw:22cqw")}</div><div class="a a-stamp h" style="right:10%;top:38%;background:var(--st-a);color:#14171C;border-radius:50%;width:14cqw;height:14cqw;display:grid;place-items:center;font-size:2.8cqw;rotate:10deg;z-index:3">NT$ 990</div>`},
+{id:"X33",src:"ext",zh:"手機扇形",code:"phone-fan",cat:"ui",st:["value","cta"],status:"外部包",
+desc:"多支 Reel 像手機組一樣扇狀展開。",how:"選項 images、text。",cmd:FX("phone-fan",'--text "本月精選"'),
+pv:`<div class="a" style="left:50%;bottom:-6%;width:0;height:0">${[-30,-15,0,15,30].map((r,i)=>`<div class="a a-fan scene ${["","sun","city","","sun"][i]}" style="left:-8cqw;bottom:0;width:16cqw;height:30cqw;border:.6cqw solid #0A0F1A;border-radius:2.4cqw;overflow:hidden;transform-origin:50% 120%;--r:${r}deg;z-index:${3-Math.abs(i-2)}"></div>`).join("")}</div><div class="c h a-fade" style="top:6%;font-size:4cqw">本月精選</div>`},
+{id:"X34",src:"ext",zh:"光點揭示",code:"dot-reveal",cat:"trans",st:["hook","chap"],status:"外部包",
+desc:"畫面先由光點組成，再切換成完整影像。",how:"選項 color、cell（光點大小）。",cmd:FX("dot-reveal","--opt cell=12"),
+pv:`${ROOM}${M("--mw:28cqw")}<div class="a a-first" style="inset:0;z-index:3;background:#0A0F1A radial-gradient(circle,#F5B800 32%,transparent 38%) 0 0/2.2cqw 2.2cqw;-webkit-mask:radial-gradient(ellipse 30cqw 34cqw at 50% 70%,#000 60%,rgba(0,0,0,.35));mask:radial-gradient(ellipse 30cqw 34cqw at 50% 70%,#000 60%,rgba(0,0,0,.35))"></div>`},
+{id:"X35",src:"ext",zh:"標題堆疊",code:"headline-wall",cat:"data",st:["value","data"],status:"外部包",
+desc:"新聞標題一張張堆疊，最後出現總數。",how:"text 以 headline::meta 格式，選項 total、label。",cmd:FX("headline-wall",'--text "AI 代理上線::科技新報|自動化工具普及::商業週刊" --opt total=24'),
+pv:`${["AI 代理正式上線","自動化工具普及","一人公司崛起"].map((t,i)=>`<div class="a card2 a-drop" style="left:${14+i*4}%;top:${12+i*16}%;width:56%;padding:1.6cqw 2.4cqw;--dl:${i*.3}s;rotate:${[-3,2,-1][i]}deg"><div class="mono" style="font-size:1.5cqw;color:#8A6400">NEWS · 0${i+1}</div><b style="font-size:2.8cqw">${t}</b></div>`).join("")}<div class="a h" style="right:6%;bottom:10%;font-size:3cqw;text-align:right">共 <span class="a-count gold mono" style="--to:24;font-size:6cqw;--dl:.6s"></span> 則</div>`},
+{id:"X36",src:"ext",zh:"任務清單",code:"checklist",cat:"list",st:["step"],status:"外部包",
+desc:"任務清單逐項旋轉進場後打勾。",how:"text 以 step::meta 格式，選項 title。",cmd:FX("checklist",'--text "設定::2 分鐘|測試::5 分鐘|上線::1 分鐘" --opt title=今日任務'),
+pv:`<div class="a" style="left:20%;right:20%;top:12%;display:grid;gap:1.6cqw"><b class="a-fade" style="font-size:3.2cqw">今日任務</b>${[["設定","2 分鐘"],["測試","5 分鐘"],["上線","1 分鐘"]].map((t,i)=>`<div class="a-pop" style="--dl:${i*.35}s;display:flex;align-items:center;gap:1.6cqw;background:rgba(255,255,255,.1);border-radius:1cqw;padding:1.4cqw 2cqw;font-size:2.6cqw;rotate:${[-2,1.5,-1][i]}deg"><span style="width:3.4cqw;height:3.4cqw;border-radius:50%;background:var(--st-a);color:#14171C;display:grid;place-items:center;font-weight:900"><b class="a-pop" style="display:inline-block;--dl:${.5+i*.35}s">✓</b></span><b style="flex:1">${t[0]}</b><span class="mono" style="font-size:1.8cqw;color:var(--st-g)">${t[1]}</span></div>`).join("")}</div>`},
+{id:"X37",src:"ext",zh:"玻璃折線圖",code:"liquid-glass-graph",cat:"data",st:["data"],status:"外部包",
+desc:"玻璃卡片中的折線上升，數字同步跳動。",how:"選項 text、from、to、color；look=bento 為外觀版。",cmd:FX("liquid-glass-graph",'--text "觀看數" --opt from=12 --opt to=48'),
+pv:`<div class="a scene city" style="inset:0"></div><div class="a" style="left:18%;right:18%;top:14%;bottom:14%;background:rgba(255,255,255,.14);backdrop-filter:blur(1.6cqw);-webkit-backdrop-filter:blur(1.6cqw);border:1px solid rgba(255,255,255,.4);border-radius:2.4cqw;padding:2.4cqw"><div style="font-size:2cqw;opacity:.85">觀看數成長</div><b class="mono" style="font-size:6cqw">+<span class="a-count" style="--to:48"></span>%</b><svg viewBox="0 0 100 30" preserveAspectRatio="none" style="position:absolute;left:6%;right:6%;bottom:12%;width:88%;height:36%"><path class="a-draw" pathLength="1" d="M0 28 L18 24 L34 25 L52 16 L70 12 L86 6 L100 2" fill="none" stroke="#7FE0FF" stroke-width="1.6"/></svg></div>`},
+{id:"X38",src:"ext",zh:"3D 輪播",code:"carousel-spin",cat:"ui",st:["value","cta"],status:"外部包",
+desc:"Reel 卡片在 3D 空間旋轉輪播後停下。",how:"選項 images、count、size、turns。",cmd:FX("carousel-spin","--opt count=8 --opt turns=2"),
+pv:`<div class="a" style="left:50%;top:50%;width:0;height:0;perspective:100cqw"><div class="a-ring3d" style="position:relative;--S:7s">${[0,1,2,3,4,5,6,7].map(i=>`<div class="scene ${["","sun","city"][i%3]}" style="position:absolute;left:-6cqw;top:-10.5cqw;width:12cqw;height:21cqw;border:.4cqw solid #fff;border-radius:1.4cqw;overflow:hidden;transform:rotateY(${i*45}deg) translateZ(26cqw)"></div>`).join("")}</div></div>`},
+{id:"X39",src:"ext",zh:"新聞匹配剪接",code:"match-cut",cat:"trans",st:["value","hook"],status:"外部包",
+desc:"新聞頁面切換時，紅框中的關鍵詞固定不動。",how:"選項 text、color；與 T04 的 HyperFrames 版 match-cut 不同，勿混用。",cmd:FX("match-cut",'--text "AI"'),
+pv:`${[0,1].map(k=>`<div class="a card2 ${k?"a-second":"a-first"}" style="inset:8% 14%;padding:3cqw;display:grid;gap:1.4cqw;align-content:start;border-radius:.6cqw"><div class="serif" style="font-size:2.4cqw;font-weight:900;border-bottom:.3cqw solid #14171C;padding-bottom:.6cqw">${k?"THE TECH DAILY":"MORNING NEWS"}</div>${L(k?80:90,1)}${L(k?60:70,1)}${L(k?90:50,1)}${L(k?40:85,1)}</div>`).join("")}<div class="c h" style="top:46%;font-size:5cqw;color:#14171C"><span style="border:.5cqw solid var(--st-r);padding:.2cqw 1.6cqw;background:#fff">AI</span></div>`},
+{id:"X40",src:"ext",zh:"設定開關",code:"apple-toggles",cat:"ui",st:["step"],status:"外部包",
+desc:"手機設定卡出現在頭上方，逐行切換開關。",how:"text 以 | 分隔，選項 ticks、color、pos（below 為舊版下巴位置）。",cmd:FX("apple-toggles",'--text "自動字幕|AI 摘要|排程發布"'),
+pv:`${ROOM}${M("--mw:24cqw")}<div class="a card2 a-up" style="left:30%;right:30%;top:4%;padding:1.6cqw 2.4cqw;z-index:3;display:grid;gap:1.2cqw;font-size:2.1cqw">${["自動字幕","AI 摘要","排程發布"].map((t,i)=>`<div style="display:flex;justify-content:space-between;align-items:center"><span>${t}</span><span style="position:relative;width:6.4cqw;height:3.6cqw;border-radius:2cqw;background:#D7DBE0;overflow:hidden"><i class="a a-fade" style="inset:0;background:#34C759;--dl:${.5+i*.4}s"></i><i class="a a-toggle" style="left:.3cqw;top:.3cqw;width:3cqw;height:3cqw;border-radius:50%;background:#fff;box-shadow:0 .2cqw .4cqw rgba(0,0,0,.3);--dl:${.5+i*.4}s"></i></span></div>`).join("")}</div>`},
+{id:"X41",src:"ext",zh:"LED 看板",code:"led-sign",cat:"text",st:["hook","chap"],status:"外部包",
+desc:"燈光變暗，LED 看板逐字打出文字。",how:"選項 text、color、push。",cmd:FX("led-sign",'--text "ON AIR"'),
+pv:`<div class="a" style="inset:0;filter:brightness(.45)">${ROOM}${M("--mw:28cqw")}</div><div class="a" style="left:14%;right:14%;top:10%;height:26%;background:#0A0A0A;border:.6cqw solid #2A2A2A;border-radius:1cqw;display:grid;place-items:center;z-index:3"><span class="mono" style="font-size:8cqw;font-weight:600;color:#FF6A3D;text-shadow:0 0 1.4cqw #FF6A3D;-webkit-mask:radial-gradient(circle,#000 55%,transparent 62%) 0 0/.7cqw .7cqw;mask:radial-gradient(circle,#000 55%,transparent 62%) 0 0/.7cqw .7cqw"><span class="a-wipe" style="display:inline-block">ON AIR</span></span></div>`},
+{id:"X42",src:"ext",zh:"緩慢推臉",code:"slow-push",cat:"grade",st:["value","cta"],status:"外部包",
+desc:"鏡頭緩慢推近臉部，背景逐漸失焦。",how:"zoom 預設 1.6，選項 blur；縮放仍不超過 2 倍。",cmd:FX("slow-push","--opt zoom=1.6"),
+pv:`<div class="a a-push" style="inset:0;--z:1.35;transform-origin:50% 40%"><div class="a room" style="inset:0;filter:blur(.6cqw)"></div><div class="a scene city" style="left:6%;top:10%;width:24%;height:30%;filter:blur(.8cqw);opacity:.7"></div>${M("--mw:28cqw")}</div>`},
+{id:"X43",src:"ext",zh:"螢幕角落推近",code:"over-the-shoulder-zoom",cat:"data",st:["data"],status:"外部包",
+desc:"鏡頭推近螢幕角落，出現兩張數據卡，長條上升並顯示數字。",how:"text 以 | 分隔，選項 to、zoom（預設 2.0）。",cmd:FX("over-the-shoulder-zoom",'--text "觀看|訂閱" --opt to=42'),
+pv:`<div class="a a-zoom" style="inset:0;--z:1.6;transform-origin:78% 30%"><div class="a scr" style="inset:8% 6% 18%"></div><div class="a" style="left:54%;top:14%;width:36%;display:grid;grid-template-columns:1fr 1fr;gap:1.2cqw">${[["觀看",80,"+42%"],["訂閱",55,"+18%"]].map((c,i)=>`<div style="background:#fff;color:#14171C;border-radius:1cqw;padding:1cqw;height:16cqw;display:flex;flex-direction:column"><span style="font-size:1.4cqw">${c[0]}</span><b class="mono" style="font-size:2cqw">${c[2]}</b><div style="flex:1;display:flex;align-items:flex-end;gap:.4cqw">${[40,60,c[1]].map((h,j)=>`<i class="a-sb" style="flex:1;height:${h}%;background:${j==2?"#F5B800":"#C9D1DC"};--dl:${.3+j*.15+i*.2}s"></i>`).join("")}</div></div>`).join("")}</div></div>`},
+{id:"X44",src:"ext",zh:"訊息通知",code:"messages",cat:"ui",st:["hook","value"],status:"外部包",
+desc:"手機訊息通知一則一則彈出。",how:"選項 text、title、y。",cmd:FX("messages",'--text "影片上線了|字幕好了嗎？|明天見"'),
+pv:`${ROOM}${M("--mw:26cqw")}<div class="a" style="left:22%;right:22%;top:4%;display:grid;gap:1cqw;z-index:3">${["影片上線了","字幕好了嗎？","明天 10 點見"].map((t,i)=>`<div class="a-drop" style="--dl:${i*.35}s;background:rgba(245,245,247,.95);color:#1B1F24;border-radius:1.6cqw;padding:1.2cqw 1.6cqw;display:flex;gap:1.2cqw;align-items:center;font-size:2cqw;box-shadow:0 .6cqw 1.4cqw rgba(0,0,0,.3)"><i style="width:3.6cqw;height:3.6cqw;border-radius:.8cqw;background:#34C759;flex:none"></i><span><b style="display:block;font-size:1.6cqw">訊息</b>${t}</span></div>`).join("")}</div>`},
+{id:"X45",src:"ext",zh:"嵌入作品格",code:"place-in-grid",cat:"data",st:["cta","data"],status:"外部包",
+desc:"畫面縮到 3×3 主頁格中央，周圍彈出 8 張 Reel 與觀看數。",how:"選項 images、views。",cmd:FX("place-in-grid","--opt views=12K,8K,30K"),
+pv:`<div class="a" style="left:31%;right:31%;top:4%;bottom:4%;display:grid;grid-template-columns:repeat(3,1fr);gap:.5cqw">${[0,1,2,3,4,5,6,7,8].map(i=>i==4?`<div class="a-pull" style="position:relative;overflow:hidden;z-index:2"><div class="room" style="position:absolute;inset:0"></div>${M("--mw:9cqw")}</div>`:`<div class="scene ${["","sun","city"][i%3]} a-pop" style="position:relative;overflow:hidden;--dl:${.4+i*.06}s"><span class="mono" style="position:absolute;left:.4cqw;bottom:.3cqw;font-size:1.2cqw;color:#fff;z-index:1;text-shadow:0 0 .4cqw #000">▶ ${[12,8,30,5,0,21,9,14,6][i]}K</span></div>`).join("")}</div>`},
+{id:"X46",src:"ext",zh:"膠帶標籤",code:"tape-label",cat:"text",st:["hook","value"],status:"外部包",
+desc:"黃色膠帶標籤落在胸前，避開臉部。",how:"選項 text。",cmd:FX("tape-label",'--text "新手友善"'),
+pv:`${ROOM}${M("--mw:30cqw")}<div class="a a-sx h" style="left:22%;right:22%;top:72%;background:#F7D84A;color:#14171C;font-size:3.6cqw;text-align:center;padding:.8cqw 0;rotate:-4deg;z-index:3;box-shadow:0 .4cqw 1cqw rgba(0,0,0,.3);clip-path:polygon(1% 0,99% 6%,100% 100%,0 94%)">新手友善</div>`},
+{id:"X47",src:"ext",zh:"選取放大",code:"select-resize",cat:"emph",st:["data"],status:"外部包",
+desc:"藍色選取框抓住數字並放大。",how:"選項 text，預設為 2X。",cmd:FX("select-resize",'--text "2X"'),
+pv:`<div class="a a-zoom" style="left:50%;top:50%;width:30cqw;height:20cqw;margin:-10cqw 0 0 -15cqw;--z:1.5"><div style="position:absolute;inset:0;border:.3cqw solid #2D8CFF;display:grid;place-items:center"><b class="mono" style="font-size:10cqw">2X</b>${["left:-1cqw;top:-1cqw","right:-1cqw;top:-1cqw","left:-1cqw;bottom:-1cqw","right:-1cqw;bottom:-1cqw"].map(s=>`<i style="position:absolute;${s};width:2cqw;height:2cqw;background:#fff;border:.3cqw solid #2D8CFF"></i>`).join("")}</div></div>`},
+{id:"X48",src:"ext",zh:"靜音修剪",code:"wave-trim",cat:"ui",st:["step"],status:"外部包",
+desc:"上方面板顯示聲波，裁掉靜音只留下說話段落。",how:"不需選項，適合說明剪輯流程。",cmd:FX("wave-trim"),
+pv:`<div class="a" style="left:6%;right:6%;top:28%;height:40%;background:rgba(10,12,18,.8);border-radius:1.2cqw;padding:2cqw;display:flex;gap:.6cqw;align-items:center">${[1,0,1,0,1].map((sp,g)=>`<div class="${sp?"":"a-cut"}" style="flex:1 1 0;min-width:0;height:100%;display:flex;gap:.3cqw;align-items:center;${sp?"":"background:rgba(226,85,63,.25);border-radius:.6cqw"}">${Array.from({length:8},(_,k)=>`<i style="flex:1;height:${sp?[40,80,55,95,60,75,35,65][k]:8}%;background:${sp?"#4CD7F5":"#E2553F"};border-radius:.3cqw"></i>`).join("")}</div>`).join("")}</div><div class="c mono" style="top:76%;font-size:2cqw;color:var(--st-g)">靜音段落自動裁掉</div>`},
+{id:"X49",src:"ext",zh:"巨字劃線",code:"huge-strike",cat:"emph",st:["value"],status:"外部包",
+desc:"巨大襯線字出現後，紅線劃過。",how:"選項 text、at（預設 0.6 秒）；與 F21 刪除線近似，二選一。",cmd:FX("huge-strike",'--text "完美主義"'),
+pv:`<div class="c mid serif" style="font-size:14cqw;font-weight:900"><span style="position:relative;display:inline-block">完美主義<i class="a a-sx" style="left:-4%;right:-4%;top:48%;height:1.4cqw;background:var(--st-r);rotate:-4deg;--dl:.6s"></i></span></div>`},
+{id:"X50",src:"ext",zh:"蠟筆寫字",code:"crayon-write",cat:"draw",st:["hook","cta"],status:"外部包",
+desc:"紅色蠟筆在人物後方寫字，並劃線飛出。",how:"選項 text。",cmd:FX("crayon-write",'--text "就是現在"'),
+pv:`${ROOM}<div class="c h a-wipe serif" style="top:8%;font-size:13cqw;color:#E2553F;z-index:1;rotate:-4deg">就是現在</div><svg class="a" viewBox="0 0 160 90" style="inset:0;width:100%;height:100%;z-index:1"><path class="a-draw" pathLength="1" d="M28 40 C 60 46, 100 36, 140 42 L 156 30" stroke="#E2553F" stroke-width="2" fill="none" stroke-linecap="round" style="--dl:.6s"/></svg>${M("--mw:28cqw")}`},
+{id:"X51",src:"ext",zh:"扇形封面",code:"fan-build",cat:"person",st:["hook","value"],status:"外部包",
+desc:"封面卡片在頭部後方展開成扇形。",how:"選項 images、count（預設 13）。",cmd:FX("fan-build","--opt count=13"),
+pv:`${ROOM}<div class="a" style="left:50%;top:44%;width:0;height:0;z-index:1">${[-60,-40,-20,0,20,40,60].map((r,i)=>`<div class="a a-fan scene ${["","sun","city"][i%3]}" style="left:-6cqw;top:-24cqw;width:12cqw;height:24cqw;border:.4cqw solid #fff;border-radius:1cqw;overflow:hidden;transform-origin:50% 100%;--r:${r}deg"></div>`).join("")}</div>${M("--mw:28cqw")}`},
+
+/* ================= 片尾 ================= */
+{id:"E01",src:"end",zh:"J3M 片尾",code:"j3m-video-endcard",cat:"cta",st:["cta"],status:"已定案",
+desc:"5 秒橫版片尾：logo 圓盤淡出後，出現「訂閱 @J3M_AI 學 AI」。",how:"logo 0 秒顯示、1.95 秒淡出；CTA 2.2 秒起淡入；底部標語 0.8 秒淡入。修改文字只動 index.html。",cmd:"npx hyperframes@0.8.217 check --json\nnpx hyperframes@0.8.217 render -q delivery -f 30 --strict -o endcard.mp4",
+pv:`<div class="a" style="inset:0;background:radial-gradient(circle at 50% 46%,#efefef 0%,#efefef 34%,#dcdcdc 100%)"></div><div class="c serif" style="top:6.5%;font-size:2.1cqw;letter-spacing:.3em;color:#5a5a5a;font-weight:700">一分鐘，學會一個 AI 技巧</div><div class="a a-out" style="left:50%;top:14%;width:32cqw;height:32cqw;margin-left:-16cqw;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff,#d4d4d4);box-shadow:0 1cqw 3cqw rgba(0,0,0,.15);display:grid;place-items:center;font-family:var(--f-disp);font-weight:900;font-size:7cqw;color:#1f1f1f">J3M</div><div class="c serif a-in" style="top:20%;font-size:7.8cqw;font-weight:700;color:#1f1f1f;line-height:1.25">訂閱 <span style="color:#5a5a5a">@J3M_AI</span><br>學 <span style="color:#5a5a5a">AI</span></div><div class="c" style="top:86%;font-size:1.8cqw;letter-spacing:.3em;color:#6e6e6e">J3M 一分鐘 AI 教學</div>`}
+];
+/* ---------------- State ---------------- */
+const STCLS={"已實作":"ok","已有流程":"ok","已存在":"ok","已定案":"ok","規格":"spec","近似":"near","改用外部":"near","外部包":"ext"};
+const FMT={short:"短片（直版 1080×1920，30 fps）",long:"長片（橫版 1920×1080，30 fps）"};
+const store={get(k,d){try{const v=localStorage.getItem("motioncraft-"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("motioncraft-"+k,JSON.stringify(v))}catch(e){}}};
+const S={st:"all",cat:"all",src:"all",q:"",sel:new Set(store.get("sel",[]).filter(id=>E.some(e=>e.id===id))),open:null,fmt:store.get("fmt","short"),
+  tech:"all",when:"all",wq:"",wLimit:60};
+const $=id=>document.getElementById(id);
+const byId=id=>E.find(e=>e.id===id);
+$("topic").value=store.get("topic","");
+
+function topic(){return $("topic").value.trim()||"【請填入影片主題】"}
+function promptOf(e){
+  const s=SRC[e.src];
+  return `請在「${topic()}」這支${FMT[S.fmt]}中加入「${e.zh}」特效（${e.id}${e.code?"｜"+e.code:""}）。
+
+【效果】${e.desc}
+【用途】${CATS[e.cat]}；適合段落：${e.st.map(k=>STATES[k]).join("、")}
+【實作要點】${e.how}
+${e.cmd?`【指令】\n${e.cmd}\n`:""}【使用規則】${s.rule}
+【目前狀態】${e.status}${e.status==="規格"?"：尚未在實際影片使用，請依規格實作並回報做法":""}
+
+請先列出要套用的時間點（對應旁白哪一句）、持續秒數與畫面文字，再產出可執行的設定或程式碼。`;
+}
+function comboPrompt(){
+  const list=E.filter(e=>S.sel.has(e.id));
+  return `請為「${topic()}」這支${FMT[S.fmt]}規劃特效時間軸，使用以下 ${list.length} 項特效：
+
+${list.map((e,i)=>`${i+1}. ${e.zh}（${e.id}${e.code?"｜"+e.code:""}）：${e.desc} 適合段落：${e.st.map(k=>STATES[k]).join("、")}。${e.cmd?" 指令："+e.cmd.split("\n")[0]:""}`).join("\n")}
+
+規劃規則：
+1. 依影片段落排序：開場 Hook → 價值說明 → 操作步驟 → 數據結果 → 章節卡 → 結尾 CTA
+2. 短片每個 cut 不超過兩種特效；長片每 3 分鐘不超過三種
+3. 同一效果在整支影片中不超過三次
+4. 外部 51 式與 HyperFrames 效果不在同一段落重疊
+5. 每個特效都要對應旁白講到的內容，不作純裝飾
+
+請輸出表格：時間、旁白句、特效、畫面文字、持續秒數、需要的素材。`;
+}
+
+/* ---------------- 影片特效 ---------------- */
+function match(e,skip){
+  if(skip!=="st"&&S.st!=="all"&&!e.st.includes(S.st))return false;
+  if(skip!=="cat"&&S.cat!=="all"&&e.cat!==S.cat)return false;
+  if(skip!=="src"&&S.src!=="all"&&e.src!==S.src)return false;
+  if(S.q){const q=S.q.toLowerCase();return [e.id,e.zh,e.code,e.desc,e.how,e.cmd||"",CATS[e.cat],SRC[e.src].name,e.status].join(" ").toLowerCase().includes(q)}
+  return true;
+}
+function chips(el,label,key,dict){
+  const pool=E.filter(e=>match(e,key));
+  const n=k=>k==="all"?pool.length:pool.filter(e=>key==="st"?e.st.includes(k):e[key]===k).length;
+  $(el).innerHTML=`<span class="lbl">${label}</span>`+[["all","全部"],...Object.entries(dict).map(([k,v])=>[k,typeof v==="string"?v:v.name])].map(([k,v])=>`<button class="chip" type="button" data-k="${key}" data-v="${k}" aria-pressed="${S[key]===k}">${v}<small>${n(k)}</small></button>`).join("");
+}
+function card(e){
+  const on=S.sel.has(e.id);
+  return `<article class="card${on?" is-picked":""}" data-id="${e.id}">
+  <div class="pv" role="button" tabindex="0" aria-label="查看「${e.zh}」的做法"><div class="v">${e.pv}</div></div>
+  <div class="meta">
+    <div class="row1"><span class="no">${e.id}</span><span class="st ${STCLS[e.status]}">${e.status}</span></div>
+    <h3>${e.zh}</h3>${e.code?`<p class="code">${e.code}</p>`:""}
+    <p class="desc">${e.desc}</p>
+    <div class="tags"><span class="tag src">${SRC[e.src].name}</span><span class="tag">${CATS[e.cat]}</span>${e.st.filter(k=>STATES[k]!==CATS[e.cat]).map(k=>`<span class="tag">${STATES[k]}</span>`).join("")}</div>
+    <div class="acts"><label class="pick"><input type="checkbox" id="pick-${e.id}" data-pick="${e.id}"${on?" checked":""}> 加入時間軸</label><button class="btn primary" type="button" data-copy="${e.id}">複製提示詞</button></div>
+  </div></article>`;
+}
+const io="IntersectionObserver" in window?new IntersectionObserver(es=>es.forEach(x=>x.target.classList.toggle("run",x.isIntersecting)),{rootMargin:"120px"}):null;
+function render(){
+  chips("fState","影片段落","st",STATES);chips("fCat","用途","cat",CATS);chips("fSrc","來源","src",SRC);
+  const list=E.filter(e=>match(e));
+  $("grid").innerHTML=list.map(card).join("");
+  $("empty").hidden=list.length>0;
+  $("count").textContent=`${list.length} ／ ${E.length} 項`;
+  document.querySelectorAll("#grid .v").forEach(v=>io?io.observe(v):v.classList.add("run"));
+  tray();
+}
+function tray(){
+  const n=S.sel.size;$("tray").hidden=n===0;
+  $("trayCount").textContent=`已選 ${n} 項`;
+  $("trayNames").textContent=E.filter(e=>S.sel.has(e.id)).map(e=>e.zh).join("、");
+  store.set("sel",[...S.sel]);
+}
+function pick(id,on){
+  on?S.sel.add(id):S.sel.delete(id);
+  document.querySelectorAll(`[data-pick="${id}"]`).forEach(x=>x.checked=on);
+  const c=document.querySelector(`.card[data-id="${id}"]`);if(c)c.classList.toggle("is-picked",on);
+  if(S.open===id)$("dPick").checked=on;
+  tray();
+}
+
+/* ---------------- Detail ---------------- */
+function openD(id,fromHash){
+  const e=byId(id);if(!e)return;S.open=id;
+  $("dPv").innerHTML=`<div class="v run">${e.pv}</div>`;
+  $("dNo").textContent=e.id;$("dTitle").textContent=e.zh;$("dCode").textContent=e.code||"";
+  $("dTags").innerHTML=`<span class="st ${STCLS[e.status]}">${e.status}</span><span class="tag src">${SRC[e.src].name}</span><span class="tag">${CATS[e.cat]}</span>${e.st.filter(k=>STATES[k]!==CATS[e.cat]).map(k=>`<span class="tag">${STATES[k]}</span>`).join("")}`;
+  $("dDesc").textContent=e.desc;$("dHow").textContent=e.how;
+  $("dCmdWrap").hidden=!e.cmd;$("dCmd").textContent=e.cmd||"";
+  $("dRule").textContent=SRC[e.src].rule;$("dSrcFull").textContent="出處："+SRC[e.src].full;
+  $("dPrompt").textContent=promptOf(e);$("dPick").checked=S.sel.has(id);
+  $("detail").hidden=false;document.documentElement.style.overflow="hidden";
+  if(!fromHash){try{history.replaceState(null,"","#fx-"+id)}catch(x){}}
+  $("dClose").focus({preventScroll:true});
+}
+function closeD(){
+  const id=S.open;S.open=null;$("detail").hidden=true;$("dPv").innerHTML="";document.documentElement.style.overflow="";
+  try{history.replaceState(null,"",location.pathname+location.search)}catch(x){}
+  const pv=document.querySelector(`.card[data-id="${id}"] .pv`);if(pv)pv.focus({preventScroll:true});
+}
+function step(d){const l=E.filter(e=>match(e));const arr=l.length?l:E;const i=arr.findIndex(e=>e.id===S.open);openD(arr[(i+d+arr.length)%arr.length].id)}
+
+/* ---------------- 網頁動態索引 ---------------- */
+const WTECH=["CSS","GSAP","Canvas"];const WWHEN=["循環待機","懸停・點擊","捲動觸發","拖曳手勢","未標註"];
+function wmatch(r,skip){
+  if(skip!=="tech"&&S.tech!=="all"&&r[3]!==S.tech)return false;
+  if(skip!=="when"&&S.when!=="all"&&(r[4]||"未標註")!==S.when)return false;
+  if(S.wq){const q=S.wq.toLowerCase();return r.join(" ").toLowerCase().includes(q)}
+  return true;
+}
+function wchips(el,label,key,vals){
+  const pool=ML.filter(r=>wmatch(r,key));
+  const n=v=>v==="all"?pool.length:pool.filter(r=>key==="tech"?r[3]===v:(r[4]||"未標註")===v).length;
+  $(el).innerHTML=`<span class="lbl">${label}</span>`+["all",...vals].map(v=>`<button class="chip" type="button" data-wk="${key}" data-v="${v}" aria-pressed="${S[key]===v}">${v==="all"?"全部":v}<small>${n(v)}</small></button>`).join("");
+}
+function wprompt(r){
+  return `請參考 Motion Library No.${r[0]}「${r[1]}${r[2]&&r[2]!==r[1]?"（"+r[2]+"）":""}」：${r[5]}。
+技術：${r[3]}；觸發時機：${r[4]||"未標註"}。
+
+請把這個動態效果用在「${topic()}」中：
+1. 先說明適合放在頁面或影片的哪個位置，以及搭配的文字內容
+2. 產出可直接執行的 HTML、CSS、JavaScript（${r[3]==="GSAP"?"GSAP 請指定確切版本號":r[3]==="Canvas"?"Canvas 需處理高解析度螢幕":"以純 CSS 為優先"}）
+3. 加上 prefers-reduced-motion 的替代狀態
+
+原站可依編號試玩：https://kittenjam-motion-library.vercel.app/`;
+}
+function wrender(){
+  wchips("wTech","技術","tech",WTECH);wchips("wWhen","觸發時機","when",WWHEN);
+  const list=ML.filter(r=>wmatch(r));
+  $("wcount").textContent=`${list.length} ／ ${ML.length} 項`;
+  $("ml").innerHTML=`<div class="ml-row ml-head"><span>編號</span><span>名稱</span><span>說明</span><span>技術</span><span>時機</span><span></span></div>`+
+    (list.length?list.slice(0,S.wLimit).map(r=>`<div class="ml-row"><span class="no">No.${r[0]}</span><span class="nm"><b>${r[1]}</b>${r[2]&&r[2]!==r[1]?`<span>${r[2]}</span>`:""}</span><span class="ds">${r[5]}</span><span class="tech">${r[3]}</span><span class="when tag" style="justify-self:start">${r[4]||"未標註"}</span><span class="go"><button class="btn primary" type="button" data-wcopy="${r[0]}">複製提示詞</button></span></div>`).join(""):`<div class="empty">找不到符合的網頁動態。</div>`);
+  $("wMore").hidden=list.length<=S.wLimit;
+  $("wMore").textContent=`顯示更多（還有 ${Math.max(0,list.length-S.wLimit)} 項）`;
+}
+
+/* ---------------- Copy ---------------- */
+let tt;function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,1800)}
+function copy(txt,msg){
+  const fb=()=>{$("fbText").value=txt;$("fallback").hidden=false;$("fbText").focus();$("fbText").select()};
+  try{if(!navigator.clipboard||!navigator.clipboard.writeText){fb();return}navigator.clipboard.writeText(txt).then(()=>toast(msg),fb)}catch(x){fb()}
+}
+
+/* ---------------- Events ---------------- */
+function setFmt(f){S.fmt=f;store.set("fmt",f);document.querySelectorAll("[data-fmt]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.fmt===f));if(S.open)$("dPrompt").textContent=promptOf(byId(S.open))}
+document.querySelectorAll("[data-fmt]").forEach(b=>b.addEventListener("click",()=>setFmt(b.dataset.fmt)));
+$("topic").addEventListener("input",e=>{store.set("topic",e.target.value);if(S.open)$("dPrompt").textContent=promptOf(byId(S.open))});
+document.querySelector("#paneVideo .bar").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;S[b.dataset.k]=b.dataset.v;render()});
+$("q").addEventListener("input",e=>{S.q=e.target.value.trim();render()});
+$("reset").addEventListener("click",()=>{S.st=S.cat=S.src="all";S.q="";$("q").value="";render()});
+$("grid").addEventListener("click",e=>{
+  const c=e.target.closest("[data-copy]");if(c){const x=byId(c.dataset.copy);copy(promptOf(x),`已複製「${x.zh}」提示詞`);return}
+  const pv=e.target.closest(".pv");if(pv)openD(pv.closest(".card").dataset.id);
+});
+$("grid").addEventListener("change",e=>{const p=e.target.closest("[data-pick]");if(p)pick(p.dataset.pick,p.checked)});
+$("grid").addEventListener("keydown",e=>{const pv=e.target.closest(".pv");if(pv&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openD(pv.closest(".card").dataset.id)}});
+$("dClose").addEventListener("click",closeD);$("dPrev").addEventListener("click",()=>step(-1));$("dNext").addEventListener("click",()=>step(1));
+$("dCopy").addEventListener("click",()=>copy(promptOf(byId(S.open)),"已複製提示詞"));
+$("dPick").addEventListener("change",e=>pick(S.open,e.target.checked));
+$("detail").addEventListener("click",e=>{if(e.target===$("detail"))closeD()});
+$("trayClear").addEventListener("click",()=>[...S.sel].forEach(id=>pick(id,false)));
+$("trayCopy").addEventListener("click",()=>copy(comboPrompt(),`已複製 ${S.sel.size} 項特效的時間軸提示詞`));
+$("fbClose").addEventListener("click",()=>$("fallback").hidden=true);
+$("fallback").addEventListener("click",e=>{if(e.target===$("fallback"))$("fallback").hidden=true});
+document.addEventListener("keydown",e=>{
+  if(!$("fallback").hidden&&e.key==="Escape"){$("fallback").hidden=true;return}
+  if($("detail").hidden)return;
+  if(e.key==="Escape")closeD();else if(e.key==="ArrowRight")step(1);else if(e.key==="ArrowLeft")step(-1);
+});
+function tab(w){
+  $("tab-video").setAttribute("aria-selected",w==="video");$("tab-web").setAttribute("aria-selected",w==="web");
+  $("paneVideo").hidden=w!=="video";$("paneWeb").hidden=w!=="web";$("tray").hidden=w!=="video"||S.sel.size===0;
+  if(w==="web")wrender();
+}
+$("tab-video").addEventListener("click",()=>{tab("video");try{history.replaceState(null,"",location.pathname+location.search)}catch(x){}});
+$("tab-web").addEventListener("click",()=>{tab("web");try{history.replaceState(null,"","#web")}catch(x){}});
+document.querySelector("#paneWeb .bar").addEventListener("click",e=>{const b=e.target.closest("[data-wk]");if(!b)return;S[b.dataset.wk]=b.dataset.v;S.wLimit=60;wrender()});
+$("wq").addEventListener("input",e=>{S.wq=e.target.value.trim();S.wLimit=60;wrender()});
+$("wMore").addEventListener("click",()=>{S.wLimit+=60;wrender()});
+$("ml").addEventListener("click",e=>{const b=e.target.closest("[data-wcopy]");if(!b)return;const r=ML.find(x=>x[0]===b.dataset.wcopy);copy(wprompt(r),`已複製 No.${r[0]} 提示詞`)});
+function fromHash(){
+  const h=location.hash;const m=h.match(/^#fx-([A-Z]\d{2})$/);
+  if(h==="#web"){tab("web");return}
+  tab("video");
+  if(m&&byId(m[1]))openD(m[1],true);else if(S.open)closeD();
+}
+window.addEventListener("hashchange",fromHash);
+
+/* ---------------- Init ---------------- */
+const ok=E.filter(e=>["ok","ext"].includes(STCLS[e.status])).length;
+$("stats").innerHTML=`<span><b>${E.length}</b>影片特效</span><span><b>${ok}</b>可直接使用</span><span><b>${E.filter(e=>e.status==="規格").length}</b>規格待實作</span><span><b>${ML.length}</b>網頁動態索引</span>`;
+$("nVideo").textContent=E.length;$("nWeb").textContent=ML.length;
+setFmt(S.fmt);render();fromHash();
+</script>
+
+</body>
+</html>
