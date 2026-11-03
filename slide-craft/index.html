@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="51 種平面簡報版式技法，每種都附 16:9 版面示意、製作步驟，以及可直接貼給 AI 的提示詞。">
+<title>簡報技法圖鑑｜J3M 教學資源站</title>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Noto+Serif+TC:wght@600;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout：型錄式目錄。頂部標頭與使用步驟 → 篩選列 → 自適應卡片網格；每張卡片上方是 16:9 的實際版面示意 */
+:root{
+  --bg:#ECEEF0; --surface:#FFFFFF; --ink:#14181D; --muted:#5A646E; --line:#D3D8DD;
+  --chip:#E1E5E9; --accent:#1D4ED8; --accent-ink:#FFFFFF; --accent-soft:#DCE5FB; --overlay:rgba(14,18,24,.55);
+  /* 投影片示意的固定色票：簡報本身是作品，不隨介面主題反轉 */
+  --sl-p:#FFFFFF; --sl-k:#1B1F24; --sl-a:#2D5BE3; --sl-a2:#F2A93B; --sl-g:#DCE1E7; --sl-m:#8A939D;
+  --sl-soft:#EEF2FC; --sl-navy:#14233F; --sl-red:#E2553F;
+  --f-disp:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1216; --surface:#171B21; --ink:#E7EBEF; --muted:#98A2AD; --line:#2A3038;
+    --chip:#222830; --accent:#86A6FF; --accent-ink:#0B1020; --accent-soft:#1E2A47; --overlay:rgba(0,0,0,.66);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1216; --surface:#171B21; --ink:#E7EBEF; --muted:#98A2AD; --line:#2A3038;
+  --chip:#222830; --accent:#86A6FF; --accent-ink:#0B1020; --accent-soft:#1E2A47; --overlay:rgba(0,0,0,.66);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1280px;margin:0 auto}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- Header ---------- */
+header.top{padding-block:48px 28px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:40px;align-items:end}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+h1{font-family:var(--f-disp);font-weight:900;font-size:clamp(36px,6vw,64px);line-height:1.08;margin:10px 0 14px;letter-spacing:.01em;text-wrap:balance}
+.lede{color:var(--muted);max-width:34em;margin:0}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:baseline}
+.steps b{font-size:18px;color:var(--accent);font-weight:500}
+.steps span{color:var(--ink)}
+.topic{margin-top:18px;display:grid;gap:6px}
+.topic label{font-size:13px;color:var(--muted)}
+.field{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;font-size:15px}
+.field::placeholder{color:var(--muted);opacity:.8}
+
+/* ---------- Filter bar ---------- */
+.bar{background:var(--bg);padding-block:14px;border-bottom:1px solid var(--line);display:grid;gap:12px;z-index:5}
+@media (min-width:760px){.bar{position:sticky;top:env(safe-area-inset-top,0px)}}
+.bar-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.bar-row .lbl{font-size:12px;color:var(--muted);margin-right:4px;min-width:3.5em}
+.search{flex:1 1 260px;max-width:420px}
+.count{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+.chip{border:1px solid transparent;background:var(--chip);border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;line-height:1.4;display:inline-flex;gap:6px;align-items:center}
+.chip:hover{border-color:var(--line)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chip small{font-family:var(--f-mono);font-size:11px;opacity:.65}
+
+/* ---------- Grid & cards ---------- */
+main{padding-block:28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:22px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-width:0;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 28px -16px rgba(0,0,0,.35)}
+.card.is-picked{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.pv{padding:14px;background:var(--chip);cursor:zoom-in}
+.pv .s{box-shadow:0 1px 2px rgba(0,0,0,.12),0 6px 16px -10px rgba(0,0,0,.3)}
+.meta{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+.row1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.no{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.cat{font-size:12px;color:var(--accent);font-weight:500}
+.card h3{font-family:var(--f-disp);font-weight:900;font-size:19px;line-height:1.3;margin:2px 0 0}
+.en{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin:0}
+.desc{margin:4px 0 0;font-size:14px;color:var(--ink)}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.tag{font-size:11px;border:1px solid var(--line);color:var(--muted);border-radius:4px;padding:0 6px}
+.acts{margin-top:auto;padding-top:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pick{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer}
+.pick input{accent-color:var(--accent);width:16px;height:16px}
+.btn{border:1px solid var(--line);background:transparent;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:500}
+.btn.primary:hover{filter:brightness(1.08)}
+.empty{padding:60px 20px;text-align:center;color:var(--muted)}
+
+/* ---------- Detail ---------- */
+.overlay{position:fixed;inset:0;background:var(--overlay);z-index:20;display:grid;place-items:center;
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.panel{background:var(--surface);border-radius:14px;width:min(1080px,100%);max-height:100%;overflow:auto;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.panel .stage{background:var(--chip);padding:28px;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.panel .stage .s{box-shadow:0 2px 4px rgba(0,0,0,.1),0 18px 40px -20px rgba(0,0,0,.4)}
+.nav{display:flex;justify-content:space-between;gap:8px}
+.panel .info{padding:28px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel h2{font-family:var(--f-disp);font-weight:900;font-size:28px;line-height:1.25;margin:0}
+.panel h4{font-size:12px;letter-spacing:.12em;color:var(--muted);margin:0 0 4px;font-weight:500}
+.panel p{margin:0}
+.plist{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.plist li{display:grid;grid-template-columns:24px 1fr;gap:4px}
+.plist b{color:var(--accent);font-weight:500}
+.avoid{border-left:3px solid var(--line);padding-left:10px;color:var(--muted)}
+.prompt{font-family:var(--f-body);font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;white-space:pre-wrap;margin:0;max-height:220px;overflow:auto;line-height:1.6}
+.x{position:sticky;top:0;margin-left:auto;border:0;background:var(--chip);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1}
+@media (max-width:820px){
+  .panel{grid-template-columns:minmax(0,1fr)}
+  .panel .stage,.panel .info{padding:18px}
+  header.top{grid-template-columns:minmax(0,1fr);gap:24px;padding-block:32px 20px}
+}
+
+/* ---------- Tray / toast / fallback ---------- */
+.tray{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--ink);color:var(--bg);
+  padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.tray-in{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tray .names{flex:1 1 240px;font-size:13px;opacity:.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tray .btn{border-color:rgba(127,127,127,.5);color:var(--bg)}
+.tray .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px}
+.fb textarea{width:100%;min-height:220px;font-size:13px}
+
+/* ================= 投影片示意 ================= */
+.s{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;container-type:inline-size;overflow:hidden;background:var(--sl-p);color:var(--sl-k);font-family:var(--f-body);border-radius:4px;line-height:1.3;isolation:isolate}
+.s *{box-sizing:border-box}
+.s .a{position:absolute}
+.s .h{font-weight:800;line-height:1.18;letter-spacing:-.005em}
+.s .sm{font-size:2.1cqw;color:var(--sl-m);line-height:1.5}
+.s .lab{font-family:var(--f-mono);font-size:1.7cqw;letter-spacing:.14em;color:var(--sl-a);text-transform:uppercase}
+.s .ln{height:1.1cqw;border-radius:1cqw;background:var(--sl-g);width:100%}
+.s .col{display:flex;flex-direction:column;gap:1.5cqw}
+.s .sbtn{background:var(--sl-a);color:#fff;font-size:2.2cqw;padding:1.3cqw 3cqw;border-radius:5cqw;font-weight:700;display:inline-block}
+.s .vl{top:0;bottom:0;border-left:1px dashed rgba(255,255,255,.75)}
+.s .hl{left:0;right:0;border-top:1px dashed rgba(255,255,255,.75)}
+.s .tile{border-radius:1.4cqw;padding:2.2cqw;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;gap:.5cqw}
+.s .mcard{background:#fff;border:1px solid var(--sl-g);border-radius:1cqw;padding:2cqw;display:flex;flex-direction:column;gap:1cqw}
+.s .dot{width:3cqw;height:3cqw;border-radius:.8cqw;background:var(--sl-a)}
+.s .pp{position:relative;width:5.2cqw;height:10cqw;display:block}
+.s .pp::before{content:"";position:absolute;left:50%;top:0;width:3cqw;height:3cqw;margin-left:-1.5cqw;border-radius:50%;background:currentColor}
+.s .pp::after{content:"";position:absolute;left:.4cqw;right:.4cqw;top:3.6cqw;bottom:0;border-radius:2.4cqw 2.4cqw .6cqw .6cqw;background:currentColor}
+.s .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.s .mk{background:linear-gradient(transparent 52%,#F9D86B 52%,#F9D86B 92%,transparent 92%);padding:0 .3em}
+.s .clipfill{background:linear-gradient(180deg,#F3A86B,#FBE3C4 46%,#7A5A6E 47%,#3E2F42);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* 照片替身：以漸層與山形繪製，避免外部圖檔 */
+.ph{background:linear-gradient(180deg,var(--sky1,#8FB0D4),var(--sky2,#E6ECF2) 72%);overflow:hidden;position:relative}
+.ph::before{content:"";position:absolute;left:0;right:0;bottom:0;height:62%;background:var(--mt,#56677F);clip-path:polygon(0 100%,0 55%,14% 30%,28% 52%,46% 8%,63% 44%,78% 22%,100% 50%,100% 100%)}
+.ph::after{content:"";position:absolute;left:0;right:0;bottom:0;height:30%;background:var(--fg,#34404F);clip-path:polygon(0 100%,0 40%,25% 70%,52% 25%,75% 60%,100% 30%,100% 100%)}
+.ph.sun{--sky1:#F0A06A;--sky2:#FBE3C4;--mt:#7A5A6E;--fg:#3E2F42}
+.ph.wood{--sky1:#A9CBB7;--sky2:#EEF4EE;--mt:#4E7A63;--fg:#2D4A3B}
+.ph.sand{--sky1:#C9B79C;--sky2:#EFE7DA;--mt:#8C7A63;--fg:#5A4C3C}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Slide Craft Library · 平面簡報版式</div>
+      <h1>簡報技法圖鑑</h1>
+      <p class="lede">為簡報找靈感，也為 AI 寫清楚需求。每一種技法都附實際版面示意、製作要點，以及可直接貼給 ChatGPT 、Claude 、Gamma 的提示詞。</p>
+    </div>
+    <div>
+      <ol class="steps">
+        <li><b>➊</b><span>依「頁型」與「類別」篩選，找到這一頁要的版式</span></li>
+        <li><b>➋</b><span>點開示意圖，查看適用情境、步驟與常見錯誤</span></li>
+        <li><b>➌</b><span>複製提示詞，或勾選多種技法組成整份簡報的風格指引</span></li>
+      </ol>
+      <div class="topic">
+        <label for="topic">簡報主題（會自動帶入所有提示詞）</label>
+        <input class="field" id="topic" type="text" placeholder="例如：2027 年度品牌行銷策略提案" autocomplete="off">
+      </div>
+    </div>
+  </header>
+
+  <div class="bar" id="bar">
+    <div class="bar-row">
+      <input class="field search" id="q" type="search" placeholder="搜尋技法、情境，例如：數據、比較、封面" autocomplete="off" aria-label="搜尋技法">
+      <span class="count" id="count"></span>
+    </div>
+    <div class="bar-row" id="cats" role="group" aria-label="類別"></div>
+    <div class="bar-row" id="pages" role="group" aria-label="頁型"></div>
+  </div>
+
+  <main>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" hidden>
+      <p>找不到符合的技法。試著換個關鍵字，或清除篩選條件。</p>
+      <button class="btn" id="reset" type="button">清除篩選</button>
+    </div>
+  </main>
+</div>
+
+<div class="tray" id="tray" hidden>
+  <div class="tray-in">
+    <strong id="trayCount"></strong>
+    <span class="names" id="trayNames"></span>
+    <button class="btn" id="trayClear" type="button">清除</button>
+    <button class="btn primary" id="trayCopy" type="button">複製組合提示詞</button>
+  </div>
+</div>
+
+<div class="overlay" id="detail" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <div class="stage">
+      <div id="dSlide"></div>
+      <div class="nav">
+        <button class="btn" id="dPrev" type="button">← 上一個</button>
+        <button class="btn" id="dNext" type="button">下一個 →</button>
+      </div>
+    </div>
+    <div class="info">
+      <div class="row1"><span class="no" id="dNo"></span><button class="x" id="dClose" type="button" aria-label="關閉">×</button></div>
+      <div>
+        <div class="cat" id="dCat"></div>
+        <h2 id="dTitle"></h2>
+        <p class="en" id="dEn"></p>
+      </div>
+      <p id="dDesc"></p>
+      <div><h4>適用情境</h4><p id="dWhen"></p></div>
+      <div><h4>製作步驟</h4><ol class="plist" id="dSteps"></ol></div>
+      <div><h4>請避免</h4><p class="avoid" id="dAvoid"></p></div>
+      <div>
+        <h4>AI 提示詞</h4>
+        <pre class="prompt" id="dPrompt"></pre>
+      </div>
+      <div class="acts" style="padding-top:0">
+        <label class="pick"><input type="checkbox" id="dPick"> 加入組合</label>
+        <button class="btn primary" id="dCopy" type="button">複製提示詞</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay fb" id="fallback" hidden>
+  <div class="panel" style="grid-template-columns:minmax(0,1fr);max-width:640px">
+    <div class="info">
+      <div class="row1"><strong>請手動複製</strong><button class="x" id="fbClose" type="button" aria-label="關閉">×</button></div>
+      <p style="color:var(--muted)">此環境不允許自動寫入剪貼簿。文字已全選，請按 Ctrl＋C 或 ⌘＋C。</p>
+      <textarea class="field" id="fbText" readonly></textarea>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const CATS=[["all","全部"],["layout","版面構圖"],["type","文字排版"],["color","色彩運用"],["data","數據呈現"],["image","圖像處理"],["diagram","圖解結構"],["focus","重點強調"],["cover","封面章節"]];
+const CATNAME=Object.fromEntries(CATS);
+const PAGES=["全部","封面","章節","內容","數據","比較","流程","結尾"];
+const R=(s,n)=>s.repeat(n);
+const LN=(w)=>`<div class="ln" style="width:${w}%"></div>`;
+
+const T=[
+/* ---------------- 版面構圖 ---------------- */
+{n:"001",cat:"layout",zh:"三分法構圖",en:"Rule of Thirds",pages:["封面","章節","內容"],
+desc:"把畫面切成九宮格，主體放在四個交會點之一。",
+when:"以照片為主的封面、章節頁，或需要視覺焦點的單一訊息頁。",
+look:"滿版照片作背景，以九宮格虛擬線切分畫面，主體位於右上交會點，標題放在左下三分之一區塊，與主體形成對角呼應。",
+steps:["先決定畫面主體，將它對齊任一交會點","標題放在主體的對角區塊，避免與主體重疊","照片過亮時，在文字區加半透明暗色漸層"],
+avoid:"主體與標題都擠在正中央，畫面失去張力。",
+html:`<div class="a ph" style="inset:0"></div><i class="a vl" style="left:33.33%"></i><i class="a vl" style="left:66.66%"></i><i class="a hl" style="top:33.33%"></i><i class="a hl" style="top:66.66%"></i>
+<div class="a" style="left:66.66%;top:33.33%;width:8cqw;height:8cqw;margin:-4cqw 0 0 -4cqw;border:.5cqw solid var(--sl-a2);border-radius:50%"></div>
+<div class="a h" style="left:6%;bottom:9%;font-size:5.4cqw;color:#fff;text-shadow:0 .3cqw 1.2cqw rgba(0,0,0,.35)">焦點放在<br>交會點上</div>`},
+
+{n:"002",cat:"layout",zh:"左右分割",en:"Split Screen",pages:["封面","內容","比較"],
+desc:"畫面一分為二，一側放圖、一側放文字，資訊各司其職。",
+when:"產品介紹、案例說明、人物介紹，任何「一張圖加一段說明」的頁面。",
+look:"畫面左半為滿高照片，右半為白底文字區；文字區上方是小型英文標籤，接著兩行粗體標題，下方三行內文，整體垂直置中。",
+steps:["圖片與文字各佔 50%，或依重要性調整為 60／40","文字區左右留白至少為畫面寬的 5%","標題不超過兩行，內文不超過三行"],
+avoid:"圖片與文字之間沒有留白，文字貼齊圖片邊緣。",
+html:`<div class="a ph" style="left:0;top:0;bottom:0;width:50%"></div>
+<div class="a col" style="left:56%;right:6%;top:50%;transform:translateY(-50%)"><div class="lab">Chapter 01</div><div class="h" style="font-size:5cqw">左圖右文<br>各司其職</div>${LN(92)}${LN(78)}${LN(84)}</div>`},
+
+{n:"003",cat:"layout",zh:"黃金比例分割",en:"Golden Split",pages:["內容","數據"],
+desc:"以 0.618 的比例切分主內容與輔助欄，比對半分割更有主從感。",
+when:"主內容加側欄資訊的頁面，例如重點說明搭配關鍵數字。",
+look:"左側 61.8% 為白底主內容區，含標籤、粗體標題與內文；右側 38.2% 為深藍色塊，底部以等寬字型標示關鍵數字與說明。",
+steps:["主內容區寬度約為整頁的 62%","輔助欄使用深色或色塊，與主內容形成明暗對比","輔助欄只放一個重點，例如一個數字或一句結論"],
+avoid:"兩側塞入同等份量的資訊，比例優勢就消失了。",
+html:`<div class="a" style="left:0;top:0;bottom:0;width:61.8%;padding:6cqw"><div class="col"><div class="lab">Golden Ratio</div><div class="h" style="font-size:5.2cqw">主內容佔<br>61.8%</div>${LN(82)}${LN(66)}</div></div>
+<div class="a" style="right:0;top:0;bottom:0;width:38.2%;background:var(--sl-navy);color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:4cqw;gap:.6cqw"><div class="num" style="font-size:5.4cqw;font-weight:600">1 : 0.618</div><div style="font-size:2cqw;opacity:.7">輔助資訊欄</div></div>`},
+
+{n:"004",cat:"layout",zh:"Z 字動線",en:"Z-Pattern",pages:["封面","內容","結尾"],
+desc:"依照視線「左上、右上、左下、右下」的順序擺放元素。",
+when:"需要引導觀眾依序閱讀，最後落在行動按鈕的頁面，例如提案結論頁。",
+look:"左上為主標題，右上為小型長條圖，左下為三行說明文字，右下為圓角行動按鈕；一條虛線 Z 字路徑串起四個位置並標示 1 到 4。",
+steps:["最重要的標題放左上，視線起點","輔助證據放右上與左下","行動呼籲放右下，視線終點"],
+avoid:"把行動按鈕放在左上，觀眾還沒理解內容就被要求行動。",
+html:`<div class="a h" style="left:7%;top:10%;font-size:4.4cqw">核心主張</div>
+<div class="a" style="right:7%;top:9%;display:flex;gap:1cqw;align-items:flex-end;height:9cqw"><i style="width:2.4cqw;height:40%;background:var(--sl-g)"></i><i style="width:2.4cqw;height:65%;background:var(--sl-g)"></i><i style="width:2.4cqw;height:100%;background:var(--sl-a)"></i></div>
+<div class="a col" style="left:7%;bottom:12%;width:36%;gap:1.2cqw">${LN(100)}${LN(84)}${LN(60)}</div>
+<div class="a sbtn" style="right:7%;bottom:10%">立即行動</div>
+<svg class="a" style="inset:0;width:100%;height:100%" viewBox="0 0 160 90"><path d="M44 15 H112 L44 68 H108" fill="none" stroke="#2D5BE3" stroke-width=".7" stroke-dasharray="2.5 2"/>
+<g font-family="JetBrains Mono,monospace" font-size="3.6" fill="#fff" text-anchor="middle"><circle cx="44" cy="15" r="3" fill="#2D5BE3"/><text x="44" y="16.3">1</text><circle cx="112" cy="15" r="3" fill="#2D5BE3"/><text x="112" y="16.3">2</text><circle cx="44" cy="68" r="3" fill="#2D5BE3"/><text x="44" y="69.3">3</text><circle cx="108" cy="68" r="3" fill="#2D5BE3"/><text x="108" y="69.3">4</text></g></svg>`},
+
+{n:"005",cat:"layout",zh:"Bento 格局",en:"Bento Grid",pages:["內容","數據"],
+desc:"像便當盒一樣以大小不一的格子收納多個重點，格子越大越重要。",
+when:"產品特色總覽、年度成果回顧、一頁說完四到六個重點。",
+look:"畫面以圓角格子拼成網格：左側一大格深藍底寫核心訊息，右上兩小格分別是大數字與照片，右下一長格黃色底寫一句補充，格間距一致。",
+steps:["先排序重點，最重要的給最大格","格子間距統一，圓角統一","每格只放一種內容：一個數字、一張圖或一句話"],
+avoid:"每一格大小相同，失去主次；或格子裡塞入完整段落。",
+html:`<div class="a" style="inset:6%;display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:1.5cqw">
+<div class="tile" style="grid-row:span 2;background:var(--sl-navy);color:#fff"><div class="lab" style="color:var(--sl-a2)">Core</div><div class="h" style="font-size:4.4cqw">一格<br>一個重點</div></div>
+<div class="tile" style="background:var(--sl-soft)"><div class="h num" style="font-size:5cqw;color:var(--sl-a)">4.8</div><div class="sm" style="font-size:1.8cqw">滿意度</div></div>
+<div class="tile ph wood"></div>
+<div class="tile" style="grid-column:span 2;background:var(--sl-a2)"><div class="h" style="font-size:3cqw;color:var(--sl-navy)">格子大小＝優先順序</div></div></div>`},
+
+{n:"006",cat:"layout",zh:"大量留白",en:"Generous Whitespace",pages:["封面","章節","內容","結尾"],
+desc:"刻意讓六成以上的畫面空著，讓唯一的訊息被看見。",
+when:"轉場頁、重要宣言、品牌調性偏精品或極簡的簡報。",
+look:"純白畫面中央只有一行中等字重的句子，字級不大；左下角以極小的等寬字標註頁碼或註記，其餘全部留白。",
+steps:["只保留一個元素，刪除裝飾與 Logo","字級適中即可，留白本身就是強調","用極小的輔助文字放在角落，平衡畫面"],
+avoid:"擔心畫面太空而加入圖示或背景圖，稀釋了訊息。",
+html:`<div class="a" style="left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-size:3.6cqw;font-weight:500;letter-spacing:.06em">少，即是清楚。</div>
+<div class="a num" style="left:6%;bottom:8%;font-size:1.5cqw;color:var(--sl-m);letter-spacing:.12em">WHITESPACE ≥ 60%</div><div class="a num" style="right:6%;bottom:8%;font-size:1.5cqw;color:var(--sl-m)">07</div>`},
+
+{n:"007",cat:"layout",zh:"12 欄網格",en:"Modular Grid",pages:["內容","數據","比較"],
+desc:"以 12 欄網格對齊所有元素，多欄內容依然整齊。",
+when:"資訊量較大的內容頁、三欄或四欄並列的說明頁。",
+look:"畫面背景隱約可見 12 條淡藍色欄位；標題橫跨前 8 欄，下方三張卡片各佔 4 欄，卡片左緣與標題左緣完全對齊。",
+steps:["在投影片母片設定 12 欄參考線與固定欄距","標題、卡片、圖片的左右邊緣都落在欄線上","三欄內容各佔 4 欄，兩欄內容各佔 6 欄"],
+avoid:"憑感覺擺放，元素邊緣差幾個像素，整頁看起來就不專業。",
+html:`<div class="a" style="inset:0 5%;display:grid;grid-template-columns:repeat(12,1fr);gap:1.2cqw">${R('<i style="background:rgba(45,91,227,.07)"></i>',12)}</div>
+<div class="a" style="inset:11% 5% 0;display:grid;grid-template-columns:repeat(12,1fr);column-gap:1.2cqw;row-gap:4cqw;align-content:start">
+<div class="h" style="grid-column:1/9;font-size:4.4cqw">所有元素都對齊欄線</div>
+${R(`<div class="mcard" style="grid-column:span 4;height:22cqw"><div class="dot"></div>${LN(80)}${LN(60)}</div>`,3)}</div>`},
+
+{n:"008",cat:"layout",zh:"不對稱平衡",en:"Asymmetric Balance",pages:["封面","章節"],
+desc:"用大小、明暗、色彩的份量差異取得平衡，而不是左右對稱。",
+when:"想要現代、有張力的封面或章節頁。",
+look:"左下方一大塊深藍矩形承載白色粗體標題，右上方一顆黃色圓形作為視覺配重，右下方兩行細文字，整體呈對角平衡。",
+steps:["一個大而重的元素放在畫面一角","對角放一個小而鮮豔的元素作為配重","剩下的空白保持完整，不要再填東西"],
+avoid:"把元素平均散在四個角落，看起來像沒有設計。",
+html:`<div class="a" style="left:0;bottom:0;width:58%;height:66%;background:var(--sl-navy)"></div>
+<div class="a h" style="left:6%;bottom:12%;font-size:6cqw;color:#fff">重與輕<br>的平衡</div>
+<div class="a" style="right:13%;top:15%;width:12cqw;height:12cqw;border-radius:50%;background:var(--sl-a2)"></div>
+<div class="a col" style="right:6%;bottom:13%;width:27%;gap:1.2cqw">${LN(100)}${LN(70)}</div>`},
+
+/* ---------------- 文字排版 ---------------- */
+{n:"009",cat:"type",zh:"超大標題",en:"Oversized Headline",pages:["封面","章節"],
+desc:"把一個字放大到超出畫面，讓文字本身成為圖像。",
+when:"發表會開場、主題宣言、章節的核心關鍵字。",
+look:"一個中文字以極大字級放在左下角並超出畫面邊緣，使用主色；右上方以小字放標籤、標題與一行說明。",
+steps:["挑選一個最能代表主題的字或詞","字級放大到畫面高度的八成以上，允許出血裁切","其餘文字縮小並放在對角，形成強烈對比"],
+avoid:"放大一整句話，字級不夠大又難以閱讀。",
+html:`<div class="a h" style="left:-3%;bottom:-12%;font-size:36cqw;line-height:1;color:var(--sl-a);font-family:var(--f-disp);font-weight:900">變</div>
+<div class="a col" style="right:6%;top:12%;width:40%"><div class="lab">Keynote 2026</div><div class="h" style="font-size:4.4cqw">產業正在<br>重寫規則</div><div class="sm">讓一個字成為畫面</div></div>`},
+
+{n:"010",cat:"type",zh:"一頁一句",en:"One Message per Slide",pages:["章節","內容","結尾"],
+desc:"整頁只放一句話，演講者負責說明，投影片負責記憶點。",
+when:"TED 式演講、關鍵洞察、需要觀眾記住的那一句。",
+look:"白底畫面中央以襯線粗體寫一句話，分成兩行；句子上方一條短主色線，下方以小字標註出處或頁碼。",
+steps:["把整段內容濃縮成 20 字以內的一句話","句子置中，字級為畫面寬度的 5% 以上","細節交給講稿，不放在投影片上"],
+avoid:"一句話加上三個補充條列，回到文字牆。",
+html:`<div class="a" style="left:50%;top:22%;width:6cqw;height:.5cqw;margin-left:-3cqw;background:var(--sl-a)"></div>
+<div class="a" style="left:8%;right:8%;top:50%;transform:translateY(-50%);text-align:center;font-family:var(--f-disp);font-weight:900;font-size:5.6cqw;line-height:1.4">客戶不買功能，<br>他們買結果。</div>
+<div class="a sm" style="left:0;right:0;bottom:12%;text-align:center">— 洞察 03</div>`},
+
+{n:"011",cat:"type",zh:"字重對比",en:"Weight Contrast",pages:["封面","章節","內容"],
+desc:"同一字體家族的極細與極粗並用，不換字型也能拉出層次。",
+when:"標題需要區分「情境」與「關鍵字」時。",
+look:"左側垂直置中兩行字：上行為細體灰色的修飾語，下行為極粗黑色的關鍵詞且字級更大，下方以小字註明字重。",
+steps:["修飾語用 Light 300，關鍵詞用 Black 900","關鍵詞字級為修飾語的 1.5 倍左右","全頁只用一個字體家族"],
+avoid:"同時改變字體、字重、顏色、底線，強調反而互相抵消。",
+html:`<div class="a" style="left:7%;top:50%;transform:translateY(-50%)"><div style="font-size:6.6cqw;font-weight:300;color:var(--sl-m);line-height:1.15">數據驅動的</div><div style="font-size:12cqw;font-weight:900;line-height:1.05">決策</div><div class="sm" style="margin-top:2cqw">Light 300 ／ Black 900</div></div>
+<div class="a" style="right:7%;top:20%;bottom:20%;width:30%;display:flex;flex-direction:column;justify-content:space-between;font-size:3.4cqw"><span style="font-weight:300">Aa 300</span><span style="font-weight:500">Aa 500</span><span style="font-weight:700">Aa 700</span><span style="font-weight:900">Aa 900</span></div>`},
+
+{n:"012",cat:"type",zh:"中文直排",en:"Vertical Typesetting",pages:["封面","章節"],
+desc:"運用中文獨有的直書排版，營造人文與東方氣質。",
+when:"文化、工藝、餐飲、旅遊、品牌故事類簡報。",
+look:"左半為暖色調照片，右側以襯線粗體直排四字標題，旁邊一行細小直排副標，右下角一枚紅色方形印章。",
+steps:["標題直排，字距拉開至 0.15 em","副標用更小的字級直排並排在標題左側","以紅色印章或細線作為點綴，不要過多"],
+avoid:"英數字直排時沒有轉正，或直排與橫排混雜在同一區塊。",
+html:`<div class="a ph sand" style="left:0;top:0;bottom:0;width:50%"></div>
+<div class="a" style="right:8%;top:11%;writing-mode:vertical-rl;font-family:var(--f-disp);font-weight:900;font-size:7cqw;letter-spacing:.15em">器物之美</div>
+<div class="a" style="right:21%;top:13%;writing-mode:vertical-rl;font-size:2.1cqw;color:var(--sl-m);letter-spacing:.25em">東方工藝的日常</div>
+<div class="a" style="right:28%;bottom:11%;width:5cqw;height:5cqw;background:#B23A2E;color:#fff;font-size:2.6cqw;display:grid;place-items:center;font-family:var(--f-disp)">選</div>`},
+
+{n:"013",cat:"type",zh:"引言頁",en:"Pull Quote",pages:["章節","內容"],
+desc:"以超大引號帶出一句引言，借用他人的話語增加說服力。",
+when:"引用客戶回饋、專家觀點、名言作為論點支撐。",
+look:"左上方一個巨大的主色引號，引言以襯線字體置於畫面中段，下方一條短黑線接著署名與職稱。",
+steps:["引號放大到標題字級的三倍以上，作為視覺錨點","引言控制在兩行內","署名包含姓名與身分，增加可信度"],
+avoid:"引言過長變成一段文章，或沒有註明出處。",
+html:`<div class="a" style="left:7%;top:-2%;font-family:var(--f-disp);font-size:26cqw;line-height:1;color:var(--sl-a)">“</div>
+<div class="a" style="left:14%;right:12%;top:36%;font-family:var(--f-disp);font-weight:600;font-size:4.6cqw;line-height:1.45">好的設計，是盡可能少的設計。</div>
+<div class="a" style="left:14%;top:64%;display:flex;align-items:center;gap:1.6cqw"><i style="width:6cqw;height:.3cqw;background:var(--sl-k)"></i><span style="font-size:2.1cqw">Dieter Rams｜工業設計師</span></div>`},
+
+{n:"014",cat:"type",zh:"四級字級系統",en:"Type Hierarchy",pages:["內容"],
+desc:"標籤、主標、副標、內文四個層級，字級差距明確。",
+when:"所有內容頁的基礎規範，也適合交給 AI 統一整份簡報。",
+look:"左側依序為主色小標籤、粗體主標、灰色副標與三行內文；右側以細線分隔，標示 44／24／18／12 pt 四個字級。",
+steps:["主標 40 至 48 pt，副標 24 pt，內文 18 pt，標籤 12 pt","相鄰層級字級比至少 1.3 倍","整份簡報固定使用同一套字級"],
+avoid:"每頁字級都不同，或主標與內文只差 2 pt。",
+html:`<div class="a col" style="left:7%;top:13%;width:58%;gap:1.4cqw"><div class="lab">Label · 12pt</div><div class="h" style="font-size:6cqw">主標題 44pt</div><div style="font-size:3cqw;color:var(--sl-m);font-weight:500">副標題 24pt，補充脈絡</div><div style="height:1cqw"></div>${LN(96)}${LN(88)}${LN(70)}</div>
+<div class="a num" style="right:6%;top:13%;bottom:13%;width:20%;border-left:1px solid var(--sl-g);padding-left:2.4cqw;display:flex;flex-direction:column;justify-content:space-between;color:var(--sl-m)"><span style="font-size:4.4cqw;color:var(--sl-k)">44</span><span style="font-size:3cqw">24</span><span style="font-size:2.4cqw">18</span><span style="font-size:1.8cqw">12 pt</span></div>`},
+
+{n:"015",cat:"type",zh:"圖片填字",en:"Image-filled Text",pages:["封面","章節"],
+desc:"用文字當作畫框，在字形裡填入照片或漸層。",
+when:"旅遊、活動、品牌主視覺，需要強烈第一印象的封面。",
+look:"深藍色背景上置中兩個極粗大字，字形內填入夕陽山景照片，下方一行淺灰小字說明。",
+steps:["選用筆畫粗的字體，字數越少越好","照片的主色要與背景形成對比","在 PowerPoint 以「合併圖案：交集」或文字填滿圖片完成"],
+avoid:"選用細字體，照片在筆畫裡幾乎看不見。",
+html:`<div class="a" style="inset:0;background:var(--sl-navy)"></div>
+<div class="a h clipfill" style="left:0;right:0;top:50%;transform:translateY(-58%);text-align:center;font-size:24cqw;font-weight:900;line-height:1.1">山海</div>
+<div class="a" style="left:0;right:0;bottom:11%;text-align:center;color:#C8D2E0;font-size:2.1cqw;letter-spacing:.2em">字形即是畫框</div>`},
+
+/* ---------------- 色彩運用 ---------------- */
+{n:"016",cat:"color",zh:"60-30-10 配色",en:"60-30-10 Rule",pages:["封面","內容"],
+desc:"主色 60%、輔色 30%、強調色 10%，用面積比例管理顏色。",
+when:"建立整份簡報配色規範，或品牌色不知道怎麼分配時。",
+look:"左側三分之一深藍色塊放白色標題，右側淺灰白底放內文，中段一顆黃色按鈕作為唯一強調；底部一條比例條標示 60／30／10。",
+steps:["背景與大面積使用中性色，約佔 60%","品牌主色用於色塊與標題區，約佔 30%","強調色只給最需要被看見的元素，約佔 10%"],
+avoid:"強調色用在太多地方，最後沒有任何東西被強調。",
+html:`<div class="a" style="left:0;top:0;bottom:0;width:34%;background:var(--sl-navy);padding:6cqw 4cqw;color:#fff"><div class="h" style="font-size:4.2cqw">三種顏色<br>三種份量</div></div>
+<div class="a" style="left:34%;right:0;top:0;bottom:0;background:#F3F5F8"></div>
+<div class="a col" style="left:40%;right:7%;top:14%">${LN(90)}${LN(74)}${LN(82)}</div>
+<div class="a sbtn" style="left:40%;top:47%;background:var(--sl-a2);color:var(--sl-navy)">重點 10%</div>
+<div class="a num" style="left:40%;right:7%;bottom:11%;height:3.4cqw;display:flex;border-radius:.6cqw;overflow:hidden;font-size:1.6cqw"><span style="flex:6;background:#E3E7EC;display:grid;place-items:center">60</span><span style="flex:3;background:var(--sl-navy);color:#fff;display:grid;place-items:center">30</span><span style="flex:1;background:var(--sl-a2);display:grid;place-items:center">10</span></div>`},
+
+{n:"017",cat:"color",zh:"單色深淺",en:"Monochrome Tints",pages:["數據","內容"],
+desc:"只用一個色相，以明度變化區分層級，畫面安靜而有秩序。",
+when:"多類別圖表、層級結構、需要穩重氣質的企業簡報。",
+look:"同一個藍色由深到淺排成五根直條，高度依序遞減，每根底部標註類別；上方左側一行粗體標題。",
+steps:["從品牌主色延伸出五階明度","最重要的類別用最深的顏色","文字顏色依背景深淺切換黑白，確保對比"],
+avoid:"淺色區塊上放白字，對比不足看不清。",
+html:`<div class="a h" style="left:7%;top:10%;font-size:4.2cqw">同一色相，五種明度</div>
+<div class="a" style="left:7%;right:7%;bottom:12%;height:52%;display:flex;gap:1.4cqw;align-items:flex-end;font-size:1.9cqw;font-weight:700">
+<div style="flex:1;height:100%;background:#14307A;color:#fff;padding:1cqw;display:flex;align-items:flex-end">A</div><div style="flex:1;height:80%;background:#2D5BE3;color:#fff;padding:1cqw;display:flex;align-items:flex-end">B</div><div style="flex:1;height:62%;background:#6C8FF0;color:#fff;padding:1cqw;display:flex;align-items:flex-end">C</div><div style="flex:1;height:44%;background:#A9BFF7;color:#14307A;padding:1cqw;display:flex;align-items:flex-end">D</div><div style="flex:1;height:28%;background:#DCE5FC;color:#14307A;padding:1cqw;display:flex;align-items:flex-end">E</div></div>`},
+
+{n:"018",cat:"color",zh:"色塊分區",en:"Color Blocking",pages:["內容","比較"],
+desc:"以整面色塊區隔並列的主題，不用框線也能分得清楚。",
+when:"三大策略、三個方案、三個部門等並列概念。",
+look:"畫面垂直分成三等份滿版色塊，分別為深藍、主藍、黃色；每塊上方有序號與粗體標題，下方兩行文字。",
+steps:["每個主題指定一個顏色，整份簡報沿用","色塊滿版出血，不留外框","文字顏色隨色塊深淺切換"],
+avoid:"三個顏色彩度都很高又互相衝突，畫面刺眼。",
+html:`<div class="a" style="inset:0;display:grid;grid-template-columns:1fr 1fr 1fr">
+${[["var(--sl-navy)","#fff","策略"],["var(--sl-a)","#fff","產品"],["var(--sl-a2)","var(--sl-navy)","通路"]].map((c,i)=>`<div style="background:${c[0]};color:${c[1]};padding:7cqw 3.6cqw;display:flex;flex-direction:column;gap:1.4cqw"><div class="num" style="font-size:1.8cqw;opacity:.75">0${i+1}</div><div class="h" style="font-size:4.4cqw">${c[2]}</div><div style="height:1cqw"></div><div class="ln" style="background:currentColor;opacity:.35"></div><div class="ln" style="background:currentColor;opacity:.35;width:70%"></div></div>`).join("")}</div>`},
+
+{n:"019",cat:"color",zh:"灰階加一色",en:"Grey Plus One",pages:["數據","比較"],
+desc:"其他資料全部灰階，只把要講的那一筆上色。",
+when:"競品比較、多條趨勢線、需要觀眾立刻找到「我們」的圖表。",
+look:"折線圖中四條灰色細線代表競品，一條粗的主色線代表自家品牌並在終點標示「我們 +42%」；左上方粗體標題。",
+steps:["所有資料先設為淺灰","只有主角使用品牌主色並加粗","直接在線條終點標註名稱，取代圖例"],
+avoid:"每條線都用不同鮮豔顏色，觀眾要先讀圖例才看得懂。",
+html:`<div class="a h" style="left:7%;top:9%;font-size:4cqw">只有一條線需要顏色</div>
+<svg class="a" style="left:7%;right:7%;top:26%;bottom:10%;width:86%;height:64%" viewBox="0 0 140 60" preserveAspectRatio="none">
+<g fill="none" stroke="#C9CFD6" stroke-width=".8"><polyline points="0,40 30,38 60,42 90,36 120,39"/><polyline points="0,46 30,44 60,40 90,44 120,42"/><polyline points="0,30 30,34 60,32 90,35 120,33"/><polyline points="0,50 30,48 60,50 90,47 120,48"/></g>
+<polyline points="0,44 30,36 60,28 90,18 120,8" fill="none" stroke="#2D5BE3" stroke-width="2"/><circle cx="120" cy="8" r="2" fill="#2D5BE3"/></svg>
+<div class="a" style="right:6%;top:30%;font-size:2.2cqw;font-weight:700;color:var(--sl-a)">我們 +42%</div>`},
+
+{n:"020",cat:"color",zh:"深色舞台",en:"Dark Stage",pages:["封面","章節","數據"],
+desc:"深色背景搭配發光的主色，聚焦感強，適合大型會場投影。",
+when:"發表會、科技產品、大型會場或暗場演講。",
+look:"近黑色背景，畫面右上方一團柔和的藍色光暈；左側主色小標籤、白色粗體標題與深灰色內文線條。",
+steps:["背景用帶一點藍的深色，不用純黑","以一團主色光暈製造空間感","內文改用淺灰，主標保持純白"],
+avoid:"深色背景上用深藍或深紅小字，投影後完全看不見。",
+html:`<div class="a" style="inset:0;background:radial-gradient(circle at 78% 22%,rgba(45,91,227,.55),transparent 45%),#0D1117"></div>
+<div class="a col" style="left:7%;top:50%;transform:translateY(-50%);width:56%"><div class="lab" style="color:#86A6FF">Launch 2026</div><div class="h" style="font-size:6cqw;color:#fff">下一代平台</div><div class="ln" style="background:#2A313B;width:90%"></div><div class="ln" style="background:#2A313B;width:66%"></div></div>`},
+
+{n:"021",cat:"color",zh:"柔和網格漸層",en:"Mesh Gradient",pages:["封面","章節","結尾"],
+desc:"多團低彩度色彩互相暈染，比單向漸層更柔和、現代。",
+when:"新創、生活風格、教育類簡報的封面與轉場頁。",
+look:"淡灰白底上暈開藍、杏橘、薄荷綠三團柔和色彩；中央一張半透明白色卡片，內含標籤與粗體標題。",
+steps:["選三個低彩度、相近明度的顏色","以放射狀漸層放在畫面不同角落","文字放在半透明白卡上，確保可讀"],
+avoid:"高彩度紫藍漸層加白字，可讀性差且容易流於俗套。",
+html:`<div class="a" style="inset:0;background:radial-gradient(circle at 18% 28%,#A9BFF7,transparent 48%),radial-gradient(circle at 82% 20%,#F7D3A1,transparent 44%),radial-gradient(circle at 62% 88%,#BFE3D2,transparent 50%),#F4F6FA"></div>
+<div class="a col" style="left:50%;top:50%;transform:translate(-50%,-50%);width:58%;background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.9);border-radius:2cqw;padding:4.4cqw;align-items:center;text-align:center"><div class="lab">Workshop</div><div class="h" style="font-size:4.6cqw">AI 工作流入門</div><div class="sm">柔和但不失焦點</div></div>`},
+
+/* ---------------- 數據呈現 ---------------- */
+{n:"022",cat:"data",zh:"單一大數字",en:"Big Number",pages:["數據","封面"],
+desc:"一頁只放一個關鍵數字，放到最大，再用一句話解釋。",
+when:"成果報告的亮點、市場規模、需要讓人震撼的單一數據。",
+look:"左側一個主色超大數字「87%」佔據畫面一半高度；右側一行粗體說明與一行灰色資料來源。",
+steps:["數字字級放大到畫面高度的四成以上","說明句回答「這個數字代表什麼」","在角落標註資料來源與期間"],
+avoid:"同一頁放三個大數字，每個都不夠大。",
+html:`<div class="a h num" style="left:6%;top:50%;transform:translateY(-52%);font-size:24cqw;color:var(--sl-a);letter-spacing:-.04em;font-weight:600">87%</div>
+<div class="a col" style="left:62%;right:6%;top:50%;transform:translateY(-50%)"><div class="h" style="font-size:3.6cqw">的使用者在第一週內回訪</div><div class="sm" style="font-size:1.7cqw">資料來源：產品後台，2026 Q3</div></div>`},
+
+{n:"023",cat:"data",zh:"排序長條圖",en:"Sorted Bar Chart",pages:["數據","比較"],
+desc:"橫向長條由大到小排序，第一名上色，其餘灰色。",
+when:"排名、通路占比、問卷選項比較等類別型資料。",
+look:"標題是結論句；下方五列橫向長條由長到短排列，左側類別名稱、右側數值，第一列為主色，其餘淺灰。",
+steps:["類別名稱較長時改用橫條，不用直條","依數值排序，不依字母或習慣","數值直接標在長條末端，省略座標軸"],
+avoid:"直條圖的類別名稱斜放 45 度，難以閱讀。",
+html:`<div class="a h" style="left:7%;top:9%;font-size:4cqw">官網是最大的流量來源</div>
+<div class="a" style="left:7%;right:7%;top:27%;display:grid;grid-template-columns:12cqw 1fr 6cqw;gap:1.5cqw;align-items:center;font-size:2cqw">
+${[["官網",100,"42%",1],["社群",62,"26%"],["搜尋",43,"18%"],["廣告",24,"10%"],["其他",10,"4%"]].map(r=>`<span style="${r[3]?'font-weight:700':'color:var(--sl-m)'}">${r[0]}</span><i style="display:block;height:3.4cqw;width:${r[1]}%;border-radius:.4cqw;background:${r[3]?'var(--sl-a)':'#CDD3DA'}"></i><span class="num" style="text-align:right;${r[3]?'font-weight:700;color:var(--sl-a)':'color:var(--sl-m)'}">${r[2]}</span>`).join("")}</div>`},
+
+{n:"024",cat:"data",zh:"標題即結論",en:"Headline as Takeaway",pages:["數據"],
+desc:"圖表標題直接寫出結論，而不是「2026 年退貨率」這種描述。",
+when:"所有圖表頁，特別是給主管或決策者看的報告。",
+look:"粗體標題寫出結論句，下方灰色小字標註單位與期間；折線圖由左上往右下降，終點以主色圓點標示數值並加註解。",
+steps:["標題用一句話回答「所以呢」","副標註明單位、期間與資料來源","在圖上標註支撐結論的那一個點"],
+avoid:"標題只寫圖表名稱，讓觀眾自己找結論。",
+html:`<div class="a" style="left:7%;top:9%;right:7%"><div class="h" style="font-size:4.2cqw">退貨率在三季內下降一半</div><div class="sm" style="font-size:1.7cqw;margin-top:.6cqw">單位：%｜2025 Q4 至 2026 Q3</div></div>
+<svg class="a" style="left:7%;top:34%;width:86%;height:56%" viewBox="0 0 140 50" preserveAspectRatio="none"><line x1="0" y1="49.5" x2="140" y2="49.5" stroke="#DCE1E7" stroke-width=".6"/><polyline points="4,8 46,16 88,30 130,40" fill="none" stroke="#2D5BE3" stroke-width="1.6"/><circle cx="4" cy="8" r="1.8" fill="#8A939D"/><circle cx="130" cy="40" r="2.4" fill="#2D5BE3"/></svg>
+<div class="a num" style="left:9%;top:34%;font-size:1.9cqw;color:var(--sl-m)">8.2</div>
+<div class="a" style="right:8%;top:62%;font-size:2.2cqw;font-weight:700;color:var(--sl-a)">4.1%</div>`},
+
+{n:"025",cat:"data",zh:"甜甜圈比例",en:"Donut Percentage",pages:["數據"],
+desc:"只表達「一個部分佔整體多少」時，用單一環圈最直觀。",
+when:"完成率、市占率、滿意度等單一比例。",
+look:"左側一個主色環圈，填滿 72%，其餘淺灰，中央寫大數字；右側粗體標題與兩列圖例。",
+steps:["環圈只表達一個比例，最多兩段","中心放數字，取代圖例","環的粗細約為直徑的 15%"],
+avoid:"切成七八塊的圓餅圖，比例差異根本看不出來。",
+html:`<div class="a" style="left:9%;top:50%;transform:translateY(-50%);width:30cqw;height:30cqw;border-radius:50%;background:conic-gradient(var(--sl-a) 0 72%,var(--sl-g) 0)"><div style="position:absolute;inset:4.6cqw;border-radius:50%;background:#fff;display:grid;place-items:center"><span class="num" style="font-size:6.4cqw;font-weight:600">72%</span></div></div>
+<div class="a col" style="left:50%;right:7%;top:50%;transform:translateY(-50%)"><div class="h" style="font-size:4cqw">專案如期完成率</div><div style="display:flex;gap:1cqw;align-items:center;font-size:2cqw"><i style="width:2cqw;height:2cqw;border-radius:.4cqw;background:var(--sl-a)"></i>如期完成</div><div style="display:flex;gap:1cqw;align-items:center;font-size:2cqw;color:var(--sl-m)"><i style="width:2cqw;height:2cqw;border-radius:.4cqw;background:var(--sl-g)"></i>延遲或調整</div></div>`},
+
+{n:"026",cat:"data",zh:"象形圖表",en:"Pictogram",pages:["數據"],
+desc:"用人形或圖示的數量表達比例，比百分比更有感。",
+when:"人口、使用者、受訪者比例等與「人」相關的數據。",
+look:"上方大字寫「每 10 位就有 3 位」，下方十個人形圖示排成一列，前三個為主色，其餘淺灰。",
+steps:["把百分比換算成 10 或 100 為單位","圖示大小一致、間距一致","上色的部分放在最左側，閱讀起點"],
+avoid:"用不同大小的圖示表達數量，造成面積誤導。",
+html:`<div class="a" style="left:7%;top:12%"><div class="h" style="font-size:4.6cqw">每 10 位就有 <span style="color:var(--sl-a)">3 位</span></div><div class="sm">會在結帳前放棄購物車</div></div>
+<div class="a" style="left:7%;right:7%;bottom:15%;display:flex;justify-content:space-between">${R('<i class="pp" style="color:var(--sl-a)"></i>',3)}${R('<i class="pp" style="color:#D3D8DE"></i>',7)}</div>`},
+
+{n:"027",cat:"data",zh:"前後對比數字",en:"Before / After",pages:["數據","比較"],
+desc:"把改善前與改善後的數字並排，中間一個箭頭，成效一目了然。",
+when:"導入成效、專案成果、流程優化報告。",
+look:"上方小標籤；左側灰色大數字「12 天」標示導入前，中間箭頭，右側主色更大的「3 天」標示導入後；底部一行「縮短 75%」。",
+steps:["只比較一個指標，單位相同","改善後的數字用主色並放大","底部補一句變化幅度"],
+avoid:"同一頁比較五個指標，每個都要觀眾自己算差異。",
+html:`<div class="a lab" style="left:7%;top:12%">交付週期</div>
+<div class="a" style="left:7%;right:7%;top:24%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:3cqw">
+<div><div class="sm">導入前</div><div class="h num" style="font-size:13cqw;color:#B5BCC4;font-weight:600">12<span style="font-size:4cqw"> 天</span></div></div>
+<svg width="10cqw" height="6cqw" viewBox="0 0 40 20" style="width:10cqw;height:6cqw"><path d="M2 10 H34 M26 3 L35 10 L26 17" fill="none" stroke="#1B1F24" stroke-width="2.4"/></svg>
+<div><div class="sm" style="color:var(--sl-a)">導入後</div><div class="h num" style="font-size:13cqw;color:var(--sl-a);font-weight:600">3<span style="font-size:4cqw"> 天</span></div></div></div>
+<div class="a" style="left:7%;bottom:11%;font-size:2.4cqw;font-weight:700">縮短 75%</div>`},
+
+{n:"028",cat:"data",zh:"KPI 數據卡",en:"KPI Cards",pages:["數據"],
+desc:"三到四張卡片各放一個指標、一條迷你趨勢線與成長率。",
+when:"月報、季報、儀表板式的總覽頁。",
+look:"標題下方三張白色圓角卡片並排，每張依序為灰色指標名稱、大數字、綠色或紅色的成長率，以及一條迷你折線。",
+steps:["每張卡片結構完全相同","成長以綠色、衰退以紅色，與主色區分","迷你折線不需要座標軸"],
+avoid:"卡片內容格式不一，有的有趨勢線、有的沒有。",
+html:`<div class="a h" style="left:6%;top:10%;font-size:4cqw">第三季營運總覽</div>
+<div class="a" style="left:6%;right:6%;top:32%;bottom:12%;display:grid;grid-template-columns:repeat(3,1fr);gap:2cqw">
+${[["營收","NT$ 4.2 億","+18%","#1F9D55","2,26 12,22 22,20 32,12 42,6"],["新客數","12,480","+9%","#1F9D55","2,24 12,18 22,22 32,14 42,10"],["流失率","3.1%","−0.6%","#1F9D55","2,8 12,12 22,10 32,18 42,22"]].map(k=>`<div class="mcard" style="justify-content:space-between;background:#F7F8FA"><span class="sm" style="font-size:1.8cqw">${k[0]}</span><span class="num" style="font-size:3.6cqw;font-weight:600">${k[1]}</span><span class="num" style="font-size:1.8cqw;color:${k[3]};font-weight:600">${k[2]}</span><svg viewBox="0 0 44 28" style="width:100%;height:5cqw" preserveAspectRatio="none"><polyline points="${k[4]}" fill="none" stroke="#2D5BE3" stroke-width="1.6"/></svg></div>`).join("")}</div>`},
+
+{n:"029",cat:"data",zh:"精簡表格",en:"Clean Table",pages:["數據","比較"],
+desc:"拿掉格線與底色，只留橫向細線，數字靠右對齊，重點列上色。",
+when:"方案規格、價格、多欄位比較，一定要用表格的場合。",
+look:"四欄表格，表頭粗體並有底線，列之間只有極細橫線；數字欄使用等寬字型並靠右對齊，第三列以淡藍底色與主色文字強調。",
+steps:["刪除所有直線與斑馬紋","文字靠左、數字靠右，小數位數一致","只強調一列或一欄"],
+avoid:"把 Excel 表格直接截圖貼上，字小到看不清。",
+html:`<div class="a h" style="left:7%;top:9%;font-size:4cqw">方案 B 成本最低</div>
+<div class="a" style="left:7%;right:7%;top:28%;font-size:2.1cqw;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr">
+<b style="padding:1.2cqw 1cqw;border-bottom:.3cqw solid var(--sl-k)">方案</b><b style="padding:1.2cqw 1cqw;border-bottom:.3cqw solid var(--sl-k);text-align:right">成本</b><b style="padding:1.2cqw 1cqw;border-bottom:.3cqw solid var(--sl-k);text-align:right">工期</b><b style="padding:1.2cqw 1cqw;border-bottom:.3cqw solid var(--sl-k);text-align:right">風險</b>
+${[["方案 A","1,280","14 週","中"],["方案 B","960","12 週","低",1],["方案 C","1,540","10 週","高"]].map(r=>r.slice(0,4).map((c,i)=>`<span class="${i&&i<3?'num':''}" style="padding:1.3cqw 1cqw;border-bottom:1px solid var(--sl-g);${i?'text-align:right;':''}${r[4]?'background:var(--sl-soft);color:var(--sl-a);font-weight:700':''}">${c}</span>`).join("")).join("")}</div>`},
+
+/* ---------------- 圖像處理 ---------------- */
+{n:"030",cat:"image",zh:"滿版圖加漸層",en:"Full-bleed with Scrim",pages:["封面","章節","結尾"],
+desc:"照片滿版出血，在文字區加一層暗色漸層，確保標題可讀。",
+when:"情境營造、品牌故事開場、活動封面。",
+look:"夕陽山景照片佈滿整個畫面，下方三分之一覆蓋由透明到深色的漸層；左下角白色小標籤、白色粗體標題與一行說明。",
+steps:["照片四邊出血，不留白框","漸層只覆蓋文字所在區域","標題使用白色粗體，必要時加細微陰影"],
+avoid:"直接把白字壓在亮色照片上，或用整面黑色半透明方塊蓋住照片。",
+html:`<div class="a ph sun" style="inset:0"></div><div class="a" style="inset:0;background:linear-gradient(180deg,transparent 38%,rgba(12,14,24,.78))"></div>
+<div class="a col" style="left:6%;bottom:10%;width:70%;color:#fff;gap:1cqw"><div class="lab" style="color:#FBE3C4">Field Notes</div><div class="h" style="font-size:5.6cqw">走進日落之前</div><div style="font-size:2cqw;opacity:.8">2026 秋季旅行企劃</div></div>`},
+
+{n:"031",cat:"image",zh:"雙色調處理",en:"Duotone",pages:["封面","章節","內容"],
+desc:"把風格不一的照片統一轉成品牌雙色，整份簡報的圖像立刻一致。",
+when:"圖庫照片來源雜亂、需要統一視覺調性時。",
+look:"照片轉為灰階後疊上品牌藍色與黃色雙色調，暗部呈深藍、亮部偏暖黃；左下方白色粗體標題。",
+steps:["照片先轉灰階並提高對比","暗部對應品牌深色，亮部對應品牌淺色","整份簡報所有照片套用同一組雙色"],
+avoid:"每張照片使用不同的濾鏡，風格比原本更亂。",
+html:`<div class="a ph" style="inset:0;filter:grayscale(1) contrast(1.15)"></div><div class="a" style="inset:0;background:#2D5BE3;mix-blend-mode:multiply"></div><div class="a" style="inset:0;background:#F2A93B;mix-blend-mode:soft-light;opacity:.9"></div>
+<div class="a h" style="left:6%;bottom:10%;font-size:5.6cqw;color:#fff">統一的影像語言</div>`},
+
+{n:"032",cat:"image",zh:"幾何裁切",en:"Shape Mask",pages:["內容","封面"],
+desc:"把照片裁成圓形或圓角形，搭配一個錯位的色環，增加設計感。",
+when:"人物介紹、講者頁、團隊成員、產品主圖。",
+look:"右側一張圓形裁切的照片，外圍一個錯位的主色細圓環；左側標籤、姓名粗體標題與兩行職稱說明。",
+steps:["整份簡報固定使用一種裁切形狀","裝飾圓環與照片錯位，不要完全同心","人物照片讓臉部位於圓形上半部"],
+avoid:"同一頁混用圓形、六角形、星形等多種裁切。",
+html:`<div class="a" style="right:9%;top:50%;width:36cqw;height:36cqw;margin-top:-16cqw;border:.4cqw solid var(--sl-a);border-radius:50%"></div>
+<div class="a ph wood" style="right:12%;top:50%;width:36cqw;height:36cqw;margin-top:-19cqw;border-radius:50%"></div>
+<div class="a col" style="left:7%;top:50%;transform:translateY(-50%);width:42%"><div class="lab">Speaker</div><div class="h" style="font-size:5cqw">林雅文</div><div class="sm">品牌策略總監<br>十五年整合行銷經驗</div></div>`},
+
+{n:"033",cat:"image",zh:"圖片拼貼網格",en:"Photo Grid",pages:["內容","封面"],
+desc:"多張照片以緊密網格拼貼，一大配多小，呈現豐富的現場感。",
+when:"活動回顧、作品集、門市展示、社群素材整理。",
+look:"畫面以細白縫分割成拼貼網格：左側一張大照片佔兩列，右側上下兩張小照片，最右一格深藍底放標題文字。",
+steps:["照片之間的縫隙統一，約為畫面寬的 1%","一張主照片放大，其他作為配角","放一格純色文字格，讓畫面有呼吸處"],
+avoid:"每張照片大小相同排成整齊方陣，像相簿而非簡報。",
+html:`<div class="a" style="inset:0;display:grid;grid-template-columns:1.6fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:.8cqw;background:#fff">
+<div class="ph sun" style="grid-row:span 2"></div><div class="ph"></div><div style="grid-row:span 2;background:var(--sl-navy);color:#fff;padding:3cqw;display:flex;flex-direction:column;justify-content:flex-end;gap:.8cqw"><div class="lab" style="color:var(--sl-a2)">Recap</div><div class="h" style="font-size:3.6cqw">年會<br>精彩回顧</div></div><div class="ph wood"></div></div>`},
+
+{n:"034",cat:"image",zh:"裝置框展示",en:"Device Mockup",pages:["內容","封面"],
+desc:"把介面截圖放進筆電或手機框中，讓畫面更真實、更有產品感。",
+when:"軟體、App、網站、數位服務的產品展示。",
+look:"右側一台筆電外框，螢幕內為簡化的介面截圖（側欄與資料卡）；左側標籤、粗體標題與兩行功能說明。",
+steps:["使用正面或微俯視角度的簡潔裝置框","截圖先裁掉瀏覽器工具列等雜訊","裝置框佔畫面一半，旁邊留給文字"],
+avoid:"直接貼滿版截圖，小字密密麻麻無法辨識。",
+html:`<div class="a col" style="left:6%;top:50%;transform:translateY(-50%);width:34%"><div class="lab">Product</div><div class="h" style="font-size:4.4cqw">一個畫面<br>看懂全局</div>${LN(90)}${LN(70)}</div>
+<div class="a" style="right:6%;top:16%;width:52%;aspect-ratio:16/10;background:#1B1F24;border-radius:1.6cqw 1.6cqw 0 0;padding:1.4cqw"><div style="width:100%;height:100%;background:#F3F5F8;border-radius:.4cqw;display:grid;grid-template-columns:22% 1fr;gap:1cqw;padding:1cqw"><div style="background:var(--sl-navy);border-radius:.4cqw"></div><div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;gap:1cqw"><div style="background:#fff;height:5cqw;border-radius:.4cqw;border-top:.5cqw solid var(--sl-a)"></div><div style="background:#fff;height:5cqw;border-radius:.4cqw;border-top:.5cqw solid var(--sl-a2)"></div><div style="grid-column:span 2;background:#fff;border-radius:.4cqw"></div></div></div></div>
+<div class="a" style="right:3%;top:calc(16% + 32.5cqw);width:58%;height:1.8cqw;background:#C7CDD4;border-radius:0 0 1.4cqw 1.4cqw"></div>`},
+
+/* ---------------- 圖解結構 ---------------- */
+{n:"035",cat:"diagram",zh:"水平時間軸",en:"Timeline",pages:["流程","內容"],
+desc:"以一條橫線串起年份與里程碑，現在的位置用主色標出。",
+when:"公司沿革、專案時程、產品路線圖。",
+look:"畫面中央一條灰色水平線，等距排列四個節點；年份在上、里程碑文字在下，最後一個節點放大並使用主色，標示「現在」。",
+steps:["節點間距等距，或依實際時間比例","每個節點只寫年份與一句里程碑","以主色標示當下或最重要的節點"],
+avoid:"每個節點下塞一整段說明，時間軸變成文字表格。",
+html:`<div class="a h" style="left:7%;top:9%;font-size:4cqw">四年走過的路</div>
+<div class="a" style="left:7%;right:7%;top:56%;height:.4cqw;background:var(--sl-g)"></div>
+<div class="a" style="left:7%;right:7%;top:34%;display:grid;grid-template-columns:repeat(4,1fr)">
+${[["2023","品牌成立"],["2024","首間門市"],["2025","進軍電商"],["2026","現在｜海外市場",1]].map(t=>`<div style="display:flex;flex-direction:column;gap:1.4cqw;align-items:flex-start"><span class="num" style="font-size:2.6cqw;font-weight:600;${t[2]?'color:var(--sl-a)':''}">${t[0]}</span><i style="width:${t[2]?3.6:2.4}cqw;height:${t[2]?3.6:2.4}cqw;border-radius:50%;background:${t[2]?'var(--sl-a)':'#fff'};border:.5cqw solid ${t[2]?'var(--sl-a)':'#AEB6BF'};margin-top:${t[2]?0:.6}cqw"></i><span style="font-size:2cqw;${t[2]?'font-weight:700':'color:var(--sl-m)'}">${t[1]}</span></div>`).join("")}</div>`},
+
+{n:"036",cat:"diagram",zh:"箭頭流程",en:"Chevron Process",pages:["流程"],
+desc:"以相連的箭頭形狀表達有先後順序的步驟。",
+when:"工作流程、服務流程、導入步驟，三到五個階段。",
+look:"四個相連的箭頭色塊橫向排列，由淺藍漸深，最後一個為主色；每塊上方小字標示步驟編號、塊內白色或深色粗體寫階段名稱。",
+steps:["步驟數控制在三到五個","顏色由淺到深，暗示推進","每個箭頭只寫一個動詞或名詞"],
+avoid:"箭頭方向與閱讀方向相反，或步驟其實沒有先後順序。",
+html:`<div class="a h" style="left:6%;top:10%;font-size:4cqw">從洞察到上線</div>
+<div class="a" style="left:6%;right:6%;top:40%;height:20%;display:flex;gap:.6cqw">
+${[["#DCE5FC","#14307A","研究"],["#A9BFF7","#14307A","設計"],["#6C8FF0","#fff","開發"],["#2D5BE3","#fff","上線"]].map((c,i)=>`<div style="flex:1;background:${c[0]};color:${c[1]};display:grid;place-items:center;font-weight:800;font-size:2.8cqw;clip-path:polygon(0 0,86% 0,100% 50%,86% 100%,0 100%${i?',14% 50%':''})">${c[2]}</div>`).join("")}</div>
+<div class="a num" style="left:6%;right:6%;top:31%;display:flex;font-size:1.6cqw;color:var(--sl-m)">${[1,2,3,4].map(i=>`<span style="flex:1;padding-left:${i>1?3:1}cqw">STEP ${i}</span>`).join("")}</div>
+<div class="a col" style="left:6%;right:6%;top:68%;flex-direction:row;gap:.6cqw">${R(`<div style="flex:1;padding:0 2cqw" class="col">${LN(80)}${LN(55)}</div>`,4)}</div>`},
+
+{n:"037",cat:"diagram",zh:"層級金字塔",en:"Pyramid",pages:["內容","流程"],
+desc:"以三角形分層表達基礎到頂端的層級或優先順序。",
+when:"需求層次、策略架構、內容漏斗、能力模型。",
+look:"左側一個三層金字塔，頂層主色、中層中藍、底層淺藍，層間以白色細縫分隔；右側三行說明以細線連到各層。",
+steps:["層數三到四層為佳","頂層最重要也最少，用最深的顏色","說明文字放在外側，不擠進三角形內"],
+avoid:"把很長的文字塞進窄小的頂層。",
+html:`<div class="a" style="left:7%;top:12%;width:44%;height:76%;clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(180deg,var(--sl-a) 0 32%,#fff 32% 34%,#6C8FF0 34% 65%,#fff 65% 67%,#C2D1F8 67%)"></div>
+<div class="a" style="left:51%;right:7%;top:12%;height:76%;display:grid;grid-template-rows:1fr 1fr 1fr;align-items:center">
+${[["願景","三年後的樣子"],["策略","今年要做的選擇"],["執行","每週的行動"]].map((r,i)=>`<div style="display:flex;align-items:center;gap:1.6cqw"><i style="flex:0 0 ${8-i*3}cqw;height:1px;background:#AEB6BF"></i><div><div class="h" style="font-size:2.8cqw">${r[0]}</div><div class="sm" style="font-size:1.7cqw">${r[1]}</div></div></div>`).join("")}</div>`},
+
+{n:"038",cat:"diagram",zh:"2×2 矩陣",en:"Quadrant Matrix",pages:["比較","內容"],
+desc:"用兩個維度切出四個象限，把選項放進去比較與決策。",
+when:"優先順序排序、競品定位、專案評估。",
+look:"十字座標切出四個象限，右上象限以淡藍底強調並標註「優先投入」；各象限有小字名稱，散佈數個灰點，右上象限的點為主色；座標軸末端標示維度名稱。",
+steps:["兩個維度必須彼此獨立","四個象限各給一個行動名稱","把要推薦的象限上色"],
+avoid:"座標軸沒有標示方向，觀眾不知道哪邊是高。",
+html:`<div class="a" style="left:14%;right:12%;top:10%;bottom:16%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;border-left:.3cqw solid var(--sl-k);border-bottom:.3cqw solid var(--sl-k);font-size:1.8cqw;color:var(--sl-m)">
+<div style="padding:1.4cqw;border-right:1px dashed #BFC6CE;border-bottom:1px dashed #BFC6CE">值得規劃</div><div style="padding:1.4cqw;background:var(--sl-soft);color:var(--sl-a);font-weight:700;border-bottom:1px dashed #BFC6CE">優先投入</div><div style="padding:1.4cqw;border-right:1px dashed #BFC6CE;display:flex;align-items:flex-end">暫緩</div><div style="padding:1.4cqw;display:flex;align-items:flex-end">快速處理</div></div>
+${[[24,30,0],[34,62,0],[66,70,0],[62,26,1],[74,38,1]].map(d=>`<i class="a" style="left:${d[0]}%;top:${d[1]}%;width:2.6cqw;height:2.6cqw;border-radius:50%;background:${d[2]?'var(--sl-a)':'#BFC6CE'}"></i>`).join("")}
+<div class="a" style="left:3%;top:10%;font-size:1.8cqw;writing-mode:vertical-rl">影響力 ↑</div><div class="a" style="right:12%;bottom:8%;font-size:1.8cqw">可行性 →</div>`},
+
+{n:"039",cat:"diagram",zh:"文氏圖",en:"Venn Diagram",pages:["內容","比較"],
+desc:"以重疊的圓表達概念的交集，交集處就是你要說的重點。",
+when:"定位說明、跨領域能力、產品切入點。",
+look:"三個半透明彩色圓形呈三角形交疊，分別標示「擅長」「熱愛」「市場需要」；中央交集處以深色粗體標示「甜蜜點」。",
+steps:["圓形用半透明疊色，讓交集自然變深","每個圓只寫一個關鍵字","交集處的結論字最大最醒目"],
+avoid:"超過三個圓，交集區域多到無法辨識。",
+html:`<div class="a" style="left:50%;top:50%;width:66cqw;height:50cqw;transform:translate(-50%,-50%)">
+<div style="position:absolute;left:12cqw;top:2cqw;width:26cqw;height:26cqw;border-radius:50%;background:rgba(45,91,227,.38);mix-blend-mode:multiply"></div>
+<div style="position:absolute;left:28cqw;top:2cqw;width:26cqw;height:26cqw;border-radius:50%;background:rgba(242,169,59,.5);mix-blend-mode:multiply"></div>
+<div style="position:absolute;left:20cqw;top:16cqw;width:26cqw;height:26cqw;border-radius:50%;background:rgba(56,178,140,.42);mix-blend-mode:multiply"></div>
+<span style="position:absolute;left:14cqw;top:9cqw;font-size:2.2cqw;font-weight:700">擅長</span><span style="position:absolute;left:44cqw;top:9cqw;font-size:2.2cqw;font-weight:700">熱愛</span><span style="position:absolute;left:28cqw;top:36cqw;font-size:2.2cqw;font-weight:700">市場需要</span>
+<span style="position:absolute;left:33cqw;top:20cqw;transform:translateX(-50%);font-size:2.4cqw;font-weight:900;color:var(--sl-navy)">甜蜜點</span></div>`},
+
+{n:"040",cat:"diagram",zh:"轉換漏斗",en:"Funnel",pages:["數據","流程"],
+desc:"逐層變窄的橫條表達每個階段的流失，轉換率標在旁邊。",
+when:"行銷轉換、銷售流程、招募流程的分析。",
+look:"四條置中橫條由寬到窄堆疊，顏色由淺至深，條內寫階段名稱與人數；右側以灰色小字標示層與層之間的轉換率。",
+steps:["橫條寬度依實際數值比例","每一層寫階段名稱與數量","把流失最嚴重的那一層用顏色或註解指出"],
+avoid:"漏斗只是裝飾，寬度與數值不相關。",
+html:`<div class="a h" style="left:6%;top:9%;font-size:4cqw">加入購物車後流失最多</div>
+<div class="a" style="left:6%;right:24%;top:28%;bottom:9%;display:flex;flex-direction:column;align-items:center;gap:.8cqw">
+${[[100,"#DCE5FC","#14307A","瀏覽 10,000"],[64,"#A9BFF7","#14307A","商品頁 6,400"],[40,"#6C8FF0","#fff","購物車 4,000"],[12,"var(--sl-a)","#fff","結帳 1,200"]].map(f=>`<div style="flex:1;width:${f[0]}%;min-width:18cqw;background:${f[1]};color:${f[2]};display:grid;place-items:center;font-size:1.9cqw;font-weight:700;border-radius:.4cqw" class="num">${f[3]}</div>`).join("")}</div>
+<div class="a num" style="right:6%;top:28%;bottom:9%;width:16%;display:flex;flex-direction:column;justify-content:space-around;padding-top:3cqw;font-size:1.8cqw;color:var(--sl-m)"><span>→ 64%</span><span>→ 63%</span><span style="color:var(--sl-red);font-weight:700">→ 30%</span></div>`},
+
+{n:"041",cat:"diagram",zh:"左右對照",en:"Versus Comparison",pages:["比較"],
+desc:"兩欄對照新舊做法或兩種方案，中間以 VS 分隔。",
+when:"導入前後、競品比較、傳統與新方法的對比。",
+look:"兩張並排卡片：左卡灰色系標題「傳統做法」，條列項目前為灰色叉號；右卡主色外框標題「新做法」，項目前為主色勾號；兩卡中間一個深色圓形寫 VS。",
+steps:["兩欄項目一一對應，數量相同","推薦的一方使用主色與較強的視覺","比較項目不超過四列"],
+avoid:"兩欄條列項目彼此不對應，無法逐項比較。",
+html:`<div class="a" style="left:6%;right:6%;top:12%;bottom:12%;display:grid;grid-template-columns:1fr 1fr;gap:5cqw">
+<div class="mcard" style="background:#F5F6F8;border-color:transparent;gap:1.8cqw;padding:3cqw"><div class="h" style="font-size:3cqw;color:var(--sl-m)">傳統做法</div>${["人工整理","每週更新","經驗判斷"].map(t=>`<div style="display:flex;gap:1.2cqw;font-size:2cqw;color:var(--sl-m)"><b style="color:#AEB6BF">✕</b>${t}</div>`).join("")}</div>
+<div class="mcard" style="border:.35cqw solid var(--sl-a);gap:1.8cqw;padding:3cqw"><div class="h" style="font-size:3cqw;color:var(--sl-a)">新做法</div>${["自動彙整","即時更新","數據判斷"].map(t=>`<div style="display:flex;gap:1.2cqw;font-size:2cqw;font-weight:700"><b style="color:var(--sl-a)">✓</b>${t}</div>`).join("")}</div></div>
+<div class="a num" style="left:50%;top:50%;width:6.4cqw;height:6.4cqw;transform:translate(-50%,-50%);border-radius:50%;background:var(--sl-k);color:#fff;display:grid;place-items:center;font-size:2cqw;font-weight:600">VS</div>`},
+
+{n:"042",cat:"diagram",zh:"循環圖",en:"Cycle Diagram",pages:["流程","內容"],
+desc:"以環狀箭頭表達會不斷重複的流程，強調持續改善。",
+when:"PDCA、內容營運循環、產品迭代、客戶生命週期。",
+look:"畫面中央一個由四段弧線箭頭組成的圓環，四個節點分別寫「計畫、執行、檢查、行動」，圓心寫 PDCA；右側一行說明。",
+steps:["節點數四到六個，等距分佈","箭頭方向一律順時針","圓心放循環的名稱或目標"],
+avoid:"把線性流程硬畫成循環，終點其實不會回到起點。",
+html:`<svg class="a" style="left:6%;top:8%;width:52%;height:84%" viewBox="0 0 100 100"><defs><marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#2D5BE3"/></marker></defs>
+<g fill="none" stroke="#2D5BE3" stroke-width="1.6" marker-end="url(#ah)"><path d="M58 13 A38 38 0 0 1 87 42"/><path d="M87 58 A38 38 0 0 1 58 87"/><path d="M42 87 A38 38 0 0 1 13 58"/><path d="M13 42 A38 38 0 0 1 42 13"/></g>
+<g font-size="6" font-weight="700" text-anchor="middle" fill="#1B1F24" font-family="Noto Sans TC,sans-serif"><text x="50" y="14">計畫</text><text x="90" y="52">執行</text><text x="50" y="92">檢查</text><text x="10" y="52">行動</text></g>
+<text x="50" y="53" text-anchor="middle" font-size="9" font-weight="600" fill="#2D5BE3" font-family="JetBrains Mono,monospace">PDCA</text></svg>
+<div class="a col" style="left:62%;right:6%;top:50%;transform:translateY(-50%)"><div class="h" style="font-size:3.6cqw">每一輪<br>都比上一輪更好</div>${LN(90)}${LN(64)}</div>`},
+
+/* ---------------- 重點強調 ---------------- */
+{n:"043",cat:"focus",zh:"螢光筆標記",en:"Highlighter",pages:["內容"],
+desc:"在段落中的關鍵詞後方畫一道螢光黃，像閱讀時劃重點。",
+when:"必須保留段落文字，但希望觀眾先看到關鍵字時。",
+look:"白底上三行內文，其中一組關鍵詞後方有一道偏下方的黃色螢光筆底色，其餘文字為一般黑色。",
+steps:["螢光色只覆蓋文字下半部，更像手劃","一段文字只標一處","演講時可搭配動畫依序出現"],
+avoid:"整段都標黃，等於沒有標。",
+html:`<div class="a lab" style="left:8%;top:14%">Insight</div>
+<div class="a" style="left:8%;right:10%;top:26%;font-size:3.4cqw;line-height:1.75;font-weight:500">消費者在社群看到產品後，平均需要 <span class="mk" style="font-weight:800">7 次接觸</span> 才會下單，因此再行銷的預算應該提前配置。</div>`},
+
+{n:"044",cat:"focus",zh:"聚焦淡化",en:"Focus & Dim",pages:["內容","章節"],
+desc:"列出全部項目，但只讓目前講到的那一項清楚，其餘淡化。",
+when:"逐項說明的條列頁，一份清單拆成多頁講解。",
+look:"四個條列項目垂直排列，第三項為黑色粗體並在左側有主色豎條與一行說明，其餘三項為淺灰色。",
+steps:["複製同一頁，每頁只亮起一個項目","淡化的項目保留位置，維持脈絡","亮起的項目可多加一行補充說明"],
+avoid:"淡化得太淺看不到，觀眾失去全局感。",
+html:`<div class="a h" style="left:8%;top:10%;font-size:3.6cqw">提案四大重點</div>
+<div class="a col" style="left:8%;right:10%;top:28%;gap:2.4cqw;font-size:3cqw;font-weight:700">
+<div style="color:#C4CAD1">01　市場機會</div><div style="color:#C4CAD1">02　目標客群</div>
+<div style="border-left:.6cqw solid var(--sl-a);padding-left:2cqw;margin-left:-2.6cqw"><div>03　差異化策略</div><div class="sm" style="font-weight:400">以服務體驗取代價格競爭</div></div>
+<div style="color:#C4CAD1">04　預算與時程</div></div>`},
+
+{n:"045",cat:"focus",zh:"手繪圈選",en:"Hand-drawn Annotation",pages:["數據","內容"],
+desc:"在圖表上用手繪風格的圓圈與箭頭圈出重點，親切又醒目。",
+when:"在既有圖表或截圖上指出關鍵變化。",
+look:"一組灰色直條圖，其中一根較高的直條被一個紅橘色手繪感橢圓圈住，旁邊一條手繪箭頭指向一行手寫風格註解「轉折點」。",
+steps:["圈選線條略不規則，模擬手繪","選用與主色不同的提醒色，例如紅橘","註解文字簡短，三到五個字"],
+avoid:"一頁畫了四五個圈，畫面變得雜亂。",
+html:`<div class="a" style="left:10%;right:30%;top:22%;bottom:14%;display:flex;gap:2cqw;align-items:flex-end;border-bottom:1px solid var(--sl-g)">${[30,36,34,40,78,82].map((h,i)=>`<i style="flex:1;height:${h}%;background:${i==4?'var(--sl-a)':'#CDD3DA'}"></i>`).join("")}</div>
+<svg class="a" style="inset:0;width:100%;height:100%" viewBox="0 0 160 90"><path d="M85 28 C 74 30, 72 62, 82 80 C 92 88, 104 76, 102 50 C 100 30, 92 22, 80 30" fill="none" stroke="#E2553F" stroke-width="1.3" stroke-linecap="round"/><path d="M104 40 C 114 30, 122 26, 130 26 M104 40 l 6 -1 M104 40 l 1 -6" fill="none" stroke="#E2553F" stroke-width="1.2" stroke-linecap="round"/></svg>
+<div class="a" style="left:82%;top:22%;font-family:var(--f-disp);font-size:3cqw;color:var(--sl-red);font-weight:900;transform:rotate(-4deg)">轉折點</div>`},
+
+{n:"046",cat:"focus",zh:"局部放大",en:"Callout Zoom",pages:["內容"],
+desc:"從截圖中框出一小塊，放大到旁邊的圓形裡，細節一清二楚。",
+when:"軟體操作教學、介面說明、報表細節講解。",
+look:"左側為一張縮小的介面截圖，其中一處以主色細框標出；右側一個大圓形放大顯示該處的按鈕，兩條細線連接小框與大圓。",
+steps:["原圖保持完整，讓觀眾知道位置","放大區域約為原圖的三倍","以細線或陰影連接兩者"],
+avoid:"只放放大圖，觀眾不知道它在畫面的哪裡。",
+html:`<div class="a" style="left:6%;top:16%;width:46%;height:68%;background:#F3F5F8;border:1px solid var(--sl-g);border-radius:1cqw;padding:2cqw;display:flex;flex-direction:column;gap:1.4cqw">${LN(60)}<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw"><i style="background:#fff;border-radius:.6cqw"></i><i style="background:#fff;border-radius:.6cqw"></i></div><div style="display:flex;justify-content:flex-end"><span style="background:var(--sl-a);width:10cqw;height:3cqw;border-radius:2cqw;outline:.35cqw solid var(--sl-a2);outline-offset:.6cqw"></span></div></div>
+<svg class="a" style="inset:0;width:100%;height:100%" viewBox="0 0 160 90"><line x1="76" y1="66" x2="110" y2="22" stroke="#F2A93B" stroke-width=".6"/><line x1="76" y1="74" x2="110" y2="78" stroke="#F2A93B" stroke-width=".6"/></svg>
+<div class="a" style="right:6%;top:50%;width:34cqw;height:34cqw;margin-top:-17cqw;border-radius:50%;border:.5cqw solid var(--sl-a2);background:#F3F5F8;display:grid;place-items:center"><span style="background:var(--sl-a);color:#fff;font-weight:800;font-size:3.4cqw;padding:2cqw 4cqw;border-radius:5cqw">立即購買</span></div>`},
+
+{n:"047",cat:"focus",zh:"大編號列表",en:"Numbered Columns",pages:["內容","流程"],
+desc:"以大號數字帶出三個重點，比項目符號更有節奏與份量。",
+when:"三大原則、三個步驟、三個理由。",
+look:"標題下方三欄並排，每欄頂端一個主色大號等寬數字 01、02、03，下方粗體小標與兩行灰色說明，欄與欄以細線分隔。",
+steps:["數字字級為小標的兩倍以上","每欄結構完全相同","只在真的有順序時使用編號"],
+avoid:"把沒有先後關係的並列重點硬加上編號。",
+html:`<div class="a h" style="left:6%;top:10%;font-size:4cqw">開始前的三件事</div>
+<div class="a" style="left:6%;right:6%;top:32%;bottom:12%;display:grid;grid-template-columns:repeat(3,1fr)">
+${[["01","定義目標"],["02","盤點資源"],["03","設定節點"]].map((c,i)=>`<div class="col" style="padding:0 2.4cqw;${i?'border-left:1px solid var(--sl-g)':''};${i?'':'padding-left:0'}"><span class="num" style="font-size:7cqw;font-weight:600;color:var(--sl-a);line-height:1">${c[0]}</span><b style="font-size:2.6cqw">${c[1]}</b>${LN(90)}${LN(70)}</div>`).join("")}</div>`},
+
+/* ---------------- 封面章節 ---------------- */
+{n:"048",cat:"cover",zh:"章節大編號",en:"Section Divider",pages:["章節"],
+desc:"以超大空心數字標示章節，搭配進度，讓觀眾知道講到哪裡。",
+when:"超過 15 頁的簡報，每個章節的開頭。",
+look:"深藍背景，左側一個巨大的白色空心數字「02」，右側白色粗體章節名稱「市場分析」；右下角五段進度條，第二段亮起主色。",
+steps:["章節編號使用空心或極細字，避免過重","章節頁版式全份統一，只換編號與名稱","以進度條或「02／05」標示位置"],
+avoid:"每個章節頁設計都不同，觀眾辨識不出這是轉場。",
+html:`<div class="a" style="inset:0;background:var(--sl-navy)"></div>
+<div class="a num" style="left:5%;top:50%;transform:translateY(-54%);font-size:30cqw;font-weight:600;line-height:1;color:transparent;-webkit-text-stroke:.35cqw #fff">02</div>
+<div class="a col" style="left:56%;right:6%;top:50%;transform:translateY(-50%)"><div class="lab" style="color:var(--sl-a2)">Section</div><div class="h" style="font-size:5.4cqw;color:#fff">市場分析</div></div>
+<div class="a" style="right:6%;bottom:10%;display:flex;gap:.8cqw">${[0,1,0,0,0].map(o=>`<i style="width:4cqw;height:.6cqw;border-radius:1cqw;background:${o?'var(--sl-a2)':'rgba(255,255,255,.25)'}"></i>`).join("")}</div>`},
+
+{n:"049",cat:"cover",zh:"雜誌式封面",en:"Editorial Cover",pages:["封面"],
+desc:"借用雜誌封面的排版語言：大標橫跨圖文、期數資訊、細小的編排元素。",
+when:"品牌提案、年度報告、需要質感的對外簡報封面。",
+look:"右側 60% 為照片，襯線粗體大標從左側白底橫跨到照片上；左上角以等寬字寫期數與日期，左下角兩行小字與一條細線。",
+steps:["大標字級夠大，允許跨越圖片邊界","加上期數、日期等編排資訊增加質感","字體以襯線搭配等寬字，最多兩種"],
+avoid:"標題放在照片雜亂的區域，難以辨識。",
+html:`<div class="a ph wood" style="left:40%;right:0;top:0;bottom:0"></div>
+<div class="a num" style="left:5%;top:9%;font-size:1.6cqw;letter-spacing:.14em">VOL.12 · 2026 AUTUMN</div>
+<div class="a" style="left:5%;top:24%;font-family:var(--f-disp);font-weight:900;font-size:13cqw;line-height:1.02;color:var(--sl-k);mix-blend-mode:multiply">慢設計<br><span style="font-size:6cqw;font-weight:600">的十個提問</span></div>
+<div class="a col" style="left:5%;bottom:9%;width:28%;gap:1cqw"><i style="height:1px;background:var(--sl-k)"></i><span style="font-size:1.7cqw">品牌年度報告</span></div>`},
+
+{n:"050",cat:"cover",zh:"議程導覽",en:"Agenda Tracker",pages:["章節","封面"],
+desc:"議程頁重複出現，每次亮起目前的章節，讓聽眾掌握進度。",
+when:"長篇簡報、課程、工作坊的開場與章節之間。",
+look:"左側粗體大字「今日議程」；右側五個編號項目垂直排列，第三項以主色膠囊底色與白字強調並附「目前」小標，其餘為灰色。",
+steps:["開場時全部項目同樣清楚","進入各章節前重複此頁，只亮起當前項目","項目名稱與章節頁標題完全一致"],
+avoid:"議程項目超過七個，看不出結構。",
+html:`<div class="a h" style="left:7%;top:14%;font-size:5.6cqw;line-height:1.2">今日<br>議程</div>
+<div class="a col" style="left:40%;right:7%;top:50%;transform:translateY(-50%);gap:1.2cqw;font-size:2.4cqw">
+${["市場觀察","客群洞察","策略主軸","執行計畫","預算時程"].map((t,i)=>i==2?`<div style="background:var(--sl-a);color:#fff;border-radius:3cqw;padding:1.2cqw 2.4cqw;display:flex;justify-content:space-between;font-weight:700"><span><span class="num">0${i+1}</span>　${t}</span><span style="font-size:1.6cqw;opacity:.85">目前</span></div>`:`<div style="padding:1.2cqw 2.4cqw;color:#AEB6BF"><span class="num">0${i+1}</span>　${t}</div>`).join("")}</div>`},
+
+{n:"051",cat:"cover",zh:"行動結尾頁",en:"Call to Action Close",pages:["結尾"],
+desc:"結尾不寫「謝謝聆聽」，而是給出具體的下一步與聯絡方式。",
+when:"提案、銷售簡報、課程結束，需要觀眾採取行動時。",
+look:"上方粗體標題「下一步，從這三件事開始」；中間三個帶編號的行動方塊並排；右下角一個 QR Code 區塊與「掃描取得講義」小字。",
+steps:["行動項目具體、可在一週內完成","附上聯絡方式或 QR Code","最後一頁停留時間最長，資訊要完整"],
+avoid:"只放「Thank You」與公司 Logo，浪費最後的注意力。",
+html:`<div class="a h" style="left:6%;top:10%;font-size:4.2cqw">下一步，從這三件事開始</div>
+<div class="a" style="left:6%;right:30%;top:34%;bottom:14%;display:grid;grid-template-columns:repeat(3,1fr);gap:1.6cqw">
+${["預約診斷","試用兩週","季度檢視"].map((t,i)=>`<div class="mcard" style="background:var(--sl-soft);border-color:transparent;justify-content:space-between"><span class="num" style="font-size:2cqw;color:var(--sl-a);font-weight:600">0${i+1}</span><b style="font-size:2.4cqw">${t}</b></div>`).join("")}</div>
+<div class="a" style="right:6%;top:34%;width:18cqw;display:flex;flex-direction:column;gap:1cqw;align-items:center"><div style="width:16cqw;height:16cqw;padding:1cqw;border:1px solid var(--sl-g);background:repeating-conic-gradient(var(--sl-k) 0 25%,#fff 0 50%) 0 0/2cqw 2cqw;background-origin:content-box;background-clip:content-box;position:relative"><i style="position:absolute;left:1cqw;top:1cqw;width:5cqw;height:5cqw;border:1cqw solid var(--sl-k);background:#fff"></i><i style="position:absolute;right:1cqw;top:1cqw;width:5cqw;height:5cqw;border:1cqw solid var(--sl-k);background:#fff"></i><i style="position:absolute;left:1cqw;bottom:1cqw;width:5cqw;height:5cqw;border:1cqw solid var(--sl-k);background:#fff"></i></div><span class="sm" style="font-size:1.6cqw">掃描取得講義</span></div>`}
+];
+
+/* ---------------- State ---------------- */
+const store={get(k,d){try{const v=localStorage.getItem("slidecraft-"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("slidecraft-"+k,JSON.stringify(v))}catch(e){}}};
+const state={cat:"all",page:"全部",q:"",sel:new Set(store.get("sel",[]).filter(n=>T.some(t=>t.n===n))),open:null};
+const $=id=>document.getElementById(id);
+const byN=n=>T.find(t=>t.n===n);
+$("topic").value=store.get("topic","");
+
+function topic(){return $("topic").value.trim()||"【請填入你的簡報主題】"}
+function promptOf(t){
+  return `請幫我設計一頁 16:9 簡報，主題是「${topic()}」。
+
+【採用技法】${t.zh}（${t.en}）
+【畫面描述】${t.look}
+【製作要點】
+${t.steps.map((s,i)=>`${i+1}. ${s}`).join("\n")}
+【請避免】${t.avoid}
+
+請依序輸出：
+1. 這一頁的文字內容（標題、副標、內文，標題不超過 20 字）
+2. 各元素的位置、大小比例與層級
+3. 建議配色（主色、輔色、強調色，附色碼）與字體`;
+}
+function comboPrompt(){
+  const list=T.filter(t=>state.sel.has(t.n));
+  return `請以下列 ${list.length} 種平面簡報技法，為「${topic()}」規劃一份簡報。每一種技法對應一頁，依序輸出每頁的：頁面目的、文字內容、版面配置說明。
+
+${list.map((t,i)=>`第 ${i+1} 頁｜${t.zh}（${t.en}）
+畫面描述：${t.look}
+要點：${t.steps.join("；")}
+避免：${t.avoid}`).join("\n\n")}
+
+整體要求：
+1. 全份簡報統一字體、配色與留白節奏
+2. 每頁只傳達一個重點，標題寫成結論句
+3. 最後附上建議的配色色碼與字體組合`;
+}
+
+/* ---------------- Render ---------------- */
+function matches(t){
+  if(state.cat!=="all"&&t.cat!==state.cat)return false;
+  if(state.page!=="全部"&&!t.pages.includes(state.page))return false;
+  if(state.q){const q=state.q.toLowerCase();return [t.zh,t.en,t.desc,t.when,CATNAME[t.cat],t.pages.join(" "),t.n].join(" ").toLowerCase().includes(q)}
+  return true;
+}
+function renderChips(){
+  const base=T.filter(t=>state.page==="全部"||t.pages.includes(state.page));
+  $("cats").innerHTML='<span class="lbl">類別</span>'+CATS.map(([k,v])=>`<button class="chip" type="button" data-cat="${k}" aria-pressed="${state.cat===k}">${v}<small>${k==="all"?base.length:base.filter(t=>t.cat===k).length}</small></button>`).join("");
+  $("pages").innerHTML='<span class="lbl">頁型</span>'+PAGES.map(p=>`<button class="chip" type="button" data-page="${p}" aria-pressed="${state.page===p}">${p}</button>`).join("");
+}
+function cardHTML(t){
+  const on=state.sel.has(t.n);
+  return `<article class="card${on?' is-picked':''}" data-n="${t.n}">
+  <div class="pv" role="button" tabindex="0" aria-label="查看「${t.zh}」的做法"><div class="s">${t.html}</div></div>
+  <div class="meta">
+    <div class="row1"><span class="no">No.${t.n}</span><span class="cat">${CATNAME[t.cat]}</span></div>
+    <h3>${t.zh}</h3><p class="en">${t.en}</p>
+    <p class="desc">${t.desc}</p>
+    <div class="tags">${t.pages.map(p=>`<span class="tag">${p}</span>`).join("")}</div>
+    <div class="acts"><label class="pick"><input type="checkbox" id="pick-${t.n}" data-pick="${t.n}"${on?" checked":""}> 加入組合</label><button class="btn primary" type="button" data-copy="${t.n}">複製提示詞</button></div>
+  </div></article>`;
+}
+function render(){
+  renderChips();
+  const list=T.filter(matches);
+  $("grid").innerHTML=list.map(cardHTML).join("");
+  $("empty").hidden=list.length>0;
+  $("count").textContent=`${list.length} ／ ${T.length} 種技法`;
+  renderTray();
+}
+function renderTray(){
+  const n=state.sel.size;
+  $("tray").hidden=n===0;
+  $("trayCount").textContent=`已選 ${n} 種`;
+  $("trayNames").textContent=T.filter(t=>state.sel.has(t.n)).map(t=>t.zh).join("、");
+  store.set("sel",[...state.sel]);
+}
+function togglePick(n,on){
+  on?state.sel.add(n):state.sel.delete(n);
+  document.querySelectorAll(`[data-pick="${n}"]`).forEach(el=>el.checked=on);
+  const card=document.querySelector(`.card[data-n="${n}"]`); if(card)card.classList.toggle("is-picked",on);
+  if(state.open===n)$("dPick").checked=on;
+  renderTray();
+}
+
+/* ---------------- Detail ---------------- */
+function visibleList(){const l=T.filter(matches);return l.length?l:T}
+function openDetail(n,fromHash){
+  const t=byN(n); if(!t)return;
+  state.open=n;
+  $("dSlide").innerHTML=`<div class="s">${t.html}</div>`;
+  $("dNo").textContent="No."+t.n; $("dCat").textContent=CATNAME[t.cat]+"　·　"+t.pages.join("／");
+  $("dTitle").textContent=t.zh; $("dEn").textContent=t.en; $("dDesc").textContent=t.desc;
+  $("dWhen").textContent=t.when; $("dAvoid").textContent=t.avoid;
+  $("dSteps").innerHTML=t.steps.map((s,i)=>`<li><b>${"➊➋➌➍➎"[i]}</b><span>${s}</span></li>`).join("");
+  $("dPrompt").textContent=promptOf(t);
+  $("dPick").checked=state.sel.has(n);
+  $("detail").hidden=false; document.documentElement.style.overflow="hidden";
+  if(!fromHash&&location.hash!=="#no-"+n){try{history.replaceState(null,"","#no-"+n)}catch(e){}}
+  $("dClose").focus({preventScroll:true});
+}
+function closeDetail(){
+  const n=state.open; state.open=null;
+  $("detail").hidden=true; document.documentElement.style.overflow="";
+  try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}
+  const pv=document.querySelector(`.card[data-n="${n}"] .pv`); if(pv)pv.focus({preventScroll:true});
+}
+function step(d){
+  const l=visibleList(); const i=l.findIndex(t=>t.n===state.open);
+  openDetail(l[(i+d+l.length)%l.length].n);
+}
+
+/* ---------------- Copy ---------------- */
+let toastTimer;
+function toast(msg){const el=$("toast");el.textContent=msg;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.hidden=true,1800)}
+function copyText(txt,msg){
+  const fallback=()=>{$("fbText").value=txt;$("fallback").hidden=false;$("fbText").focus();$("fbText").select()};
+  try{
+    if(!navigator.clipboard||!navigator.clipboard.writeText){fallback();return}
+    navigator.clipboard.writeText(txt).then(()=>toast(msg),fallback);
+  }catch(e){fallback()}
+}
+
+/* ---------------- Events ---------------- */
+$("cats").addEventListener("click",e=>{const b=e.target.closest("[data-cat]");if(!b)return;state.cat=b.dataset.cat;render()});
+$("pages").addEventListener("click",e=>{const b=e.target.closest("[data-page]");if(!b)return;state.page=b.dataset.page;render()});
+$("q").addEventListener("input",e=>{state.q=e.target.value.trim();render()});
+$("topic").addEventListener("input",e=>{store.set("topic",e.target.value);if(state.open)$("dPrompt").textContent=promptOf(byN(state.open))});
+$("reset").addEventListener("click",()=>{state.cat="all";state.page="全部";state.q="";$("q").value="";render()});
+$("grid").addEventListener("click",e=>{
+  const c=e.target.closest("[data-copy]"); if(c){copyText(promptOf(byN(c.dataset.copy)),`已複製「${byN(c.dataset.copy).zh}」提示詞`);return}
+  const pv=e.target.closest(".pv"); if(pv){openDetail(pv.closest(".card").dataset.n)}
+});
+$("grid").addEventListener("change",e=>{const p=e.target.closest("[data-pick]");if(p)togglePick(p.dataset.pick,p.checked)});
+$("grid").addEventListener("keydown",e=>{const pv=e.target.closest(".pv");if(pv&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openDetail(pv.closest(".card").dataset.n)}});
+$("dClose").addEventListener("click",closeDetail);
+$("dPrev").addEventListener("click",()=>step(-1));
+$("dNext").addEventListener("click",()=>step(1));
+$("dCopy").addEventListener("click",()=>copyText(promptOf(byN(state.open)),"已複製提示詞"));
+$("dPick").addEventListener("change",e=>togglePick(state.open,e.target.checked));
+$("detail").addEventListener("click",e=>{if(e.target===$("detail"))closeDetail()});
+$("trayClear").addEventListener("click",()=>{[...state.sel].forEach(n=>togglePick(n,false))});
+$("trayCopy").addEventListener("click",()=>copyText(comboPrompt(),`已複製 ${state.sel.size} 種技法的組合提示詞`));
+$("fbClose").addEventListener("click",()=>{$("fallback").hidden=true});
+$("fallback").addEventListener("click",e=>{if(e.target===$("fallback"))$("fallback").hidden=true});
+document.addEventListener("keydown",e=>{
+  if(!$("fallback").hidden&&e.key==="Escape"){$("fallback").hidden=true;return}
+  if($("detail").hidden)return;
+  if(e.key==="Escape")closeDetail();
+  else if(e.key==="ArrowRight")step(1);
+  else if(e.key==="ArrowLeft")step(-1);
+});
+function fromHash(){const m=location.hash.match(/^#no-(\d{3})$/);if(m&&byN(m[1]))openDetail(m[1],true);else if(state.open)closeDetail()}
+window.addEventListener("hashchange",fromHash);
+
+render();
+fromHash();
+</script>
+
+</body>
+</html>
