@@ -295,7 +295,7 @@ pre.cmd{font-family:var(--f-mono);font-size:12px;background:var(--bg);border:1px
     <div>
       <div class="eyebrow"><a href="../">J3M 教學資源站</a> · 影片製作 · Motion Craft Library</div>
       <h1>動態技法圖鑑<span class="hl">．</span></h1>
-      <p class="lede">把散在各個製作流程裡的動態效果收在同一處。每一項都有循環播放的畫面示意、用途、實作要點與指令，以及可以直接交給 Claude 執行的提示詞。</p>
+      <p class="lede">把教學影片常用的動態效果收在同一處。每一項都有循環播放的畫面示意、用途、實作要點與指令，以及可以直接交給 Claude 執行的提示詞。</p>
       <div class="stats" id="stats"></div>
     </div>
     <div>
@@ -322,7 +322,7 @@ pre.cmd{font-family:var(--f-mono);font-size:12px;background:var(--bg);border:1px
       <div class="bar-row"><input class="field search" id="q" type="search" placeholder="搜尋效果、指令名稱，例如：去背、the-bill、數字" autocomplete="off" aria-label="搜尋影片特效"><span class="count" id="count"></span></div>
       <div class="bar-row" id="fState" role="group" aria-label="影片段落"></div>
       <div class="bar-row" id="fCat" role="group" aria-label="用途"></div>
-      <div class="bar-row" id="fSrc" role="group" aria-label="來源"></div>
+      <div class="bar-row" id="fSrc" role="group" aria-label="製作方式"></div>
     </div>
     <main>
       <div class="grid" id="grid"></div>
@@ -394,17 +394,17 @@ const FX=(fx,o="")=>`.venv/bin/python scripts/fx.py ${fx} <影片> <輸出>.mp4 
 const CK=`<b class="gold">✓</b>`;
 
 const SRC={
-  lib:{name:"J3M 特效庫",full:"short-video-production 第七節｜特效庫 30 項",rule:"同一 cut 的特效不超過兩種；長片每 3 分鐘內最多三種不同特效。動態元素出現的時間，必須對應旁白講到該詞的時刻。"},
-  hf:{name:"HyperFrames 十二式",full:"short-video-production 第十五節｜十二式特效整合",rule:"短片每 cut 不超過兩種，長片每 3 分鐘不超過三種；同一效果在同一支影片中不超過三次；每段效果必須對應旁白內容，不作純裝飾。"},
-  hfx:{name:"去背與轉場",full:"short-video-production 第十四節｜真人去背與疊層效果（HyperFrames）",rule:"同一畫面的疊層不超過三層；去背效果以真人實拍為主；去背模型與元件安裝需要網路，首次下載前先取得同意。"},
-  ext:{name:"外部 51 式",full:"short-video-production 第十六節｜外部 51 式特效包（MIT 授權，作者 Vibha Ramprakash）",rule:"每個效果 1.5 至 4 秒，避免遮擋人臉；縮放不超過 2 倍；同一支影片每種效果不超過三次；不得與 HyperFrames 效果在同一段落重疊；片尾或說明欄標示作者出處。"},
-  end:{name:"片尾",full:"j3m-video-endcard｜J3M 影片片尾定案規格",rule:"橫版 1920×1080、30 fps、5 秒，無音樂與語音；CTA 最後一行停留至少 2 秒；不另加訂閱按鈕。"}
+  lib:{name:"基礎動態",full:"基礎動態：文字、圖形與轉場的常用動態，任何剪輯軟體或 HTML 動畫都能製作。",rule:"同一個鏡頭的特效不超過兩種；長片每 3 分鐘內最多三種不同特效。動態出現的時間，要對上旁白講到該詞的時刻。"},
+  hf:{name:"HyperFrames 元件",full:"HyperFrames 元件：以 HyperFrames（開源的 HTML 影片渲染工具）現成元件製作的進階效果。",rule:"短片每個鏡頭不超過兩種，長片每 3 分鐘不超過三種；同一效果在一支影片中不超過三次；每個效果都要對應旁白內容，不作純裝飾。"},
+  hfx:{name:"去背合成與轉場",full:"去背合成與轉場：先把真人實拍去背，再與文字、背景分層合成；轉場同樣使用 HyperFrames 元件。",rule:"同一畫面的疊層不超過三層；去背效果適用於真人實拍；去背模型與元件安裝需要網路。"},
+  ext:{name:"開源特效包",full:"開源特效包：Vibha Ramprakash 的 claude-video-effects（MIT 授權），以 Python 與 ffmpeg 在原影片上加特效。",rule:"每個效果 1.5 至 4 秒，避免遮擋人臉；縮放不超過 2 倍；同一支影片每種效果不超過三次；不要和 HyperFrames 效果放在同一段落；片尾或說明欄標示作者出處。"},
+  end:{name:"片尾範本",full:"片尾範本：J3M 教學影片使用的 5 秒片尾。",rule:"橫版 1920×1080、30 fps、5 秒，無音樂與語音；最後一行文字停留至少 2 秒；不另加訂閱按鈕。"}
 };
 const CATS={text:"文字標題",emph:"強調重點",list:"清單步驟",data:"數據數字",ui:"介面示意",person:"人物疊層",trans:"轉場",draw:"手繪標註",grade:"調色鏡頭",cta:"結尾 CTA"};
 const STATES={hook:"開場 Hook",value:"價值說明",step:"操作步驟",data:"數據結果",chap:"章節卡",cta:"結尾 CTA"};
 
 const E=[
-/* ================= J3M 特效庫 30 ================= */
+/* ================= 基礎動態 ================= */
 {id:"F01",src:"lib",zh:"動態文字",code:"",cat:"text",st:["step","value"],status:"已實作",
 desc:"字幕逐字或逐詞出現，跟著旁白的節奏推進。",how:"依該句時長均分，逐字顯示；長片每行不超過 18 字。",
 pv:`<div class="a scr" style="inset:10% 12% 30%"></div><div class="a cap"><span class="a-type" style="--n:8">每一句都對上旁白</span></div>`},
@@ -496,20 +496,20 @@ pv:`<div class="c mono" style="top:24%;font-size:2cqw;letter-spacing:.2em;color:
 desc:"亮白光帶由左至右掃過標題或重點字。",how:"光帶掃過約 0.6 秒，同一標題只掃一次。",
 pv:`<div class="c mid h a-sweep" style="font-size:9cqw;background:linear-gradient(100deg,#F5B800 40%,#FFF7D6 50%,#F5B800 60%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent">年度精選</div>`},
 
-/* ================= HyperFrames 十二式 ================= */
+/* ================= HyperFrames 元件 ================= */
 {id:"H01",src:"hf",zh:"標題牆",code:"mk-clone-wall-transition",cat:"text",st:["hook"],status:"近似",
-desc:"重複的文字列覆蓋整個畫面，再收斂到主標題。",how:"可作為標題序幕；文字列左右交錯滑入，主標最後彈出。",cmd:HF("mk-clone-wall-transition"),
+desc:"重複的文字列覆蓋整個畫面，再收斂到主標題。",how:"適合作為片頭序幕；文字列左右交錯滑入，主標最後彈出。",cmd:HF("mk-clone-wall-transition"),
 pv:`<div class="a" style="inset:-6% -12%;display:grid;gap:1.2cqw;rotate:-6deg">${[0,1,2,3,4,5,6].map(i=>`<div class="mono ${i%2?"a-right":"a-left"}" style="font-size:5cqw;font-weight:600;white-space:nowrap;color:${i==3?"#F5B800":"rgba(255,255,255,.16)"};--dl:${i*.08}s">AI WORKFLOW · AI WORKFLOW · AI WORKFLOW</div>`).join("")}</div><div class="c mid h a-pop" style="font-size:8cqw;--dl:.6s;text-shadow:0 .5cqw 2cqw rgba(0,0,0,.8)">AI 工作流</div>`},
-{id:"H02",src:"hf",zh:"破框而出",code:"去背層（14.5）",cat:"person",st:["hook"],status:"已有流程",
+{id:"H02",src:"hf",zh:"破框而出",code:"remove-background",cat:"person",st:["hook"],status:"已有流程",
 desc:"人物的頭部或肩膀跨出框線，製造立體感。",how:"先去背取得 subject.webm，框線放在人物後方，讓頭部超出上緣；字幕仍在最上層。",cmd:"npx hyperframes remove-background talk.mp4 -o assets/subject.webm -b assets/bg-plate.webm --quality best --json",
 pv:`${ROOM}<div class="a" style="left:30%;right:30%;top:36%;bottom:-2%;border:.7cqw solid var(--st-a)"></div><div class="a h a-left" style="left:5%;top:40%;font-size:4cqw;line-height:1.3">主體<br><span class="gold">跨出邊界</span></div>${M("--mw:34cqw","a-up")}`},
 {id:"H03",src:"hf",zh:"雜誌封面",code:"caption-editorial-emphasis",cat:"person",st:["value","chap"],status:"已有流程",
 desc:"實拍人物搭配刊頭、大小字混排與閃光切換。",how:"組合 caption-editorial-emphasis、freeze-frame-dressing、editorial-flash-overlay；閃光切入只用一次。",cmd:[HF("caption-editorial-emphasis"),HF("freeze-frame-dressing"),HF("editorial-flash-overlay")].join("\n"),
 pv:`<div class="a" style="inset:0;background:#E9E4DA"></div><div class="c serif" style="top:3%;font-size:13cqw;font-weight:900;color:#B23A2E;letter-spacing:.06em;z-index:1">FOCUS</div>${M("--mw:30cqw")}<div class="a a-left" style="left:5%;top:52%;z-index:3"><span class="chip">AI 特輯</span></div><div class="a h a-right" style="right:5%;top:60%;font-size:3.6cqw;color:#14171C;text-align:right;z-index:3;--dl:.2s">一人公司<br>的工作流</div><div class="a a-flash" style="inset:0;background:#fff;z-index:4"></div>`},
-{id:"H04",src:"hf",zh:"環繞字",code:"規格實作",cat:"person",st:["value"],status:"規格",
-desc:"文字沿圓弧環繞在人物頭部周圍旋轉。",how:"沿用特效庫 F19 的圓形路徑，圓心對齊頭部；目錄無現成元件，需依規格自建。",
+{id:"H04",src:"hf",zh:"環繞字",code:"",cat:"person",st:["value"],status:"規格",
+desc:"文字沿圓弧環繞在人物頭部周圍旋轉。",how:"沿用 F19 環繞文字的圓形路徑，圓心對齊頭部；目前沒有現成元件，需要自行製作。",
 pv:`${ROOM}${M("--mw:28cqw")}<svg class="a a-spin" viewBox="0 0 100 100" style="left:50%;top:6cqw;width:30cqw;height:30cqw;margin-left:-15cqw;z-index:3;--S:10s"><defs><path id="rpH04" d="M50 50 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"/></defs><text font-size="8.6" fill="#F5B800" font-weight="900" letter-spacing="3"><textPath href="#rpH04">AI 教學 · 一分鐘 · 學會一招 ·</textPath></text></svg>`},
-{id:"H05",src:"hf",zh:"綠幕換景",code:"remove-background（14.4）",cat:"person",st:["step","hook"],status:"已有流程",
+{id:"H05",src:"hf",zh:"綠幕換景",code:"remove-background",cat:"person",st:["step","hook"],status:"已有流程",
 desc:"不需綠幕，直接把實拍人物放到另一個背景。",how:"AI 去背後疊在新背景上；頭髮邊緣有殘留時改輸出 ProRes 4444 的 .mov。",cmd:"npx hyperframes remove-background talk.mp4 -o assets/subject.webm --quality best --json",
 pv:`<div class="a scene a-first" style="inset:0"></div><div class="a scene city a-second" style="inset:0"></div>${M("--mw:30cqw")}<div class="a mono" style="left:4%;top:5%;font-size:1.8cqw;background:rgba(0,0,0,.5);padding:.6cqw 1.2cqw;border-radius:.6cqw;z-index:3">NO GREEN SCREEN</div>`},
 {id:"H06",src:"hf",zh:"碎紙拼貼",code:"paper-collage-reveal",cat:"trans",st:["chap","cta"],status:"已存在",
@@ -527,8 +527,8 @@ pv:`<div class="c" style="top:31%;font-size:6cqw;font-weight:900">先驗收，�
 {id:"H10",src:"hf",zh:"玻璃字",code:"glass-shard-title",cat:"text",st:["value","cta"],status:"已存在",
 desc:"玻璃碎片從四周飛入，拼合成標題。",how:"適合承諾與價值段落、結尾；碎片數量不宜過多。",cmd:HF("glass-shard-title"),
 pv:`${[[18,24,-80,"polygon(0 0,100% 20%,40% 100%)"],[40,18,0,"polygon(10% 0,100% 0,60% 100%)"],[62,26,80,"polygon(0 30%,100% 0,80% 100%)"],[24,50,-90,"polygon(0 0,100% 40%,20% 100%)"],[48,54,60,"polygon(30% 0,100% 60%,0 100%)"]].map((s,i)=>`<i class="a a-in" style="left:${s[0]}%;top:${s[1]}%;width:22%;height:26%;background:linear-gradient(135deg,rgba(255,255,255,.5),rgba(140,190,255,.15));border:1px solid rgba(255,255,255,.6);clip-path:${s[3]};--ix:${s[2]}%;--is:1.6"></i>`).join("")}<div class="c mid h a-in" style="font-size:8cqw;color:#DDEBFF;text-shadow:0 0 2cqw rgba(140,190,255,.8);--dl:.3s">透明工作流</div>`},
-{id:"H11",src:"hf",zh:"收據列印",code:"the-bill（X08）",cat:"data",st:["data"],status:"改用外部",
-desc:"成果以收據列印的方式逐行吐出。",how:"建議改用外部 51 式第 8 項 the-bill；與 X08 二選一，不要同時使用。",cmd:FX("the-bill",'--text "剪輯 4 支|字幕 12 份|省下 9 小時"'),
+{id:"H11",src:"hf",zh:"收據列印",code:"the-bill",cat:"data",st:["data"],status:"改用外部",
+desc:"成果以收據列印的方式逐行吐出。",how:"使用開源特效包的 the-bill 製作，與 X08 收據列印相同，兩者擇一使用。",cmd:FX("the-bill",'--text "剪輯 4 支|字幕 12 份|省下 9 小時"'),
 pv:`<i class="a" style="left:30%;right:30%;top:0;height:3%;background:#0A1222;z-index:2"></i><div class="a" style="left:35%;width:30%;top:2%;height:80%"><div class="a-sy" style="background:var(--st-paper);color:#14171C;height:100%;padding:2.4cqw;font-family:var(--f-mono);font-size:1.9cqw;display:grid;gap:1.4cqw;align-content:start;clip-path:polygon(0 0,100% 0,100% 96%,95% 100%,90% 96%,85% 100%,80% 96%,75% 100%,70% 96%,65% 100%,60% 96%,55% 100%,50% 96%,45% 100%,40% 96%,35% 100%,30% 96%,25% 100%,20% 96%,15% 100%,10% 96%,5% 100%,0 96%)"><b style="text-align:center;font-size:2.4cqw">本週成果</b><span>剪輯 ........ 4</span><span>字幕 ....... 12</span><span>省下 ...... 9h</span><span style="border-top:1px dashed #999;padding-top:1cqw;font-weight:600">TOTAL ..... OK</span></div></div>`},
 {id:"H12",src:"hf",zh:"拉遠揭曉",code:"pull-back-reveal",cat:"data",st:["data","hook"],status:"已存在",
 desc:"鏡頭從特寫拉遠，揭示完整畫面與標題。",how:"適合數據結果與開場；拉遠過程約 1 秒。",cmd:HF("pull-back-reveal"),
@@ -557,7 +557,7 @@ pv:`<div class="a a-first" style="inset:0;background:#0E1B33"></div><div class="
 desc:"主體運動方向連續時，以速度感硬切到下一段。",how:"兩段畫面的運動方向一致，切點落在速度最快的瞬間。",cmd:HF("cut-the-curve"),
 pv:`<div class="a scene a-out" style="inset:0;--ox:-60%;--ob:1.6cqw"></div><div class="a scene sun a-in" style="inset:0;--ix:60%;--ib:1.6cqw"></div><div class="a mono" style="left:4%;top:5%;font-size:1.8cqw;color:#14171C">WHIP →</div>`},
 
-/* ================= 外部 51 式 ================= */
+/* ================= 開源特效包 ================= */
 {id:"X01",src:"ext",zh:"影像堆疊",code:"noise",cat:"person",st:["hook"],status:"外部包",
 desc:"圖片在人物頭後快速堆疊，每 0.25 秒出現一張。",how:"選項 images、size；圖片主題要與旁白一致。",cmd:FX("noise","--opt images=a.jpg,b.jpg"),
 pv:`${ROOM}${[[14,8,-8,""],[60,4,6,"sun"],[34,2,3,"city"],[66,26,-5,""],[10,30,7,"sun"],[48,14,-3,"city"]].map((p,i)=>`<div class="a scene ${p[3]} a-pop" style="left:${p[0]}%;top:${p[1]}%;width:24cqw;height:15cqw;rotate:${p[2]}deg;border:.5cqw solid #fff;--dl:${i*.25}s;z-index:1;overflow:hidden"></div>`).join("")}${M("--mw:28cqw")}`},
@@ -736,7 +736,6 @@ function promptOf(e){
 【用途】${CATS[e.cat]}；適合段落：${e.st.map(k=>STATES[k]).join("、")}
 【實作要點】${e.how}
 ${e.cmd?`【指令】\n${e.cmd}\n`:""}【使用規則】${s.rule}
-【目前狀態】${e.status}${e.status==="規格"?"：尚未在實際影片使用，請依規格實作並回報做法":""}
 
 請先列出要套用的時間點（對應旁白哪一句）、持續秒數與畫面文字，再產出可執行的設定或程式碼。`;
 }
@@ -750,7 +749,7 @@ ${list.map((e,i)=>`${i+1}. ${e.zh}（${e.id}${e.code?"｜"+e.code:""}）：${e.d
 1. 依影片段落排序：開場 Hook → 價值說明 → 操作步驟 → 數據結果 → 章節卡 → 結尾 CTA
 2. 短片每個 cut 不超過兩種特效；長片每 3 分鐘不超過三種
 3. 同一效果在整支影片中不超過三次
-4. 外部 51 式與 HyperFrames 效果不在同一段落重疊
+4. 開源特效包與 HyperFrames 效果不放在同一段落
 5. 每個特效都要對應旁白講到的內容，不作純裝飾
 
 請輸出表格：時間、旁白句、特效、畫面文字、持續秒數、需要的素材。`;
@@ -761,7 +760,7 @@ function match(e,skip){
   if(skip!=="st"&&S.st!=="all"&&!e.st.includes(S.st))return false;
   if(skip!=="cat"&&S.cat!=="all"&&e.cat!==S.cat)return false;
   if(skip!=="src"&&S.src!=="all"&&e.src!==S.src)return false;
-  if(S.q){const q=S.q.toLowerCase();return [e.id,e.zh,e.code,e.desc,e.how,e.cmd||"",CATS[e.cat],SRC[e.src].name,e.status].join(" ").toLowerCase().includes(q)}
+  if(S.q){const q=S.q.toLowerCase();return [e.id,e.zh,e.code,e.desc,e.how,e.cmd||"",CATS[e.cat],SRC[e.src].name].join(" ").toLowerCase().includes(q)}
   return true;
 }
 function chips(el,label,key,dict){
@@ -783,7 +782,7 @@ function card(e){
 }
 const io="IntersectionObserver" in window?new IntersectionObserver(es=>es.forEach(x=>x.target.classList.toggle("run",x.isIntersecting)),{rootMargin:"120px"}):null;
 function render(){
-  chips("fState","影片段落","st",STATES);chips("fCat","用途","cat",CATS);chips("fSrc","來源","src",SRC);
+  chips("fState","影片段落","st",STATES);chips("fCat","用途","cat",CATS);chips("fSrc","製作方式","src",SRC);
   const list=E.filter(e=>match(e));
   $("grid").innerHTML=list.map(card).join("");
   $("empty").hidden=list.length>0;
@@ -813,7 +812,7 @@ function openD(id,fromHash){
   $("dTags").innerHTML=`<span class="tag">${CATS[e.cat]}</span>${e.st.filter(k=>STATES[k]!==CATS[e.cat]).map(k=>`<span class="tag">${STATES[k]}</span>`).join("")}`;
   $("dDesc").textContent=e.desc;$("dHow").textContent=e.how;
   $("dCmdWrap").hidden=!e.cmd;$("dCmd").textContent=e.cmd||"";
-  $("dRule").textContent=SRC[e.src].rule;$("dSrcFull").textContent="出處："+SRC[e.src].full;
+  $("dRule").textContent=SRC[e.src].rule;$("dSrcFull").textContent=SRC[e.src].full;
   $("dPrompt").textContent=promptOf(e);$("dPick").checked=S.sel.has(id);
   $("detail").hidden=false;document.documentElement.style.overflow="hidden";
   if(!fromHash){try{history.replaceState(null,"","#fx-"+id)}catch(x){}}
@@ -913,8 +912,7 @@ function fromHash(){
 window.addEventListener("hashchange",fromHash);
 
 /* ---------------- Init ---------------- */
-const ok=E.filter(e=>["ok","ext"].includes(STCLS[e.status])).length;
-$("stats").innerHTML=`<span><b>${E.length}</b>影片特效</span><span><b>${ok}</b>可直接使用</span><span><b>${E.filter(e=>e.status==="規格").length}</b>規格待實作</span><span><b>${ML.length}</b>網頁動態索引</span>`;
+$("stats").innerHTML=`<span><b>${E.length}</b>影片特效</span><span><b>${Object.keys(SRC).length}</b>種製作方式</span><span><b>${ML.length}</b>網頁動態索引</span>`;
 $("nVideo").textContent=E.length;$("nWeb").textContent=ML.length;
 setFmt(S.fmt);render();fromHash();
 </script>
