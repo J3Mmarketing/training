@@ -1,6 +1,6 @@
 ---
 name: j3m-github-publish
-description: 將 J3M 的課程教材、互動工具或 demo 網頁上傳到 GitHub（J3Mmarketing/training）並發布到教學資源站 https://j3mmarketing.github.io/training/ 時使用。涵蓋分支規則、資料夾結構、目錄頁卡片格式、提交身分、推送後驗證，以及理財規劃器各版本的同步規則。只要使用者提到「上傳 GitHub」「放到教學資源站」「加到目錄頁」「更新網站」，就應使用本 skill。
+description: 將 J3M 的課程教材、互動工具或 demo 網頁上傳到 GitHub（J3Mmarketing/training）並發布到教學資源站 https://j3mmarketing.github.io/training/ 時使用。涵蓋分支規則、資料夾結構、首頁卡片與分類格式、提交身分、推送後驗證，以及理財規劃器各版本的同步規則。只要使用者提到「上傳 GitHub」「放到教學資源站」「加到目錄頁」「更新網站」，就應使用本 skill。
 ---
 
 # J3M 教學資源站發布規則
@@ -14,7 +14,7 @@ description: 將 J3M 的課程教材、互動工具或 demo 網頁上傳到 GitH
 | 發布分支 | **`gh-pages`**：網站只從這個分支發布，所有要上線的內容都推到這裡 |
 | `main` 分支 | 僅作備份，不會出現在網站上。README.md 是舊版教材，不是目錄頁 |
 
-- 不要以為 `main` 的 README 是目錄頁。真正的目錄頁是 `gh-pages` 的 `index.html`（標題「J3M 教學資源站」）。
+- 不要以為 `main` 的 README 是目錄頁。真正的目錄頁是 `gh-pages` 的 `index.html`（標題「J3M 教學資源站」，2026/11 起為網站形式的首頁）。
 - 動手前先 `git fetch origin gh-pages`，確認目前收錄了哪些卡片與資料夾。
 
 ## 二、資料夾結構
@@ -23,32 +23,75 @@ description: 將 J3M 的課程教材、互動工具或 demo 網頁上傳到 GitH
 
 ```
 gh-pages/
-├── index.html            ← 目錄頁（卡片索引）
-├── aipmp/index.html      ← 01 善用 AI 工具提升訓練行政效率
-├── shorts-subtitle/      ← 02 短影音上字幕實戰手冊
-├── ai-evolution/         ← 03 AI 工具進化論
-└── finance-planner/      ← 04 目標理財規劃器（課堂示範版）
+├── index.html            ← 首頁（網站形式的目錄頁）
+├── about/                ← 關於 J3M
+├── aipmp/                ← 課程教材 01
+├── ai-evolution/         ← 課程教材 02
+├── slide-craft/          ← AI 簡報術 01 簡報技法圖鑑
+├── slide-styles/         ← AI 簡報術 02 簡報風格圖鑑
+├── shorts-subtitle/      ← 影片製作 01
+├── motion-craft/         ← 影片製作 02 動態技法圖鑑
+├── finance-planner/      ← Vibe Coding 01
+└── ai-knowledge/         ← AI 小知識 01
 ```
 
 - 資料夾名稱使用小寫英文與連字號（kebab-case），不使用中文或空格。
-- 連結一律使用相對路徑，例如 `href="finance-planner/"`。
+- 連結一律使用相對路徑，例如 `href="finance-planner/"`；子頁面回首頁使用 `href="../"`。
+- 子頁面頂部的 eyebrow 放回首頁連結，格式：`J3M 教學資源站 · 分類名稱 · 英文名稱`。
 
-## 三、目錄頁新增卡片
+## 三、首頁新增教材
 
-在 `index.html` 的 `<div class="cards">` 內，接在最後一張卡片之後新增，編號依序遞增（下一張為 05）：
+首頁（2026/11 改版）由五個部分組成：固定導覽列、首屏（標語、搜尋、最新上架）、分類索引卡、各分類區塊、頁尾。目前分類依序為：
+
+| 分類 | 區塊 id | 代表色變數 | 封面英文標籤 |
+|---|---|---|---|
+| 課程教材 | `course` | `--c-course` | COURSE |
+| AI 簡報術 | `slides` | `--c-slides` | SLIDES |
+| 影片製作 | `video` | `--c-video` | VIDEO |
+| Vibe Coding | `vibe` | `--c-vibe` | VIBE CODING |
+| AI 小知識 | `knowledge` | `--c-know` | KNOWLEDGE |
+
+### 3.1 新增卡片
+
+在對應分類的 `<section class="sec" id="…">` 內，於 `<div class="cards">` 的最後一張卡片之後新增，編號依該分類遞增：
 
 ```html
-  <a class="card" href="資料夾名稱/">
-    <span class="no">05</span>
-    <div class="t">教材標題：一句話副標</div>
-    <p class="d">兩到四句說明：解決什麼問題、包含哪些內容、學員能帶走什麼。</p>
-    <div class="tags"><span class="tag">標籤一</span><span class="tag">標籤二</span><span class="tag">標籤三</span><span class="tag">標籤四</span></div>
-  </a>
+      <a class="card" href="資料夾名稱/">
+        <div class="cover"><span class="lab">SLIDES</span><span class="badge">NEW</span><span class="no">03</span></div>
+        <div class="body"><div class="t">教材標題：一句話副標</div>
+        <p class="d">兩到四句說明：解決什麼問題、包含哪些內容、學員能帶走什麼。</p>
+        <div class="tags"><span class="tag">標籤一</span><span class="tag">標籤二</span><span class="tag">標籤三</span><span class="tag">標籤四</span></div><span class="go">開啟圖鑑 →</span></div>
+      </a>
 ```
 
+- `lab` 使用上表的封面英文標籤；`no` 為該分類內的兩位數編號。
+- `badge`（NEW）只放在最新上架的教材；新增時移除較舊教材的 NEW。
+- `go` 的文字依類型：講義「開啟講義 →」、手冊「開啟手冊 →」、圖鑑「開啟圖鑑 →」、工具「開啟工具 →」。外部連結加 `target="_blank" rel="noopener"`，文字改為「前往範例 ↗」。
 - 固定四個標籤，以工具名稱或主題關鍵字為主。
+
+### 3.2 同步更新的位置
+
+每新增一份教材，以下三處也要一起改，否則數字會對不上：
+
+1. 該分類標題旁的 `<span class="count">N 份</span>`。
+2. 分類索引卡（`<nav class="cats">`）中對應分類的 `<em>N 份</em>`。
+3. 首屏「最新上架」（`<aside class="latest">`）：新教材放在第一列並加 NEW，維持三列，移除最舊的一列。
+
+首屏的「份教材」數字由 JavaScript 自動計算，不需手改；「本 AI 圖鑑」數字為手動，新增圖鑑時要加一。
+
+### 3.3 新增分類
+
+1. 在 `:root` 加入新的代表色變數，例如 `--c-ops`（兩個主題共用，不需放進深色區塊）。
+2. 導覽列 `.menu` 加入 `<a href="#新id">分類名稱</a>`，放在「關於 J3M」之前。
+3. 分類索引卡加一張 `<a class="cat" href="#新id" style="--cc:var(--c-新)">`；超過五類時，把 `.cats` 的欄數 `repeat(5,…)` 改成實際數量或改為兩列。
+4. 新增 `<section class="sec" id="新id" style="--cc:var(--c-新)">`，包含 `sec-head`、`cat-note` 與 `cards`。
+
+### 3.4 文案與修改原則
+
 - 文案遵循 J3M 語氣：繁體中文全形標點、英數前後留空格、不使用 emoji、理性專業。
 - 不修改既有卡片的內容與順序，除非使用者明確要求。
+- 每張卡片最多兩欄並排；手機版自動改為單欄，不需另外處理。
+- 修改後在桌機與手機寬度各檢查一次，確認沒有橫向捲動。
 
 ## 四、獨立網頁的必要處理
 
