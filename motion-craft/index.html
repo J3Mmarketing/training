@@ -774,10 +774,10 @@ function card(e){
   return `<article class="card${on?" is-picked":""}" data-id="${e.id}">
   <div class="pv" role="button" tabindex="0" aria-label="查看「${e.zh}」的做法"><div class="v">${e.pv}</div></div>
   <div class="meta">
-    <div class="row1"><span class="no">${e.id}</span><span class="st ${STCLS[e.status]}">${e.status}</span></div>
+    <div class="row1"><span class="no">${e.id}</span></div>
     <h3>${e.zh}</h3>${e.code?`<p class="code">${e.code}</p>`:""}
     <p class="desc">${e.desc}</p>
-    <div class="tags"><span class="tag src">${SRC[e.src].name}</span><span class="tag">${CATS[e.cat]}</span>${e.st.filter(k=>STATES[k]!==CATS[e.cat]).map(k=>`<span class="tag">${STATES[k]}</span>`).join("")}</div>
+    <div class="tags"><span class="tag">${CATS[e.cat]}</span>${e.st.filter(k=>STATES[k]!==CATS[e.cat]).map(k=>`<span class="tag">${STATES[k]}</span>`).join("")}</div>
     <div class="acts"><label class="pick"><input type="checkbox" id="pick-${e.id}" data-pick="${e.id}"${on?" checked":""}> 加入時間軸</label><button class="btn primary" type="button" data-copy="${e.id}">複製提示詞</button></div>
   </div></article>`;
 }
@@ -810,7 +810,7 @@ function openD(id,fromHash){
   const e=byId(id);if(!e)return;S.open=id;
   $("dPv").innerHTML=`<div class="v run">${e.pv}</div>`;
   $("dNo").textContent=e.id;$("dTitle").textContent=e.zh;$("dCode").textContent=e.code||"";
-  $("dTags").innerHTML=`<span class="st ${STCLS[e.status]}">${e.status}</span><span class="tag src">${SRC[e.src].name}</span><span class="tag">${CATS[e.cat]}</span>${e.st.filter(k=>STATES[k]!==CATS[e.cat]).map(k=>`<span class="tag">${STATES[k]}</span>`).join("")}`;
+  $("dTags").innerHTML=`<span class="tag">${CATS[e.cat]}</span>${e.st.filter(k=>STATES[k]!==CATS[e.cat]).map(k=>`<span class="tag">${STATES[k]}</span>`).join("")}`;
   $("dDesc").textContent=e.desc;$("dHow").textContent=e.how;
   $("dCmdWrap").hidden=!e.cmd;$("dCmd").textContent=e.cmd||"";
   $("dRule").textContent=SRC[e.src].rule;$("dSrcFull").textContent="出處："+SRC[e.src].full;
