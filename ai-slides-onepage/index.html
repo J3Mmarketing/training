@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>AI 簡報術一頁圖表｜工具選擇與風格</title>
+<meta name="description" content="AI 簡報術一頁圖表：七步工作流、Gemini Notebook 與 Gemini in Slides 與 Claude 三大工具比較、四種簡報風格與交付前檢核清單。">
+<meta name="author" content="J3M 數學行銷人">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI 簡報術一頁圖表｜工具選擇與風格">
+<meta property="og:description" content="七步工作流、三大 AI 簡報工具比較、四種風格類型與交付前檢核清單，一張圖看完。">
+<meta property="og:url" content="https://j3mmarketing.github.io/training/ai-slides-onepage/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: one long editorial sheet, 12-col grid of modules separated by hairlines; gold marks the key figure in each module */
+:root{
+  --bg:#FAFAFA; --panel:#F1F0EC; --card:#FFFFFF; --ink:#111827; --ink2:#1F2937; --body:#4B5563; --muted:#6B7280;
+  --line:#E5E7EB; --gold:#A16207; --gold-soft:#F5EBD3; --arrow:#C9C7C1;
+  --gem:#EAF0F9; --gem-line:#4285F4; --sld:#FBF3DC; --sld-line:#F4B400; --cla:#F6EEE6; --cla-line:#D97757;
+  --f-sans:'Inter','Noto Sans TC',system-ui,sans-serif; --f-cjk:'Noto Sans TC','Inter',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14161B; --panel:#1C1F26; --card:#1A1D23; --ink:#F3F4F6; --ink2:#E5E7EB; --body:#B6BCC6; --muted:#8B93A0;
+  --line:#2C313A; --gold:#E0A43A; --gold-soft:#3A2E17; --arrow:#4A4F58;
+  --gem:#1B2433; --gem-line:#6EA2F7; --sld:#2C2716; --sld-line:#F4C542; --cla:#2C221D; --cla-line:#E58E70; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14161B; --panel:#1C1F26; --card:#1A1D23; --ink:#F3F4F6; --ink2:#E5E7EB; --body:#B6BCC6; --muted:#8B93A0;
+  --line:#2C313A; --gold:#E0A43A; --gold-soft:#3A2E17; --arrow:#4A4F58;
+  --gem:#1B2433; --gem-line:#6EA2F7; --sld:#2C2716; --sld-line:#F4C542; --cla:#2C221D; --cla-line:#E58E70; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-sans);line-height:1.6;font-size:15px}
+.wrap{max-width:1180px;margin:0 auto;padding-block:48px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:40px}
+h1,h2,h3,p{margin:0}
+h1,h2{text-wrap:balance}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.mod{display:flex;flex-direction:column;gap:18px;padding-top:28px;border-top:1px solid var(--line);min-width:0}
+.mod h2{font-family:var(--f-cjk);font-size:24px;font-weight:700;color:var(--ink)}
+.lead{color:var(--body);font-size:15px}
+.grid{display:grid;gap:40px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:860px){.g2,.g3{grid-template-columns:1fr}}
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:40px;align-items:end}
+@media (max-width:860px){.hero{grid-template-columns:1fr}}
+.hero h1{font-family:var(--f-cjk);font-size:clamp(40px,7vw,72px);font-weight:900;letter-spacing:.04em;line-height:1.1;margin-top:10px}
+.hero .sub{font-size:18px;color:var(--body);margin-top:14px}
+.rule{width:64px;height:2px;background:var(--gold);margin-top:18px}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.kpi{background:var(--card);padding:18px 20px;display:flex;flex-direction:column;gap:2px}
+.kpi b{font-size:40px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--ink2)}
+.kpi b small{font-size:16px;font-weight:600;margin-left:4px;color:var(--ink)}
+.kpi span{font-size:13px;color:var(--muted)}
+.kpi.gold b{color:var(--gold)}
+/* timeline */
+.tl{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));overflow-x:auto}
+.tl>div{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;min-width:84px}
+.tl .n{font-size:20px;font-weight:500;color:var(--ink2)}
+.tl .dotrow{display:flex;align-items:center;width:100%;height:22px}
+.tl .seg{flex:1;height:2px;background:var(--arrow)}
+.tl>div:first-child .seg:first-child,.tl>div:last-child .seg:last-child{background:transparent}
+.tl .dot{width:18px;height:18px;border-radius:50%;flex:none}
+.tl .ai .dot{background:var(--gold)}
+.tl .hu .dot{background:var(--bg);border:3px solid var(--ink2)}
+.tl h3{font-family:var(--f-cjk);font-size:15px;font-weight:700}
+.tl .tag{font-size:12px;font-weight:600;color:var(--gold)}
+.tl .hu .tag{color:var(--muted)}
+.legend{display:flex;gap:20px;font-size:13px;color:var(--body);flex-wrap:wrap}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+/* chart */
+.chart{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:20px 20px 12px;overflow-x:auto}
+.chart svg{display:block;width:100%;min-width:520px;height:auto}
+.chart text{font-family:var(--f-sans);font-size:12px;fill:var(--muted)}
+.chart .lbl{font-size:13px;fill:var(--ink);font-weight:600}
+.chart .val{font-size:12px;fill:var(--ink2);font-weight:600}
+.tactics{display:flex;flex-direction:column}
+.tactics div{display:flex;gap:16px;align-items:baseline;padding:12px 0;border-top:1px solid var(--line)}
+.tactics div:last-child{border-bottom:1px solid var(--line)}
+.tactics b{font-size:22px;font-weight:500;color:var(--ink2);min-width:34px}
+.tactics h3{font-size:16px;font-weight:700;font-family:var(--f-cjk)}
+.tactics p{font-size:13px;color:var(--body)}
+/* comparison table */
+.tbl{overflow-x:auto;border-radius:8px}
+table{border-collapse:separate;border-spacing:8px 0;width:100%;min-width:640px;font-size:14px}
+th,td{padding:10px 14px;text-align:left;vertical-align:middle}
+thead th{font-family:var(--f-cjk);font-size:15px;border-radius:8px 8px 0 0;border-top:3px solid}
+tbody th{color:var(--ink);font-weight:700;padding-left:0;white-space:nowrap;font-size:13px}
+tbody td{color:var(--body);border-top:1px solid var(--line)}
+.c1{background:var(--gem)}.c2{background:var(--sld)}.c3{background:var(--cla)}
+thead .c1{border-color:var(--gem-line)}thead .c2{border-color:var(--sld-line)}thead .c3{border-color:var(--cla-line)}
+tbody tr:last-child td{border-radius:0 0 8px 8px}
+.grp th{padding-top:18px;color:var(--gold);font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-family:var(--f-sans)}
+.grp td{border-top:none}
+td.hi{color:var(--gold);font-weight:700}
+.note{font-size:13px;color:var(--muted)}
+/* flows */
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.flow .st{flex:1 1 120px;min-width:0;border-top:1px solid var(--line);padding-top:10px}
+.flow .st.key{border-top:2px solid var(--gold)}
+.flow .st b{display:block;font-size:13px;color:var(--gold);font-weight:600;letter-spacing:.06em}
+.flow .st h3{font-family:var(--f-cjk);font-size:15px;font-weight:700}
+.flow .st p{font-size:12.5px;color:var(--muted)}
+.flow .ar{color:var(--arrow);align-self:center;font-size:18px}
+@media (max-width:600px){.flow .ar{display:none}}
+/* pros cons */
+.pc{border-radius:8px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;border-top:3px solid}
+.pc h3{font-family:var(--f-cjk);font-size:17px;font-weight:700}
+.pc h3 span{font-size:12px;font-weight:500;color:var(--muted);margin-left:8px}
+.pc .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pc ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;font-size:13.5px;color:var(--body)}
+.pc .k{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.verdict{display:flex;gap:12px;align-items:center;font-size:15px;color:var(--ink2);font-weight:500}
+.verdict::before{content:"";width:40px;height:2px;background:var(--gold);flex:none}
+.cmp2{display:grid;grid-template-columns:auto 1fr 1fr;font-size:13.5px}
+.cmp2>div{padding:9px 10px;border-top:1px solid var(--line);color:var(--body)}
+.cmp2 .h{font-weight:700;color:var(--ink);font-family:var(--f-cjk);border-top:none;font-size:15px}
+.cmp2 .h small{display:block;font-size:11px;color:var(--gold);font-weight:600;letter-spacing:.1em}
+.cmp2 .r{font-weight:700;color:var(--ink);padding-left:0;white-space:nowrap}
+/* styles */
+.styles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:860px){.styles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.styles{grid-template-columns:1fr}}
+.sty{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+.sw{display:flex;height:56px}
+.sw i{flex:1}
+.sty .b{padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.sty .code{font-size:11px;font-weight:600;letter-spacing:.14em;color:var(--gold)}
+.sty h3{font-family:var(--f-cjk);font-size:16px;font-weight:700}
+.sty p{font-size:12.5px;color:var(--body)}
+.sty .fit{font-size:12.5px;color:var(--muted)}
+.hex{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted)}
+/* dna */
+.dna{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px;align-items:stretch}
+@media (max-width:860px){.dna{grid-template-columns:1fr}}
+.dnabar{border-radius:8px;overflow:hidden;display:grid;grid-template-rows:1fr auto;min-height:180px;border:1px solid var(--line)}
+.dnabar .grad{background:linear-gradient(110deg,#A81C63,#DA2754);display:flex;align-items:flex-end;padding:16px;color:#FFF4F8;font-weight:700;font-size:20px;letter-spacing:.08em;font-style:italic}
+.dnabar .sw3{display:grid;grid-template-columns:repeat(3,1fr)}
+.dnabar .sw3 div{padding:10px 12px;font-size:12px;color:#F3F4F6}
+.traits{display:flex;flex-direction:column}
+.traits div{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line);font-size:14px}
+.traits b{font-family:var(--f-cjk)}
+.traits span{color:var(--body)}
+/* steps vertical */
+.vsteps{display:flex;flex-direction:column;gap:0}
+.vsteps div{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:center;padding:8px 0}
+.vsteps i{width:36px;height:36px;border-radius:50%;border:1px solid var(--arrow);display:grid;place-items:center;font-style:normal;font-size:13px;font-weight:600;color:var(--ink2)}
+.vsteps .key i{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.vsteps h3{font-family:var(--f-cjk);font-size:15px;font-weight:700}
+.vsteps p{font-size:12.5px;color:var(--muted)}
+/* checklist */
+.check{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.check{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.check div{background:var(--panel);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.check b{font-size:12px;color:var(--gold);letter-spacing:.1em}
+.check h3{font-family:var(--f-cjk);font-size:16px;font-weight:700}
+.check p{font-size:13px;color:var(--body)}
+footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px;font-size:13px;color:var(--muted)}
+footer b{color:var(--ink2);font-weight:600}
+footer a{color:var(--gold);text-decoration:none}
+footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <p class="eyebrow">AI Presentation · 一頁看懂</p>
+    <h1>AI 簡報術：<br>工具選擇與風格</h1>
+    <div class="rule"></div>
+    <p class="sub">從工作流、三大工具比較，到風格 DNA 與提案檢核，<br>一張圖整理簡報工具的關鍵選擇。</p>
+  </div>
+  <div class="kpis" aria-label="關鍵數字">
+    <div class="kpi"><b>7<small>步</small></b><span>簡報製作工作流</span></div>
+    <div class="kpi"><b>3<small>大</small></b><span>AI 簡報工具比較</span></div>
+    <div class="kpi gold"><b>20<small>頁</small></b><span>Gemini Notebook 單次上限</span></div>
+    <div class="kpi"><b>4<small>種</small></b><span>簡報風格類型</span></div>
+  </div>
+</header>
+
+<section class="mod">
+  <p class="eyebrow">Workflow</p>
+  <h2>簡報製作工作流：AI 負責內容，人負責定稿</h2>
+  <div class="tl" role="list">
+    <div class="ai" role="listitem"><span class="n">01</span><div class="dotrow"><i class="seg"></i><i class="dot"></i><i class="seg"></i></div><h3>需求分析</h3><span class="tag">AI</span></div>
+    <div class="ai" role="listitem"><span class="n">02</span><div class="dotrow"><i class="seg"></i><i class="dot"></i><i class="seg"></i></div><h3>內容整理</h3><span class="tag">AI</span></div>
+    <div class="ai" role="listitem"><span class="n">03</span><div class="dotrow"><i class="seg"></i><i class="dot"></i><i class="seg"></i></div><h3>版面編排</h3><span class="tag">AI</span></div>
+    <div class="ai" role="listitem"><span class="n">04</span><div class="dotrow"><i class="seg"></i><i class="dot"></i><i class="seg"></i></div><h3>生成圖表</h3><span class="tag">AI</span></div>
+    <div class="ai" role="listitem"><span class="n">05</span><div class="dotrow"><i class="seg"></i><i class="dot"></i><i class="seg"></i></div><h3>初稿製作</h3><span class="tag">AI</span></div>
+    <div class="hu" role="listitem"><span class="n">06</span><div class="dotrow"><i class="seg"></i><i class="dot"></i><i class="seg"></i></div><h3>演練調整</h3><span class="tag">人工</span></div>
+    <div class="hu" role="listitem"><span class="n">07</span><div class="dotrow"><i class="seg"></i><i class="dot"></i><i class="seg"></i></div><h3>定稿發佈</h3><span class="tag">人工</span></div>
+  </div>
+  <div class="legend"><span><i style="background:var(--gold)"></i>AI 負責</span><span><i style="border:3px solid var(--ink2)"></i>人工負責</span></div>
+</section>
+
+<section class="mod">
+  <p class="eyebrow">Data · 頁數限制</p>
+  <h2>Gemini Notebook 單次產出 20 頁，長篇簡報要分段生成</h2>
+  <div class="grid g2">
+    <div class="chart">
+      <svg viewBox="0 0 560 220" role="img" aria-label="頁數比較長條圖：官方上限 20 頁；實測產出 8 到 15 頁；長篇簡報需求 30 到 50 頁">
+        <g stroke="var(--line)" stroke-width="1">
+          <line x1="130" y1="20" x2="130" y2="180"/><line x1="210" y1="20" x2="210" y2="180"/><line x1="290" y1="20" x2="290" y2="180"/><line x1="370" y1="20" x2="370" y2="180"/><line x1="450" y1="20" x2="450" y2="180"/><line x1="530" y1="20" x2="530" y2="180"/>
+        </g>
+        <g text-anchor="middle"><text x="130" y="200">0</text><text x="210" y="200">10</text><text x="290" y="200">20</text><text x="370" y="200">30</text><text x="450" y="200">40</text><text x="530" y="200">50 頁</text></g>
+        <text class="lbl" x="0" y="54">單次上限</text>
+        <rect x="130" y="38" width="160" height="26" rx="3" fill="var(--gold)"/>
+        <text class="val" x="298" y="56">20 頁</text>
+        <text class="lbl" x="0" y="104">實測產出</text>
+        <rect x="130" y="88" width="64" height="26" rx="3" fill="var(--panel)"/>
+        <rect x="194" y="88" width="56" height="26" rx="3" fill="var(--ink2)"/>
+        <text class="val" x="258" y="106">8–15 頁</text>
+        <text class="lbl" x="0" y="154">長篇需求</text>
+        <rect x="130" y="138" width="240" height="26" rx="3" fill="var(--panel)"/>
+        <rect x="370" y="138" width="160" height="26" rx="3" fill="var(--arrow)"/>
+        <text class="val" x="378" y="156" fill="var(--ink2)">30–50 頁</text>
+        <line x1="290" y1="28" x2="290" y2="176" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="4 4"/>
+      </svg>
+      <p class="note">金色虛線為單次上限。免費版與付費方案皆相同，升級無法提高頁數。</p>
+    </div>
+    <div class="tactics">
+      <p class="eyebrow" style="padding-bottom:10px">30–50 頁的對策</p>
+      <div><b>01</b><span><h3>拆章節分次生成</h3><p>每章各自生成，最後再合併成一份。</p></span></div>
+      <div><b>02</b><span><h3>20 頁骨幹再擴充</h3><p>先產出完整骨架，重點段落二次生成。</p></span></div>
+    </div>
+  </div>
+</section>
+
+<section class="mod">
+  <p class="eyebrow">Compare · 三大工具</p>
+  <h2>Gemini Notebook、Gemini in Slides、Claude 怎麼選</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th style="border:none;width:96px"></th><th class="c1">Gemini Notebook</th><th class="c2">Gemini in Slides</th><th class="c3">Claude</th></tr></thead>
+      <tbody>
+        <tr class="grp"><th colspan="1">生成與輸出</th><td class="c1"></td><td class="c2"></td><td class="c3"></td></tr>
+        <tr><th>生成方式</th><td class="c1">上傳來源，自動生成</td><td class="c2">依提示詞生成</td><td class="c3">提示詞＋參考舊簡報</td></tr>
+        <tr><th>頁數控制</th><td class="c1">提示詞指定</td><td class="c2">大綱階段確認</td><td class="c3">大綱階段確認</td></tr>
+        <tr><th>修改方式</th><td class="c1">對話修訂出新版</td><td class="c2">單頁或多頁指令</td><td class="c3">Canvas 直接編輯</td></tr>
+        <tr><th>資料來源</th><td class="c1">僅限上傳來源</td><td class="c2">可引用雲端硬碟</td><td class="c3">附件，需自行查證</td></tr>
+        <tr><th>使用門檻</th><td class="c1">Gemini Notebook 權限</td><td class="c2">AI Pro 或 Workspace</td><td class="c3">Canvas 需 Pro 以上</td></tr>
+        <tr class="grp"><th>風格與視覺</th><td class="c1"></td><td class="c2"></td><td class="c3"></td></tr>
+        <tr><th>風格選擇</th><td class="c1">10 種資訊圖風格</td><td class="c2">套模板，新頁仿前後頁</td><td class="c3">Canvas 起始模板</td></tr>
+        <tr><th>模板相似度</th><td class="c1">靠提示詞描述</td><td class="c2 hi">100%，還原度最高</td><td class="c3">外掛讀取母片</td></tr>
+        <tr><th>圖表</th><td class="c1">資訊圖為主</td><td class="c2">連結試算表更新</td><td class="c3">外掛轉原生圖表</td></tr>
+        <tr><th>圖片素材</th><td class="c1">依來源重新繪製</td><td class="c2">Imagen 生成</td><td class="c3">需自行替換</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">三者皆可匯出 PPTX 與 PDF。</p>
+</section>
+
+<section class="mod" style="border-top:none;padding-top:0">
+  <div class="mod">
+    <p class="eyebrow">Outline</p>
+    <h2>先內容，後視覺：轉換簡報大綱</h2>
+    <div class="flow">
+      <div class="st"><b>01</b><h3>企劃草稿</h3><p>原始內容</p></div><span class="ar">→</span>
+      <div class="st"><b>02</b><h3>逐頁大綱</h3><p>拆解頁面</p></div><span class="ar">→</span>
+      <div class="st key"><b>03</b><h3>邏輯健檢</h3><p>頁與頁要承接</p></div><span class="ar">→</span>
+      <div class="st"><b>04</b><h3>生成簡報</h3><p>版面製作</p></div><span class="ar">→</span>
+      <div class="st"><b>05</b><h3>定稿輸出</h3><p>完成簡報</p></div>
+    </div>
+  </div>
+</section>
+<section class="mod" style="border-top:none;padding-top:0">
+  <div class="mod">
+    <p class="eyebrow">Gemini Canvas</p>
+    <h2>文字與視覺化引擎：Notebook 直接當來源</h2>
+    <div class="flow">
+      <div class="st"><h3>Gemini Notebook</h3><p>文件萃取</p></div><span class="ar">→</span>
+      <div class="st"><h3>Gemini 引用</h3><p>上傳選項 → Notebooks</p></div><span class="ar">→</span>
+      <div class="st key"><h3>Gemini</h3><p>生成大綱</p></div><span class="ar">→</span>
+      <div class="st"><h3>人工審核</h3><p>數字核實</p></div>
+    </div>
+    <p class="note">文字類：大綱、圖表標題、105 字精簡文字。程式碼類：Chart.js 動態圖表、流程圖、Canva 色調指令。</p>
+  </div>
+</section>
+
+<section class="mod">
+  <p class="eyebrow">Canvas vs. Slides</p>
+  <h2>對外展示用 Canvas，正式提案交付用 Google Slides</h2>
+  <div class="grid g2" style="gap:20px">
+    <div class="pc c1" style="border-color:var(--gem-line)">
+      <h3>Gemini Canvas<span>網頁式互動簡報</span></h3>
+      <div class="cols">
+        <div><p class="k">優點</p><ul><li>互動網頁呈現</li><li>動態圖表吸睛</li><li>連結即可分享</li></ul></div>
+        <div><p class="k">缺點</p><ul><li>匯出容易跑版</li><li>修改要再下指令</li><li>難套品牌模板</li></ul></div>
+      </div>
+    </div>
+    <div class="pc c2" style="border-color:var(--sld-line)">
+      <h3>Google Slides<span>可編輯簡報檔</span></h3>
+      <div class="cols">
+        <div><p class="k">優點</p><ul><li>逐頁直接編輯</li><li>套用公司模板</li><li>團隊協作留言</li></ul></div>
+        <div><p class="k">缺點</p><ul><li>版面較制式</li><li>動態效果有限</li><li>生成後需微調</li></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="grid g2">
+  <div class="mod">
+    <p class="eyebrow">Google Slides AI</p>
+    <h2>智慧功能與進階協作</h2>
+    <div class="vsteps">
+      <div><i>01</i><span><h3>Help me organize</h3><p>自動生成大綱結構</p></span></div>
+      <div><i>02</i><span><h3>AI 圖像生成</h3><p>文字描述直接生圖</p></span></div>
+      <div><i>03</i><span><h3>側邊欄助手</h3><p>改寫、摘要、生圖表</p></span></div>
+      <div><i>04</i><span><h3>生態系串聯</h3><p>Sheets、Docs、Drive 轉素材</p></span></div>
+      <div class="key"><i>05</i><span><h3>引用模板</h3><p>自動延續既有風格</p></span></div>
+    </div>
+  </div>
+  <div class="mod">
+    <p class="eyebrow">Claude</p>
+    <h2>Claude Slides 與 Claude Design</h2>
+    <div class="cmp2">
+      <div class="h"></div><div class="h"><small>一般對話模式</small>Claude Slides</div><div class="h"><small>視覺設計畫布</small>Claude Design</div>
+      <div class="r">定位</div><div>快速生成整套草稿</div><div>精緻視覺提案</div>
+      <div class="r">生成方式</div><div>提出需求，自動生成</div><div>內建設計系統，風格一致</div>
+      <div class="r">適用情境</div><div>內容梳理、取得初稿</div><div>品牌簡報、重點提案</div>
+      <div class="r">編輯調整</div><div>單頁下指令修改</div><div>點選元素、批註、Tweaks</div>
+    </div>
+  </div>
+</section>
+
+<section class="mod">
+  <p class="eyebrow">Styles · 風格類型</p>
+  <h2>同一份內容，換風格就換情緒</h2>
+  <div class="styles">
+    <div class="sty"><div class="sw"><i style="background:#FAFAFA"></i><i style="background:#111827"></i><i style="background:#A16207"></i></div><div class="b"><span class="code">STYLE 01</span><h3>瑞士極簡商務風</h3><p>暖白留白・細線分隔・紀實照片</p><p class="fit">適合：企業提案、課程教學、顧問報告</p><span class="hex">#FAFAFA #111827 #A16207</span></div></div>
+    <div class="sty"><div class="sw"><i style="background:#07090F"></i><i style="background:#22D3EE"></i><i style="background:#E040FB"></i></div><div class="b"><span class="code">STYLE 02</span><h3>暗黑霓虹電競風</h3><p>深色底・霓虹漸層・斜切標籤</p><p class="fit">適合：電競賽事、遊戲品牌、科技發表</p><span class="hex">#07090F #22D3EE #E040FB</span></div></div>
+    <div class="sty"><div class="sw"><i style="background:#F3EEE6"></i><i style="background:#1C1917"></i><i style="background:#B23A2E"></i></div><div class="b"><span class="code">STYLE 03</span><h3>雜誌編輯風</h3><p>襯線大標・滿版照片・刊頭細線</p><p class="fit">適合：品牌故事、年度報告、人物專訪</p><span class="hex">#F3EEE6 #1C1917 #B23A2E</span></div></div>
+    <div class="sty"><div class="sw"><i style="background:#FFF4E0"></i><i style="background:#FFD93D"></i><i style="background:#4ECDC4"></i><i style="background:#FF6B6B"></i></div><div class="b"><span class="code">STYLE 04</span><h3>活潑社群風</h3><p>圓潤色塊・貼紙標籤・螢光標記</p><p class="fit">適合：社群活動、新品推廣、年輕受眾</p><span class="hex">#FFF4E0 #FFD93D #4ECDC4 #FF6B6B</span></div></div>
+  </div>
+</section>
+
+<section class="grid g2">
+  <div class="mod">
+    <p class="eyebrow">Brand DNA</p>
+    <h2>提煉提案公司風格 DNA</h2>
+    <div class="dna">
+      <div class="dnabar" aria-label="CARRY 品牌色：主色 #C2215B，漸層 #A81C63 到 #DA2754，底色 #0B0B0F">
+        <div class="grad">CARRY ▶</div>
+        <div class="sw3"><div style="background:#C2215B">主色<br>#C2215B</div><div style="background:#A81C63">漸層起<br>#A81C63</div><div style="background:#0B0B0F">底色<br>#0B0B0F</div></div>
+      </div>
+      <div class="traits">
+        <div><b>動感速度</b><span>斜體字形、斜切色塊</span></div>
+        <div><b>影音娛樂</b><span>播放鍵符號、直播感</span></div>
+        <div><b>年輕電競</b><span>洋紅漸層、暗色舞台</span></div>
+      </div>
+    </div>
+    <p class="note">依這組 DNA 可一次生成封面、內容、數據三種模板頁。</p>
+  </div>
+  <div class="mod">
+    <p class="eyebrow">Rebirth</p>
+    <h2>舊簡報重生術：依客群餵養 AI</h2>
+    <div class="vsteps">
+      <div><i>01</i><span><h3>準備母版簡報</h3><p>一份完整的舊簡報</p></span></div>
+      <div><i>02</i><span><h3>建立客群輪廓</h3><p>產業・決策者・在意點</p></span></div>
+      <div class="key"><i>03</i><span><h3>餵養 AI</h3><p>母版＋輪廓＋風格</p></span></div>
+      <div><i>04</i><span><h3>生成新簡報</h3><p>每個客群一個版本</p></span></div>
+    </div>
+    <p class="note">AI 依客群調整：換上產業實景、加入客戶品牌、改寫產業語言。</p>
+  </div>
+</section>
+
+<section class="mod">
+  <p class="eyebrow">Checklist</p>
+  <h2>交付前的簡報檢核清單</h2>
+  <div class="check">
+    <div><b>01</b><h3>封面設定</h3><p>痛點與對象</p></div>
+    <div><b>02</b><h3>訊息聚焦</h3><p>一頁一核心</p></div>
+    <div><b>03</b><h3>方案比較</h3><p>10 秒易讀</p></div>
+    <div><b>04</b><h3>數據嚴謹</h3><p>來源標示明確</p></div>
+    <div><b>05</b><h3>結尾行動</h3><p>下一步決定</p></div>
+  </div>
+</section>
+
+<footer><span><b>AI 簡報術</b>　工具選擇與風格・一頁圖表</span><span><a href="../">← 回教學資源站</a>　<b>J3M 數學行銷人</b></span></footer>
+</div>
+
+</body>
+</html>
