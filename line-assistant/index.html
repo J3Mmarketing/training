@@ -867,6 +867,32 @@ function handleUserText(userText, replyToken) {
   try {
     const props = PropertiesService.getScriptProperties();
     const pendingProject = props.getProperty('PENDING_PROJECT');
+    const pendingDay = props.getProperty('PENDING_DAY');
+
+    // 正在等使用者回答「下禮拜幾」
+    if (pendingDay) {
+      const ask = JSON.parse(pendingDay);
+      const answer = String(userText).trim()
+        .replace(/[０-９]/g, c =&gt; String.fromCharCode(c.charCodeAt(0) - 0xFEE0)) // 全形數字轉半形：２→2
+        .replace(/^(是|在)?\s*(禮拜|星期|週|周)/, '');
+      if (answer === '取消') {
+        props.deleteProperty('PENDING_DAY');
+        replyLine(replyToken, '好的，這筆不記了。');
+        return;
+      }
+      // 把回答接回原本的句子再解析一次：「下禮拜」＋「三 下午兩點」→「下禮拜三 下午兩點」
+      const merged = /^[一二三四五六日天1-7](?![\d\/月])/.test(answer) // 「3」是禮拜三，「11/20」是日期
+        ? ask.text.replace(ask.matched, ask.matched + answer + ' ')
+        : ask.text.replace(ask.matched, ' ' + answer + ' ');
+      const todo = quickParseTodo(merged);
+      if (todo &amp;&amp; todo.type === 'TODO') {
+        props.deleteProperty('PENDING_DAY');
+        executeAction(todo, ask.text, replyToken);
+        return;
+      }
+      replyLine(replyToken, `還沒收到是${ask.matched}幾喔！\n請回覆「三」或「禮拜三下午2點」，也可以回覆日期，例如「11/20」。\n\n不記了請回覆「取消」。`);
+      return;
+    }
 
     // 正在等使用者回答某個案件的進度
     if (pendingProject) {
@@ -896,13 +922,21 @@ function handleUserText(userText, replyToken) {
 
     // 「幾點提醒我…」「20 分鐘後…」這類有明確時間的待辦，直接解析，不用等 Gemini
     const quickTodo = quickParseTodo(userText);
+    if (quickTodo &amp;&amp; quickTodo.type === 'ASK_DAY') {
+      // 只講「下禮拜」沒講禮拜幾：先問清楚再記
+      props.setProperty('PENDING_DAY', JSON.stringify({ text: quickTodo.text, matched: quickTodo.matched }));
+      replyLine(replyToken, `好的！請問是${quickTodo.matched}幾呢？\n請回覆「三」或「禮拜三下午2點」。\n\n不記了請回覆「取消」。`);
+      return;
+    }
     if (quickTodo) {
       executeAction(quickTodo, userText, replyToken);
       return;
     }
 
-    // 使用 Gemini 判斷意圖
+    // 使用 Gemini 判斷意圖（記下「處理中」，萬一 Gemini 卡住讓程式被中斷，定時檢查會通知使用者）
+    const runKey = markAiStart(userText);
     const aiResult = analyzeIntentWithGemini(userText);
+    markAiEnd(runKey);
     if (!aiResult) {
       replyLine(replyToken, lastGeminiError
         ? '⚠️ AI 連線失敗：' + lastGeminiError
@@ -927,9 +961,13 @@ function handleUserAudio(messageId, replyToken) {
     return;
   }
 
+  const runKey = markAiStart('（語音訊息）');
   const transcribedText = speechToTextWithGemini(audioBlob);
+  markAiEnd(runKey);
   if (!transcribedText) {
-    replyLine(replyToken, '語音辨識不清楚，請重新發送或改用文字。');
+    replyLine(replyToken, lastGeminiError
+      ? '⚠️ 語音辨識失敗：' + lastGeminiError + '\n\n語音一定要經過 AI，忙碌時建議先改用打字。'
+      : '語音辨識不清楚，請重新發送或改用文字。');
     return;
   }
 
@@ -1107,9 +1145,19 @@ function callGemini(parts, generationConfig) {
     return null;
   }
 
+  const startedAt = Date.now();
   try {
     let model = currentGeminiModel();
+    // 這個模型最近很慢或卡住過：15 分鐘內先用備用模型
+    if (CacheService.getScriptCache().get('GEMINI_SLOW_' + model)) {
+      const backup = findBackupModel(model);
+      if (backup) {
+        Logger.log(`模型「${model}」最近很慢，這次先用「${backup}」`);
+        model = backup;
+      }
+    }
     let res = requestGemini(model, body);
+    if (Date.now() - startedAt &gt; 30000) markModelSlow(model);
 
     if (res.getResponseCode() === 404) {
       const found = findAvailableModel();
@@ -1121,23 +1169,46 @@ function callGemini(parts, generationConfig) {
       }
     }
 
+    // 伺服器忙碌（503 等）：等 1.5 秒重試一次；還是不行就依序改用最多 3 個備用模型（不會記住，下次仍用原本的模型）
+    // 已經等超過 45 秒就不再重試，避免使用者等太久
+    const busy = c =&gt; c === 500 || c === 502 || c === 503 || c === 504;
+    const canRetry = () =&gt; Date.now() - startedAt &lt; 45000;
+    const tried = [`${model} ${res.getResponseCode()}`];
+    if (busy(res.getResponseCode()) &amp;&amp; canRetry()) {
+      Utilities.sleep(1500);
+      res = requestGemini(model, body);
+      tried.push(`${model} 重試 ${res.getResponseCode()}`);
+    }
+    if (busy(res.getResponseCode()) || res.getResponseCode() === 429) {
+      const backups = findBackupModels(model).slice(0, 3);
+      if (!backups.length) tried.push('找不到備用模型');
+      for (const backup of backups) {
+        if (!canRetry()) { tried.push('超過 45 秒，停止重試'); break; }
+        const backupRes = requestGemini(backup, body);
+        tried.push(`${backup} ${backupRes.getResponseCode()}`);
+        if (backupRes.getResponseCode() === 200) {
+          Logger.log('Gemini 改用備用模型成功：' + tried.join(' → '));
+          return parseGeminiText(backupRes);
+        }
+      }
+    }
+
     const code = res.getResponseCode();
     if (code !== 200) {
-      logError(`Gemini 回應錯誤（代碼 ${code}，模型 ${model}）：` + res.getContentText().slice(0, 300));
+      logError(`Gemini 回應錯誤（代碼 ${code}，試過：${tried.join(' → ')}）：` + res.getContentText().slice(0, 300));
       const hints = {
         400: 'API Key 格式不對，請重新複製 Google AI Studio 的金鑰，用選單「① 填入金鑰」重填',
         401: 'API Key 不正確，請重新複製金鑰，用選單「① 填入金鑰」重填',
         403: 'API Key 沒有權限，請確認金鑰是在 Google AI Studio 建立的',
         404: `找不到可用的 Gemini 模型，請在編輯器執行 listGeminiModels 查看可用名稱，填進 GEMINI_MODEL`,
         429: '超過免費額度或傳太快，請等一分鐘再試',
-        503: 'Gemini 伺服器忙碌，請稍後再試'
+        500: 'Gemini 暫時出錯，已自動重試和換模型都沒成功，請過一兩分鐘再傳一次',
+        503: 'Gemini 現在使用的人太多，已自動重試和換模型都沒成功，請過一兩分鐘再傳一次。有明確時間的提醒（例如「下午3點提醒我打電話」）不受影響'
       };
-      lastGeminiError = `（代碼 ${code}）` + (hints[code] || '請到 Apps Script 編輯器執行 testGemini 查看詳細紀錄');
+      lastGeminiError = `（代碼 ${code}）` + (hints[code] || hints[busy(code) ? 503 : 0] || '請到 Apps Script 編輯器執行 testGemini 查看詳細紀錄');
       return null;
     }
-    const data = JSON.parse(res.getContentText());
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    return text ? text.trim() : null;
+    return parseGeminiText(res);
   } catch (err) {
     const msg = String(err.message).replace(/https?:\/\/\S+/g, '').trim();
     logError('Gemini 連線錯誤：' + msg);
@@ -1146,6 +1217,36 @@ function callGemini(parts, generationConfig) {
       : '連線錯誤：' + msg;
     return null;
   }
+}
+
+// 取出 Gemini 回覆的文字
+function parseGeminiText(res) {
+  const data = JSON.parse(res.getContentText());
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  return text ? text.trim() : null;
+}
+
+// 備用模型：原本的模型忙碌時臨時改用。挑其他 Flash 模型（可含 Lite），由新到舊排好，模型清單快取 6 小時
+function findBackupModel(current) {
+  return findBackupModels(current)[0] || '';
+}
+
+function findBackupModels(current) {
+  const cache = CacheService.getScriptCache();
+  let names;
+  const cached = cache.get('GEMINI_MODEL_LIST');
+  if (cached) {
+    try { names = JSON.parse(cached); } catch (err) {}
+  }
+  if (!names) {
+    names = fetchGeminiModels();
+    if (names.length) cache.put('GEMINI_MODEL_LIST', JSON.stringify(names), 21600);
+  }
+  const version = n =&gt; parseFloat((n.match(/gemini-(\d+(?:\.\d+)?)/) || [])[1] || 0);
+  return names
+    .filter(n =&gt; n !== current &amp;&amp; /^gemini-.*flash/.test(n))
+    .filter(n =&gt; !/(image|tts|live|audio|embed|exp|thinking)/.test(n))
+    .sort((a, b) =&gt; (/preview/.test(a) - /preview/.test(b)) || (version(b) - version(a)) || (/lite/.test(a) - /lite/.test(b)) || (a.length - b.length));
 }
 
 // 送出一次 Gemini 請求：思考程度由低到高試（minimal → low → 不指定），記住這個模型能用的最低程度，回應最快
@@ -1241,7 +1342,14 @@ function replyLine(replyToken, messageText) {
     payload: JSON.stringify({ replyToken: replyToken, messages: [{ type: 'text', text: messageText }] }),
     muteHttpExceptions: true
   });
-  if (res.getResponseCode() !== 200) logError(`LINE 回覆失敗（代碼 ${res.getResponseCode()}）：` + res.getContentText().slice(0, 300));
+  if (res.getResponseCode() === 200) return;
+  // AI 回應太慢，回覆憑證（約 1 分鐘有效）已過期：改用推播把結果送出去
+  if (res.getResponseCode() === 400 &amp;&amp; /reply token/i.test(res.getContentText())) {
+    Logger.log('回覆憑證已過期，改用推播送出結果');
+    pushLine(messageText);
+    return;
+  }
+  logError(`LINE 回覆失敗（代碼 ${res.getResponseCode()}）：` + res.getContentText().slice(0, 300));
 }
 
 /**
@@ -1312,6 +1420,7 @@ function dailyMorningPush() {
  * 定時檢查：有指定時間的待辦，在時間前 REMINDER_RULES.minutesBefore 分鐘用 ⏰ 提醒
  */
 function checkTimedReminders() {
+  checkStuckAi();
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_TODOS);
   if (!sheet) return;
 
@@ -1342,6 +1451,37 @@ function checkTimedReminders() {
       if (pushLine(`${head}\n${data[i][1]}（${remind.time}）`) === 200) sheet.getRange(i + 1, 4).setValue('已推播');
     }
   }
+}
+
+// 記下「AI 處理中」：Apps Script 一次最多跑 6 分鐘，Gemini 卡住時程式會被直接中斷、來不及回覆
+function markAiStart(label) {
+  const key = 'AI_RUN_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+  PropertiesService.getScriptProperties().setProperty(key, JSON.stringify({ label: String(label).slice(0, 100), at: Date.now(), model: currentGeminiModel() }));
+  return key;
+}
+
+function markAiEnd(key) {
+  PropertiesService.getScriptProperties().deleteProperty(key);
+}
+
+// 定時檢查時順便看：有沒有超過 7 分鐘還沒結束的 AI 處理（代表被中斷了），通知使用者再傳一次
+function checkStuckAi() {
+  const props = PropertiesService.getScriptProperties();
+  const all = props.getProperties();
+  Object.keys(all).filter(k =&gt; k.indexOf('AI_RUN_') === 0).forEach(k =&gt; {
+    let run;
+    try { run = JSON.parse(all[k]); } catch (err) { props.deleteProperty(k); return; }
+    if (Date.now() - run.at &lt; 7 * 60 * 1000) return;
+    props.deleteProperty(k);
+    markModelSlow(run.model);
+    logError(`Gemini 卡住超過 6 分鐘，程式被中斷（模型 ${run.model}）：${run.label}`);
+    pushLine(`⚠️ 剛剛這則訊息 AI 處理太久，被系統中斷，沒有記錄到：\n「${run.label}」\n\n請再傳一次，接下來會自動改用備用模型。`);
+  });
+}
+
+// 模型回應很慢：接下來 15 分鐘先改用備用模型
+function markModelSlow(model) {
+  if (model) CacheService.getScriptCache().put('GEMINI_SLOW_' + model, '1', 900);
 }
 
 /**
@@ -1631,80 +1771,114 @@ function quickParseNewProject(text) {
   return { type: 'NEW_PROJECT', projectName: name, stage: matchStage(parts.slice(1).join(' ')) };
 }
 
-// 抓有明確時間的待辦：例如「提醒我今天8:30要打電話給A」「明天下午兩點去工地丈量」「20分鐘後提醒我關電燈」
-// 抓不到明確時間就回傳 null，交給 Gemini 判斷
+// 抓待辦的日期和時間，不用等 Gemini：
+// 「提醒我今天8:30要打電話給A」「明天下午兩點去工地丈量」「20分鐘後提醒我關電燈」「下禮拜三提醒我去台南看場地」
+// 只講「下禮拜」沒講禮拜幾，回傳 ASK_DAY，由助理反問；抓不到日期和時間就回傳 null，交給 Gemini 判斷
 function quickParseTodo(text) {
   let t = String(text).replace(/[０-９]/g, c =&gt; String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
     .replace(/：/g, ':').trim();
   if (/\d\s*(元|塊|圓)/.test(t)) return null; // 有金額的是記帳
 
   const NUM = '(\\d{1,3}|[零〇一二兩三四五六七八九十]{1,3})';
+  const TODO_WORDS = /(提醒|記得|別忘|待辦|要|得|需要|去)/;
   const now = new Date();
-  let when = null;
-  let matched = '';
+  let date = '', time = '', removed = [];
 
   // 相對時間：「20分鐘後」「半小時後」「2小時後」
-  let m = t.match(new RegExp(NUM + '\\s*分鐘(?:之)?後'));
-  if (m) { when = new Date(now.getTime() + zhNumber(m[1]) * 60000); matched = m[0]; }
-  if (!when &amp;&amp; (m = t.match(/半(?:個)?小時(?:之)?後/))) { when = new Date(now.getTime() + 30 * 60000); matched = m[0]; }
-  if (!when &amp;&amp; (m = t.match(new RegExp(NUM + '\\s*(?:個)?(?:小時|鐘頭)(?:之)?後')))) {
-    when = new Date(now.getTime() + zhNumber(m[1]) * 3600000); matched = m[0];
-  }
+  let when = null, m;
+  if ((m = t.match(new RegExp(NUM + '\\s*分鐘(?:之)?後')))) when = new Date(now.getTime() + zhNumber(m[1]) * 60000);
+  else if ((m = t.match(/半(?:個)?小時(?:之)?後/))) when = new Date(now.getTime() + 30 * 60000);
+  else if ((m = t.match(new RegExp(NUM + '\\s*(?:個)?(?:小時|鐘頭)(?:之)?後')))) when = new Date(now.getTime() + zhNumber(m[1]) * 3600000);
 
-  let date = '', time = '';
   if (when) {
     date = Utilities.formatDate(when, TZ, 'yyyy-MM-dd');
     time = Utilities.formatDate(when, TZ, 'HH:mm');
+    removed.push(m[0]);
   } else {
-    // 絕對時間：［今天/明天/後天/11月20日/11/20］［早上/下午…］8:30、八點半、下午兩點十分
-    const re = new RegExp(
-      '(今天|今日|明天|明日|後天|(\\d{1,2})\\s*[月/]\\s*(\\d{1,2})\\s*[日號]?)?\\s*' +
-      '(凌晨|早上|上午|中午|下午|傍晚|晚上)?\\s*' +
-      NUM + '\\s*(?::\\s*(\\d{2})|點\\s*(半|' + NUM + '\\s*分?)?)');
-    m = t.match(re);
-    if (!m) return null;
-    const [whole, dayWord, mon, day, period, hourText, minDigits, pointMin] = m;
-    let hour = zhNumber(hourText);
-    let min = minDigits ? parseInt(minDigits, 10) : pointMin === '半' ? 30 : pointMin ? zhNumber(pointMin.replace(/分$/, '').trim()) : 0;
-    if (/下午|傍晚|晚上/.test(period || '') &amp;&amp; hour &lt; 12) hour += 12;
-    if (period === '中午' &amp;&amp; hour &lt; 11) hour += 12;
-    if (hour &gt; 23 || min &gt; 59) return null;
-
-    const base = new Date(now.getTime());
-    if (dayWord === '明天' || dayWord === '明日') base.setDate(base.getDate() + 1);
-    if (dayWord === '後天') base.setDate(base.getDate() + 2);
-    date = Utilities.formatDate(base, TZ, 'yyyy-MM-dd');
-    if (mon &amp;&amp; day) {
-      const y = parseInt(date.slice(0, 4), 10);
-      const target = `${y}-${String(mon).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      date = target &lt; today() ? `${y + 1}${target.slice(4)}` : target;
+    // 日期：今天、明天、後天、下禮拜三、週五、11月20日、11/20
+    const day = findDay(t);
+    if (day &amp;&amp; day.ask) {
+      return TODO_WORDS.test(t) ? { type: 'ASK_DAY', text: t, matched: day.matched } : null;
     }
-    time = `${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+    const rest = day ? t.replace(day.matched, ' ') : t;
 
-    // 沒講哪一天、時間已經過了：沒講上下午就當成下午，否則算明天
-    if (!dayWord &amp;&amp; !mon) {
-      const nowText = Utilities.formatDate(now, TZ, 'HH:mm');
-      if (time &lt;= nowText) {
-        const pm = `${String(hour + 12).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
-        if (!period &amp;&amp; hour &lt; 12 &amp;&amp; pm &gt; nowText) {
-          time = pm;
-        } else {
-          const tomorrow = new Date(now.getTime() + 86400000);
-          date = Utilities.formatDate(tomorrow, TZ, 'yyyy-MM-dd');
+    // 時間：早上8:30、八點半、下午兩點十分
+    m = rest.match(new RegExp('(凌晨|早上|上午|中午|下午|傍晚|晚上)?\\s*' + NUM + '\\s*(?::\\s*(\\d{2})|點\\s*(半|' + NUM + '\\s*分?)?)'));
+    if (!m) {
+      // 只有日期、沒講幾點：要有「提醒、要、去」這類字才算待辦（避免「明天天氣如何」被當成待辦）
+      if (!day || !TODO_WORDS.test(t)) return null;
+      date = day.date;
+      removed.push(day.matched);
+    } else {
+      const [whole, period, hourText, minDigits, pointMin] = m;
+      let hour = zhNumber(hourText);
+      const min = minDigits ? parseInt(minDigits, 10) : pointMin === '半' ? 30 : pointMin ? zhNumber(pointMin.replace(/分$/, '').trim()) : 0;
+      if (/下午|傍晚|晚上/.test(period || '') &amp;&amp; hour &lt; 12) hour += 12;
+      if (period === '中午' &amp;&amp; hour &lt; 11) hour += 12;
+      if (isNaN(hour) || isNaN(min) || hour &gt; 23 || min &gt; 59) return null;
+      date = day ? day.date : today();
+      time = `${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+
+      // 沒講哪一天、時間已經過了：沒講上下午就當成下午，否則算明天
+      if (!day) {
+        const nowText = Utilities.formatDate(now, TZ, 'HH:mm');
+        if (time &lt;= nowText) {
+          const pm = `${String(hour + 12).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+          if (!period &amp;&amp; hour &lt; 12 &amp;&amp; pm &gt; nowText) time = pm;
+          else date = shiftDate(today(), 1);
         }
       }
+      if (day) removed.push(day.matched);
+      removed.push(whole);
     }
-    matched = whole;
   }
 
-  const content = t.replace(matched, ' ')
-    .replace(/^[\s，,。]*(請)?(幫我)?(提醒我|提醒|記得)?/, '')
-    .replace(/(提醒我|提醒一下|提醒)[\s，,。！!]*$/, '')
-    .replace(/^[\s，,。]*(要|再)(?=\S)/, '')
-    .replace(/^[\s，,]+|[\s，,。！!]+$/g, '')
-    .replace(/\s{2,}/g, ' ');
+  let content = t;
+  removed.forEach(r =&gt; { content = content.replace(r, ' '); });
+  content = content
+    .replace(/(請)?(幫我)?(提醒我|提醒一下|提醒|記得|別忘了|別忘記)/g, ' ')
+    .replace(/^[\s，,。]+|[\s，,。！!]+$/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/^(要|再)\s*/, '')
+    .trim();
   if (!content) return null;
   return { type: 'TODO', content: content, remindDate: date, remindTime: time };
+}
+
+// 找出訊息裡的日期。回傳 { date, matched }；只講「下禮拜」沒講禮拜幾，回傳 { ask: true, matched }
+function findDay(t) {
+  const re = /(大後天|今天|今日|明天|明日|後天|(下下|下|這|本)?個?(?:禮拜|星期|週|周)([一二三四五六日天1-7])?|(\d{1,2})\s*[月\/]\s*(\d{1,2})\s*[日號]?)/g;
+  const base = today();
+  let m;
+  while ((m = re.exec(t))) {
+    const [whole, word, prefix, wd, mon, day] = m;
+    if (mon &amp;&amp; day) {
+      const y = parseInt(base.slice(0, 4), 10);
+      const target = `${y}-${String(mon).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      return { date: target &lt; base ? `${y + 1}${target.slice(4)}` : target, matched: whole };
+    }
+    const fixed = { 今天: 0, 今日: 0, 明天: 1, 明日: 1, 後天: 2, 大後天: 3 }[word];
+    if (fixed !== undefined) return { date: shiftDate(base, fixed), matched: whole };
+    if (!wd) {
+      if (prefix) return { ask: true, matched: whole };
+      continue; // 只有「週」這個字（例如「週報」），不是日期
+    }
+    // 禮拜幾：一＝1 … 日＝7
+    const w = /\d/.test(wd) ? Number(wd) : /[日天]/.test(wd) ? 7 : '一二三四五六'.indexOf(wd) + 1;
+    const dow = new Date(base + 'T12:00:00Z').getUTCDay() || 7; // 今天禮拜幾
+    let offset;
+    if (prefix === '下') offset = 7 - dow + w;
+    else if (prefix === '下下') offset = 14 - dow + w;
+    else offset = (w - dow + 7) % 7; // 「這禮拜三」「週三」：最近的那個禮拜三（今天就是今天）
+    return { date: shiftDate(base, offset), matched: whole };
+  }
+  return null;
+}
+
+// 日期加減天數：shiftDate('2026-11-12', 1) → '2026-11-13'
+function shiftDate(dateStr, days) {
+  const d = new Date(new Date(dateStr + 'T12:00:00+08:00').getTime() + days * 86400000);
+  return Utilities.formatDate(d, TZ, 'yyyy-MM-dd');
 }
 
 // 中文或阿拉伯數字轉數字（支援到 99）：兩→2、十→10、十五→15、二十→20、三十五→35
@@ -1788,7 +1962,7 @@ function parseRemind(value) {
         <tbody>
           <tr><td>設定區</td><td><code>WORKFLOW_RULES</code>、<code>REMINDER_RULES</code>、<code>GEMINI_MODEL</code>、工作表名稱</td><td>唯一需要手動改的地方</td></tr>
           <tr><td>接收訊息</td><td><code>doPost</code></td><td>每次在 LINE 傳訊息</td></tr>
-          <tr><td>文字與語音</td><td><code>handleUserText</code>、<code>handleUserAudio</code>、<code>quickParseNewProject</code>、<code>quickParseTodo</code></td><td>新案件與有明確時間的待辦直接解析，其他交給 Gemini</td></tr>
+          <tr><td>文字與語音</td><td><code>handleUserText</code>、<code>handleUserAudio</code>、<code>quickParseNewProject</code>、<code>quickParseTodo</code></td><td>新案件與有明確時間的待辦直接解析（只寫「下禮拜」會先問禮拜幾），其他交給 Gemini；Gemini 忙碌時自動重試並換備用模型</td></tr>
           <tr><td>AI 判斷</td><td><code>analyzeIntentWithGemini</code>、<code>callGemini</code></td><td>模型下架時自動換一個可用的</td></tr>
           <tr><td>執行動作</td><td><code>executeAction</code>、<code>processProjectProgress</code></td><td>寫進三個工作表，回覆 LINE</td></tr>
           <tr><td>定時提醒</td><td><code>dailyMorningPush</code>、<code>checkTimedReminders</code></td><td>每天早上一次、每 5 分鐘一次</td></tr>
