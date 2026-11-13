@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="zh-Hant">
+<!-- 共用樣式（SHARED-CSS）與深淺色切換程式（THEME）和首頁 ../index.html 相同，修改時兩邊一起改 -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>關於 J3M｜江惠君 AI 工具應用講師</title>
+<meta name="description" content="江惠君，J3M 數學行銷人總監。15 年品牌營運與專案管理經驗，500+ 小時授課實戰，企業、政府機構與大學合作講師。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700;900&display=swap">
+<style>
+/*SHARED-CSS-START*/
+:root{
+  --paper:#F5F7FA;--surface:#FFFFFF;--surface-2:#EDF0F5;--ink:#14171C;--ink-2:#3C4452;--muted:#5C6675;--line:#D8DEE7;
+  --accent:#F5B800;--accent-text:#7A5800;
+  --lift:0 1px 2px rgba(20,23,28,.05),0 10px 28px rgba(20,23,28,.08);
+  --pad-l:max(20px,env(safe-area-inset-left));--pad-r:max(20px,env(safe-area-inset-right));
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1116;--surface:#161A21;--surface-2:#1D222B;--ink:#E9ECF1;--ink-2:#C2C9D4;--muted:#8A94A3;--line:#2A313C;
+    --accent-text:#F5B800;--lift:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1116;--surface:#161A21;--surface-2:#1D222B;--ink:#E9ECF1;--ink-2:#C2C9D4;--muted:#8A94A3;--line:#2A313C;
+  --accent-text:#F5B800;--lift:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Noto Sans TC',system-ui,sans-serif;font-size:16px;line-height:1.7;-webkit-text-size-adjust:100%}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;box-shadow:0 0 0 5px var(--accent)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:1240px;margin:0 auto;padding-left:var(--pad-l);padding-right:var(--pad-r)}
+@media (min-width:900px){.wrap{padding-left:40px;padding-right:40px}}
+
+/* 導覽列 */
+.top{position:sticky;top:0;z-index:10;background:var(--paper);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px}
+.brand{display:inline-flex;align-items:baseline;gap:10px;min-height:44px;padding-top:8px}
+.brand b{font-family:'JetBrains Mono',monospace;font-size:18px;letter-spacing:.02em;border-bottom:3px solid var(--accent)}
+.brand span{font-family:'Noto Serif TC',serif;font-weight:700;font-size:16px}
+.top nav{display:flex;align-items:center;gap:6px}
+.navlink{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;font-size:14px;font-weight:500;color:var(--ink-2);border-radius:8px}
+.navlink:hover{background:var(--surface-2);color:var(--ink)}
+.navlink[aria-current]{color:var(--ink);font-weight:700}
+.book{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:10px;background:#F5B800;color:#14171C;font-weight:700;font-size:14px;transition:transform .15s ease,box-shadow .15s ease}
+.book:hover{transform:translateY(-2px);box-shadow:var(--lift)}
+.book.lg{min-height:52px;padding:0 22px;border-radius:12px;font-size:16px}
+.btn-line{display:inline-flex;align-items:center;min-height:52px;padding:0 22px;border-radius:12px;border:1.5px solid var(--ink);background:var(--surface);font-weight:700;font-size:16px}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}
+@media (max-width:900px){.hide-m{display:none}}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center;padding-top:56px;padding-bottom:64px}
+.hero-text{display:flex;flex-direction:column;gap:22px}
+.kicker{margin:0;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:13px;letter-spacing:.04em;color:var(--muted)}
+h1{margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:clamp(44px,6.2vw,86px);line-height:1.08;letter-spacing:-.01em;white-space:nowrap}
+h1 i{font-style:normal;color:var(--accent)}
+.tagline{margin:0;font-family:'Noto Serif TC',serif;font-weight:700;font-size:22px;line-height:1.5}
+.lead{margin:0;max-width:34em;color:var(--ink-2)}
+.cta-row{display:flex;flex-wrap:wrap;gap:10px}
+.socs{display:flex;flex-wrap:wrap;gap:8px}
+.soc{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px 0 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:500;transition:transform .15s ease,border-color .15s ease}
+.soc:hover{transform:translateY(-2px);border-color:var(--ink)}
+.soc.round{padding:0;width:44px;justify-content:center}
+.soc svg,.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:900px){.hero{grid-template-columns:minmax(0,1fr);gap:32px}}
+
+/* 區塊 */
+.band{background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sec{padding-top:48px;padding-bottom:48px;display:flex;flex-direction:column;gap:24px;scroll-margin-top:60px}
+.sec-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px}
+h2{margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:30px;line-height:1.3}
+.sec-head p{margin:0;color:var(--muted);font-size:14px}
+.label{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:12px;letter-spacing:.08em;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:26px;padding:0 8px;border-radius:999px;border:1px solid rgba(255,255,255,.22);color:#fff;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px}
+.card{padding:20px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+
+/* 授課邀約 */
+.invite-band{background:#F5B800;color:#14171C;scroll-margin-top:60px}
+.invite{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:48px;align-items:center;padding-top:56px;padding-bottom:56px}
+.invite-text{display:flex;flex-direction:column;gap:16px}
+.invite-text p{margin:0}
+.invite h2{font-size:clamp(28px,4.4vw,48px);line-height:1.25}
+.btn-ink{display:inline-flex;align-items:center;gap:10px;min-height:56px;padding:0 24px;border-radius:12px;background:#14171C;color:#fff;font-weight:700;font-size:17px}
+.btn-ink-line{display:inline-flex;align-items:center;gap:8px;min-height:56px;padding:0 22px;border-radius:12px;border:1.5px solid #14171C;color:#14171C;font-weight:700;font-size:16px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.stat{padding:20px;border-radius:14px;background:rgba(20,23,28,.09);display:flex;flex-direction:column;gap:2px;font-size:14px}
+.stat b{font-family:'JetBrains Mono',monospace;font-size:40px;line-height:1.15}
+.stat b small{font-size:15px}
+@media (max-width:900px){.invite{grid-template-columns:minmax(0,1fr);gap:28px}}
+
+/* 頁尾 */
+footer .wrap{padding-top:28px;padding-bottom:max(32px,env(safe-area-inset-bottom));display:flex;flex-wrap:wrap;gap:16px 48px;justify-content:space-between}
+footer p{margin:0;flex:1 1 320px;max-width:46em;font-size:13px;line-height:1.8;color:var(--muted)}
+footer nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:14px}
+
+.rise{animation:rise .6s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;scroll-behavior:auto !important}}
+/*SHARED-CSS-END*/
+
+/* 關於頁專用 */
+.mono-card{display:flex;flex-direction:column;justify-content:space-between;gap:40px;min-height:340px;padding:28px;border-radius:18px;border:1px solid rgba(255,255,255,.14);color:#fff;background-color:#14171C;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:28px 28px}
+.mono-card .badge{align-self:flex-start;display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;background:#F5B800;color:#14171C;font-weight:700;font-size:12px}
+.mono-card b{display:block;font-family:'JetBrains Mono',monospace;font-size:clamp(64px,9vw,96px);line-height:1;letter-spacing:-.02em}
+.mono-card span.sub{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:15px;letter-spacing:.04em}
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.cols3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.cols4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.num-card{padding:22px;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ink-2)}
+.num-card b{font-family:'JetBrains Mono',monospace;font-size:44px;line-height:1.15;color:var(--ink)}
+.num-card b small{font-size:16px}
+.box{display:flex;flex-direction:column;gap:12px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.box:hover{transform:translateY(-3px);box-shadow:var(--lift);border-color:var(--muted)}
+.box .head{display:flex;align-items:center;gap:10px}
+h3{margin:0;font-family:'Noto Serif TC',serif;font-weight:700;font-size:20px;line-height:1.35}
+.box h3{font-size:24px}
+.box p{margin:0;font-size:15px;color:var(--ink-2)}
+.split{display:grid;grid-template-columns:minmax(0,280px) minmax(0,1fr);gap:24px 48px;align-items:start}
+.split .side{display:flex;flex-direction:column;gap:4px}
+.record{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.record li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 16px;padding:12px 0;border-bottom:1px solid var(--line)}
+.record b{flex:0 0 auto}
+.record span{flex:1 1 200px;font-size:14px;color:var(--ink-2)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.tags li{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:14px;font-weight:500;color:var(--ink-2)}
+.tags li.more{border-style:dashed;color:var(--muted)}
+.exp{display:flex;flex-direction:column;gap:10px;padding:22px}
+.exp ul{margin:0;padding:0 0 0 1.2em;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ink-2)}
+.exp .now{align-self:flex-start;display:inline-flex;align-items:center;min-height:24px;padding:0 10px;border-radius:999px;background:#F5B800;color:#14171C;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px}
+.plain{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:15px}
+.news{font-family:'Noto Serif TC',serif;font-weight:700;font-size:18px;line-height:1.5}
+.news span{color:var(--accent-text)}
+.invite-flex{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px 48px;padding-top:56px;padding-bottom:56px}
+.invite-flex .txt{flex:1 1 360px;display:flex;flex-direction:column;gap:12px}
+.invite-flex .txt p{margin:0}
+.invite-flex h2{font-size:clamp(28px,4.2vw,44px);line-height:1.25}
+.invite-flex .btns{display:flex;flex-direction:column;gap:10px}
+@media (max-width:900px){.split{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body id="top">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-yt" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></symbol>
+  <symbol id="i-th" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></symbol>
+  <symbol id="i-fb" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></symbol>
+  <symbol id="i-theme" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../"><b>J3M</b><span>教學資源站</span></a>
+    <nav aria-label="主要導覽">
+      <a class="navlink hide-m" href="../#topics">教學主題</a>
+      <a class="navlink hide-m" href="./" aria-current="page">關於 J3M</a>
+      <a class="book" href="#invite">授課邀約</a>
+      <button class="iconbtn" id="themeBtn" type="button" aria-label="切換深色／淺色模式"><svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-theme"/></svg></button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <div class="hero-text rise">
+      <p class="kicker">ABOUT · AI 工具應用講師</p>
+      <h1>江惠君<i>．</i></h1>
+      <p class="tagline">不寫一行程式，也能讓 AI 把事做完。</p>
+      <p class="lead">15 年品牌營運與專案管理經驗，擅長把數位工具轉化成簡單易懂的工作法，讓學員掌握「職場應用、現學現用」的實戰技巧。現任 J3M 數學行銷人總監，並擔任企業、政府機構與大學的合作講師。</p>
+      <div class="cta-row">
+        <a class="book lg" href="#invite">授課邀約 <span aria-hidden="true">→</span></a>
+        <a class="btn-line" href="#record">看授課實績</a>
+      </div>
+      <nav class="socs" aria-label="追蹤與聯絡">
+        <a class="soc" href="https://www.youtube.com/@J3M_AI" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-yt"/></svg>YouTube</a>
+        <a class="soc" href="https://www.threads.com/@j3m_ai" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-th"/></svg>Threads</a>
+        <a class="soc" href="https://www.facebook.com/trj3m" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-fb"/></svg>Facebook</a>
+        <a class="soc" href="https://www.instagram.com/j3m_ai/" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-ig"/></svg>Instagram</a>
+        <a class="soc" href="mailto:trj3mmm@gmail.com"><svg aria-hidden="true"><use href="#i-mail"/></svg>Email</a>
+      </nav>
+    </div>
+    <div class="mono-card rise" aria-hidden="true">
+      <span class="badge">數學行銷人</span>
+      <div><b>J3M</b><span class="sub">Math · Marketing · Management</span></div>
+    </div>
+  </div>
+
+  <div class="wrap" style="padding-bottom:56px">
+    <div class="cols4">
+      <div class="card num-card"><b>15+<small> 年</small></b>品牌營運與專案管理</div>
+      <div class="card num-card"><b>500+<small> 小時</small></b>授課實戰經驗</div>
+      <div class="card num-card"><b>95%</b>學員滿意度</div>
+      <div class="card num-card"><b>20+</b>政府／企業合作單位</div>
+    </div>
+  </div>
+
+  <section class="band">
+    <div class="wrap sec">
+      <div class="sec-head">
+        <h2>核心授課領域</h2>
+        <p>兩大方向，內容可依單位的工作情境安排。</p>
+      </div>
+      <div class="cols2">
+        <article class="card box">
+          <div class="head"><span class="pill" style="background:#1F3A5F">01</span><span class="label">AI WORKFLOW</span></div>
+          <h3>AI 工作術</h3>
+          <p>活用 Claude、ChatGPT、Gemini、Canva、Notion 等工具，有效提升工作效率。</p>
+        </article>
+        <article class="card box">
+          <div class="head"><span class="pill" style="background:#8F6A08">02</span><span class="label">AI MARKETING</span></div>
+          <h3>AI 行銷術</h3>
+          <p>數位行銷、社群媒體、CRM 客戶關係管理、標案簡報、活動企劃等。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sec" id="record" style="gap:32px">
+    <h2>授課與演講實績</h2>
+    <div class="split">
+      <div class="side"><span class="label">PUBLIC SECTOR</span><h3>政府／協會／大學單位</h3></div>
+      <ul class="record">
+        <li><b>新北市政府警察局</b><span>AI 工具教育訓練</span></li>
+        <li><b>臺中市政府</b><span>創新人才培育 AI 講師</span></li>
+        <li><b>中華民國工業協進會</b><span>菁英講習 AI 講師</span></li>
+        <li><b>台灣工廠管理輔導學會</b><span>AI 實戰行銷</span></li>
+        <li><b>逢甲大學／弘光科技大學</b><span>數位行銷、AI 數位工具兼任講師</span></li>
+        <li><b>勞動力發展署</b><span>職訓課程、產業人才投資方案講師</span></li>
+        <li><b>南投縣工策會</b><span>GPT 應用專案</span></li>
+      </ul>
+    </div>
+    <div class="split">
+      <div class="side"><span class="label">CORPORATE · CAMPUS</span><h3>企業內訓｜校園演講</h3></div>
+      <ul class="tags">
+        <li>鄉林集團</li><li>大雅廚房器具</li><li>泰溥科技</li><li>鍇睿國際數位股份有限公司</li><li>科碼新媒體</li><li>造夢者行銷</li><li>中興大學</li><li>逢甲大學</li><li>靜宜大學</li><li>臺灣體育運動大學</li><li>僑光科技大學</li><li class="more">……</li>
+      </ul>
+    </div>
+    <div class="split">
+      <div class="side"><span class="label">BRAND PARTNERS</span><h3>品牌專案合作</h3></div>
+      <ul class="tags">
+        <li>數位發展部數位產業署</li><li>Microsoft</li><li>Diagrimo</li><li>LightPDF</li><li>FlexClip</li><li>Fotor</li><li>Pea</li><li>Tenorshare</li><li>PDNob</li><li>TopView AI</li><li>Edimakor</li><li>Filo</li><li>Email AI</li><li>AiPPT</li><li>Filmora</li><li>Dzine</li><li>AI Seedance 2.0</li><li>AweShell.ai</li><li class="more">……</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap sec">
+      <h2>工作經歷</h2>
+      <div class="cols3">
+        <article class="card exp">
+          <span class="now">2025 - 至今</span>
+          <h3>總監｜J3M 數學行銷人</h3>
+          <ul><li>主導品牌策略規劃、內容創作與 AI 工具教學課程開發</li><li>經營 YouTube《J3M 一分鐘 AI 教學》頻道，把複雜技術轉化為秒懂內容</li></ul>
+        </article>
+        <article class="card exp">
+          <span class="label">整合行銷</span>
+          <h3>行銷副理｜巨鷗整合行銷公司</h3>
+          <ul><li>負責公關行銷專案規劃執行與客戶服務管理</li><li>擔任內部行銷實務講師，提升團隊數位行銷實戰力</li></ul>
+        </article>
+        <article class="card exp">
+          <span class="label">產品管理</span>
+          <h3>產品經理｜104 人力銀行</h3>
+          <ul><li>負責產品規劃、跨部門協作及使用者體驗（UX）優化</li><li>擔任產品教育訓練講師，推動市場推廣策略</li></ul>
+        </article>
+      </div>
+      <div class="cols2">
+        <article class="card exp">
+          <span class="label">教育背景與認證</span>
+          <ul class="plain"><li><b>MA Globalization of Business</b>｜Sheffield Hallam University（英國）</li><li><b>應用數學系 學士</b>｜逢甲大學</li><li><b>專業認證</b>｜AI 專案應用士</li></ul>
+        </article>
+        <article class="card exp">
+          <span class="label">新聞採訪</span>
+          <a class="news" href="https://today.line.me/tw/v3/article/1Dl020z" target="_blank" rel="noopener">AI 不是取代人，而是放大專業！NotebookLM、AI GEO 與 AI 寫作如何改變職場競爭力？ <span aria-hidden="true">↗</span></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="invite-band" id="invite">
+    <div class="wrap invite-flex">
+      <div class="txt">
+        <p class="mono" style="font-weight:700;font-size:13px;letter-spacing:.08em">WORKSHOP · 授課邀約</p>
+        <h2>想讓團隊現學現用？來信聊聊課程。</h2>
+        <p>企業內訓、公部門研習、大專院校講座，都可以來信或加 LINE 討論。</p>
+      </div>
+      <div class="btns">
+        <a class="btn-ink" href="mailto:trj3mmm@gmail.com?subject=%E6%8E%88%E8%AA%B2%E9%82%80%E7%B4%84"><svg class="ico" aria-hidden="true"><use href="#i-mail"/></svg>trj3mmm@gmail.com</a>
+        <a class="btn-ink-line" href="https://line.me/R/ti/p/@621wbdum" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg>LINE @621wbdum</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>J3M 數學行銷人｜AI 工具教學與行銷自動化顧問。本站以 GitHub Pages 靜態託管，內容持續增補；手冊中的參數取自實際專案，請依自己的素材重新推導。</p>
+    <nav aria-label="站內連結">
+      <a class="navlink" href="../">教學資源站 →</a>
+      <a class="navlink" href="#top">回到頂部 ↑</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/*THEME-START*/
+(function () {
+  var root = document.documentElement;
+  var saved = null;
+  try { saved = localStorage.getItem('j3m-theme'); } catch (e) {}
+  if (saved === 'dark' || saved === 'light') root.setAttribute('data-theme', saved);
+  var btn = document.getElementById('themeBtn');
+  if (btn) btn.addEventListener('click', function () {
+    var now = root.getAttribute('data-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var next = now === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('j3m-theme', next); } catch (e) {}
+  });
+})();
+/*THEME-END*/
+</script>
+</body>
+</html>
