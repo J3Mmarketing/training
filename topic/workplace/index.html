@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>AI 職場應用｜J3M 教學資源站</title>
+<meta name="description" content="搭配實體課程的完整講義，附操作步驟、提示詞與常見錯誤排除。">
+<meta name="author" content="J3M 數學行銷人">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700;900&display=swap">
+<style>
+:root{
+  --paper:#F5F7FA; --surface:#FFFFFF; --surface-2:#EDF0F5;
+  --ink:#14171C; --ink-2:#3C4452; --muted:#66707F;
+  --line:#D8DEE7; --accent:#F5B800; --accent-text:#8A6400;
+  --shadow:0 1px 2px rgba(20,23,28,.06), 0 10px 28px -14px rgba(20,23,28,.22);
+  --f-disp:"Noto Serif TC",Georgia,serif; --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1116; --surface:#161A21; --surface-2:#1D222B;
+    --ink:#E9ECF1; --ink-2:#C2C9D4; --muted:#8A94A3;
+    --line:#2A313C; --accent:#F5B800; --accent-text:#F5B800;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1116; --surface:#161A21; --surface-2:#1D222B;
+  --ink:#E9ECF1; --ink-2:#C2C9D4; --muted:#8A94A3;
+  --line:#2A313C; --accent:#F5B800; --accent-text:#F5B800;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px -16px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:20px;min-height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:900;white-space:nowrap}
+.brand .mk{width:32px;height:32px;border-radius:8px;background:var(--accent);color:#14171C;display:grid;place-items:center;font-family:var(--f-mono);font-size:12px;font-weight:700}
+.menu{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;margin-left:auto}
+.menu::-webkit-scrollbar{display:none}
+.menu a{text-decoration:none;font-size:14px;font-weight:500;color:var(--ink-2);padding:6px 12px;border-radius:99px;white-space:nowrap}
+.menu a:hover,.menu a[aria-current="page"]{background:var(--surface-2);color:var(--ink)}
+.menu a.about{border:1px solid var(--line);margin-left:6px}
+@media (max-width:760px){.nav .wrap{flex-wrap:wrap;gap:4px;padding-block:10px}.menu{margin-left:0;width:100%}}
+.eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0 0 10px}
+.eyebrow a{text-decoration:none;border-bottom:1px solid var(--line)}
+h1{font-family:var(--f-disp);font-weight:900;line-height:1.2;margin:0 0 12px;letter-spacing:-.01em;text-wrap:balance}
+h1 .hl{background:linear-gradient(transparent 62%,var(--accent) 62%,var(--accent) 92%,transparent 92%);padding-inline:2px}
+.lede{font-size:17px;color:var(--ink-2);margin:0;max-width:40em}
+footer{margin-top:72px;background:var(--surface);border-top:1px solid var(--line)}
+footer .wrap{padding-block:32px calc(32px + env(safe-area-inset-bottom,0px));display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px 32px;font-size:13.5px;color:var(--muted)}
+footer p{margin:0;max-width:62ch}
+footer b{color:var(--ink)}
+footer nav{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+footer .wrap{align-items:flex-start}
+footer nav a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+
+.hero{padding-block:44px 28px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:36px;align-items:end}
+.hero h1{font-size:clamp(32px,5vw,48px)}
+.hero .bar{width:56px;height:8px;border-radius:4px;background:var(--cc);margin-bottom:16px}
+.outline{padding:20px 22px;background:var(--surface);border:1px solid var(--line);border-radius:14px;font-size:15px}
+.outline ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.outline h2{margin:0 0 4px;font-size:12px;letter-spacing:.2em;color:var(--muted);font-weight:700}
+.outline li{display:grid;grid-template-columns:24px 1fr}
+.outline b{color:var(--accent-text);font-weight:500}
+@media (max-width:760px){.hero{grid-template-columns:minmax(0,1fr);gap:20px}}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;padding-top:32px}
+@media (max-width:760px){.cards{grid-template-columns:minmax(0,1fr)}}
+.card{display:flex;flex-direction:column;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);transition:transform .2s;min-width:0}
+.card:hover{transform:translateY(-3px)}
+.cover{position:relative;height:110px;background:var(--cc);color:#fff;overflow:hidden}
+.cover::before{content:"";position:absolute;right:-30px;top:-40px;width:180px;height:180px;border-radius:50%;border:26px solid rgba(255,255,255,.1)}
+.cover .lab{position:absolute;left:20px;top:16px;font-size:11.5px;letter-spacing:.18em;font-weight:700;opacity:.85}
+.cover .kind{position:absolute;left:20px;bottom:16px;font-size:12px;font-weight:700;background:rgba(255,255,255,.18);border-radius:6px;padding:2px 10px}
+.cover .no{position:absolute;right:20px;bottom:6px;font-family:var(--f-mono);font-size:54px;font-weight:700;line-height:1;opacity:.92}
+.cover .new{position:absolute;left:20px;top:40px;font-size:11px;font-weight:700;background:var(--accent);color:#14171C;border-radius:99px;padding:1px 9px}
+.body{padding:20px 22px 22px;display:flex;flex-direction:column;flex:1}
+.card .t{font-family:var(--f-disp);font-weight:700;font-size:21px;line-height:1.4;margin:0 0 2px}
+.card .s{font-size:14px;color:var(--muted);margin:0 0 10px}
+.card .d{font-size:14.5px;color:var(--ink-2);margin:0}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.tag{font-size:11.5px;font-weight:700;color:var(--muted);background:var(--surface-2);border:1px solid var(--line);border-radius:99px;padding:3px 11px}
+.go{margin-top:auto;padding-top:16px;font-size:14px;font-weight:700;color:var(--accent-text)}
+.others{margin-top:48px;padding-top:24px;border-top:1px solid var(--line)}
+.others h2{font-size:12px;letter-spacing:.2em;color:var(--muted);font-weight:700;margin:0 0 12px}
+.others div{display:flex;flex-wrap:wrap;gap:8px}
+.others a{text-decoration:none;font-size:14px;font-weight:700;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--oc);border-radius:10px;padding:8px 14px}
+.others a:hover{border-color:var(--ink);border-left-color:var(--oc)}
+</style>
+</head>
+<body>
+<nav class="nav" aria-label="主要導覽">
+  <div class="wrap">
+    <a class="brand" href="../../"><span class="mk">J3M</span>教學資源站</a>
+    <div class="menu"><a href="../../topic/slides/">AI 簡報術</a><a href="../../topic/video/">AI 影片</a><a href="../../topic/vibe/">Vibe Coding</a><a href="../../topic/3d/">3D 空間提案</a><a href="../../topic/line/">LINE AI 秘書</a><a href="../../topic/knowledge/">AI 小知識</a><a href="../../topic/workplace/" aria-current="page">AI 職場應用</a><a class="about" href="../../about/">關於 J3M</a></div>
+  </div>
+</nav>
+<div class="wrap" style="--cc:#1F3A5F">
+  <header class="hero">
+    <div>
+      <p class="eyebrow"><a href="../../">J3M 教學資源站</a> · 07 WORKPLACE</p>
+      <div class="bar"></div>
+      <h1>AI 職場應用</h1>
+      <p class="lede">把 AI 放進每天的工作裡：公文與報告、知識庫與數據分析，再進一步讓 Agent 代你把流程跑完。</p>
+    </div>
+    <div class="outline"><h2>本節大綱</h2><ul><li><b>➊</b><span>文件與報告：公文、DM 與自動化報告</span></li><li><b>➋</b><span>資料整理：知識庫與試算表分析</span></li><li><b>➌</b><span>工作流：Agent、Skills 與 MCP</span></li></ul></div>
+  </header>
+  <main class="cards">
+    <a class="card" href="../../aipmp/">
+      <div class="cover"><span class="lab">WORKPLACE</span><span class="kind">講義</span><span class="no">01</span></div>
+      <div class="body"><div class="t">善用 AI 工具提升訓練行政效率</div><p class="s">NotebookLM 與 Gemini 行政實務</p>
+      <p class="d">NotebookLM 知識資料庫、Gemini 公文起草、DM 製作、Google Sheets 數據分析、Gemini Canvas 自動化報告。六個章節帶訓練行政人員把重複作業交給 AI，附資料庫建置流程與可直接套用的提示詞。</p>
+      <div class="tags"><span class="tag">NotebookLM</span><span class="tag">Gemini</span><span class="tag">職訓行政</span><span class="tag">公文撰寫</span></div><span class="go">開啟講義 →</span></div>
+    </a>
+    <a class="card" href="../../ai-evolution/">
+      <div class="cover"><span class="lab">WORKPLACE</span><span class="kind">講義</span><span class="no">02</span></div>
+      <div class="body"><div class="t">AI 工具進化論</div><p class="s">打造你的高效職場力</p>
+      <p class="d">從問 AI 升級到讓 AI 做事。Agent 的五個組成、Claude 與 ChatGPT 與 Gemini 三平台 Skills 比較、API 與連接器與 MCP 的差別，以及七個實際在跑的工作流。附 LINE 提醒小助理、Google 表單儀表板與目標設定三個系統化案例。</p>
+      <div class="tags"><span class="tag">AI Agent</span><span class="tag">Skills</span><span class="tag">MCP</span><span class="tag">工作流</span></div><span class="go">開啟講義 →</span></div>
+    </a>
+  </main>
+  <section class="others"><h2>其他主題</h2><div><a href="../slides/" style="--oc:#B8860B">AI 簡報術</a><a href="../video/" style="--oc:#2B2D42">AI 影片</a><a href="../vibe/" style="--oc:#1F6F5C">Vibe Coding</a><a href="../3d/" style="--oc:#5B4B8A">3D 空間提案</a><a href="../line/" style="--oc:#0B8F4A">LINE AI 秘書</a><a href="../knowledge/" style="--oc:#7A4E2D">AI 小知識</a></div></section>
+</div>
+<footer>
+  <div class="wrap">
+    <p><b>J3M 數學行銷人</b>｜AI 工具教學與行銷自動化顧問。本站以 GitHub Pages 靜態託管，內容持續增補；手冊中的參數取自實際專案，請依自己的素材重新推導。</p>
+    <nav aria-label="站外連結"><a href="../../about/">關於 J3M</a><a href="https://www.youtube.com/@J3M_AI" target="_blank" rel="noopener">YouTube @J3M_AI</a><a href="https://www.threads.com/@j3m_ai" target="_blank" rel="noopener">Threads @j3m_ai</a></nav>
+  </div>
+</footer>
+</body>
+</html>
