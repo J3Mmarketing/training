@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BI 圖表圖鑑｜J3M 教學資源站</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E9EDF0;--card:#FFFFFF;--ink:#14181D;--mut:#5A646E;--bd:#D3D8DD;--y:#F2B10A;--gold:#7A5A12;--a:#2F5D7C;--hi:#C2703D;}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg)}
+body{color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:15px;line-height:1.75}
+.wrap{max-width:1240px;margin:0 auto;padding:44px 32px 96px}
+.mono{font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace}
+.crumb{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;letter-spacing:1.4px;color:var(--mut);margin:0 0 14px}
+.crumb a{color:var(--mut);text-decoration:none;border-bottom:1px solid var(--bd)}
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:start}
+h1{font-family:"Noto Serif TC","Songti TC",PMingLiU,serif;font-weight:900;font-size:64px;line-height:1.12;margin:0 0 14px;position:relative;display:inline-block}
+h1 .acc{position:absolute;right:4px;top:-4px;width:12px;height:12px;border-radius:50%;background:var(--ink)}
+h1 .blk{position:absolute;right:-24px;bottom:-14px;width:68px;height:22px;background:var(--y)}
+.lead{color:var(--mut);margin:26px 0 0;max-width:600px}
+.lead a{color:var(--gold);text-decoration:underline;text-underline-offset:3px}
+.stats{display:flex;gap:28px;margin-top:22px}
+.stats div{display:flex;flex-direction:column}
+.stats b{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:30px;font-weight:700;line-height:1.1}
+.stats span{font-size:13px;color:var(--mut)}
+.steps{list-style:none;margin:6px 0 0;padding:0}
+.steps li{display:flex;gap:12px;align-items:flex-start;margin:0 0 14px;font-size:15px}
+.steps i{flex:0 0 26px;height:26px;border-radius:50%;background:var(--gold);color:#FFFFFF;font-style:normal;font-weight:700;display:inline-flex;align-items:center;justify-content:center;font-size:13px;margin-top:1px}
+.lbl{display:block;font-size:13px;color:var(--mut);margin:18px 0 8px}
+.inp{font:inherit;font-size:15px;width:100%;border:1px solid var(--bd);background:var(--card);color:var(--ink);padding:12px 16px;border-radius:10px;outline:none}
+.inp:focus{border-color:var(--ink)}
+.inp::placeholder{color:#9AA3AC}
+.filters{display:flex;align-items:center;gap:16px;margin:40px 0 0;flex-wrap:wrap}
+.search{flex:1;min-width:260px;max-width:460px}
+.count{margin-left:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:var(--mut)}
+.frow{display:flex;align-items:center;gap:12px;margin-top:16px;flex-wrap:wrap}
+.flab{font-size:13px;color:var(--mut);min-width:64px}
+.chips-row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font:inherit;font-size:13px;border:0;background:#DDE2E7;color:var(--ink);padding:7px 14px;border-radius:999px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip small{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--mut)}
+.chip.on{background:var(--ink);color:#F7F8F9}
+.chip.on small{color:#B7BFC7}
+.divider{height:1px;background:var(--bd);margin:22px 0 28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform .15s ease,box-shadow .15s ease}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(20,24,29,.08)}
+.card svg{width:100%;height:auto;display:block;background:#F7F8F9;border-bottom:1px solid var(--bd)}
+.cbody{padding:16px 18px 18px;display:flex;flex-direction:column;flex:1}
+.cmeta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--mut);margin-bottom:6px}
+.cen{text-align:right}
+.ctitle{font-family:"Noto Serif TC","Songti TC",PMingLiU,serif;font-weight:900;font-size:21px;line-height:1.3;margin:2px 0 6px}
+.cdesc{font-size:14px;color:var(--ink);margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chips span{font-size:12px;border:1px solid var(--bd);border-radius:999px;padding:2px 10px;color:var(--mut);background:#FFFFFF}
+.chips span:first-child{background:#E5E8EB;color:var(--ink)}
+.cfoot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:16px;gap:10px;flex-wrap:wrap}
+.chk{font-size:13px;color:var(--mut);display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.cb{width:16px;height:16px;accent-color:var(--ink);margin:0;cursor:pointer}
+button.cpy{font:inherit;font-size:13px;font-weight:700;background:var(--y);color:var(--ink);border:0;padding:9px 16px;border-radius:999px;cursor:pointer}
+button.cpy:hover{filter:brightness(.95)}
+button.cpy.done{background:var(--ink);color:var(--bg)}
+.empty{color:var(--mut);padding:40px 0}
+.combo{position:sticky;bottom:16px;margin-top:32px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;box-shadow:0 6px 18px rgba(20,24,29,.08)}
+.combo .list{flex:1;font-size:13px;color:var(--mut)}
+button.k{font:inherit;font-size:13px;background:var(--ink);color:var(--bg);border:0;padding:9px 18px;border-radius:999px;cursor:pointer}
+button.k.ghost{background:var(--card);color:var(--ink);border:1px solid var(--bd)}
+button.k:disabled{opacity:.4;cursor:default}
+.note{font-size:12px;color:var(--mut);margin-top:26px}
+.modal{position:fixed;inset:0;background:rgba(20,24,29,.45);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto;z-index:50}
+.modal.open{display:flex}
+.sheet{background:var(--card);border-radius:12px;max-width:960px;width:100%;padding:28px 32px 32px;position:relative}
+.sheet .diag{background:#F7F8F9;border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.sheet .diag svg{width:100%;height:auto;display:block}
+.x{position:absolute;right:16px;top:12px;font-size:24px;background:none;border:0;cursor:pointer;color:var(--ink)}
+.tag{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--mut);letter-spacing:1px}
+.sheet h2{font-family:"Noto Serif TC","Songti TC",PMingLiU,serif;font-weight:900;font-size:30px;margin:4px 0 4px}
+.sheet h4{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;font-weight:500;color:var(--mut);letter-spacing:1.4px;margin:22px 0 6px}
+.sheet p{color:var(--mut);margin:0 0 12px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
+ol.n,ul.d{padding-left:0;margin:0 0 8px;list-style:none;font-size:14px}
+ol.n li{margin:4px 0}
+ul.d li{margin:4px 0;padding-left:14px;position:relative}
+ul.d li:before{content:"－";position:absolute;left:0;color:var(--mut)}
+pre{background:#F3F4F6;border:1px solid var(--bd);border-radius:12px;padding:14px 16px;white-space:pre-wrap;font-family:"Noto Sans TC",system-ui,sans-serif;font-size:13px;line-height:1.7;color:var(--ink);margin:8px 0 12px}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px;flex-wrap:wrap}
+.nav .r{display:flex;gap:10px;flex-wrap:wrap}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:13px;display:none;z-index:60}
+@media (max-width:900px){.hero{grid-template-columns:1fr;gap:32px}h1{font-size:46px}}
+@media (max-width:760px){.wrap{padding:32px 18px 80px}h1{font-size:40px}.cols{grid-template-columns:1fr}.sheet{padding:22px 18px}.stats{gap:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div>
+      <div class="crumb"><a href="../">J3M 教學資源站</a> · AI 簡報術 · DATA VIZ LIBRARY</div>
+      <h1>BI 圖表圖鑑<span class="acc"></span><span class="blk"></span></h1>
+      <p class="lead">30 種 BI 圖表技法，依分析目的分為比較、組成、趨勢、分布與關係流程五大類。每一種都附示意圖、資料結構、Google 試算表製作步驟與請避免事項，並可複製提示詞，請 AI 協助規劃完整的分析內容。</p>
+      <div class="stats">
+        <div><b>30</b><span>種圖表</span></div>
+        <div><b>5</b><span>大類型</span></div>
+        <div><b>30</b><span>組提示詞</span></div>
+      </div>
+    </div>
+    <div>
+      <ol class="steps">
+        <li><i>1</i><span>依「分析目的」篩選，或直接搜尋圖表名稱，例如：瀑布、交叉、地圖。</span></li>
+        <li><i>2</i><span>點選卡片，查看示意圖、資料結構、製作步驟與請避免事項。</span></li>
+        <li><i>3</i><span>複製提示詞，或勾選多張圖表加入組合，一次取得整份分析規劃。</span></li>
+      </ol>
+      <label class="lbl" for="topic">分析主題（會自動帶入所有提示詞）</label>
+      <input id="topic" class="inp" placeholder="例如：2027 年門市營收拆解與通路分析">
+    </div>
+  </header>
+
+  <div class="filters">
+    <input id="q" class="inp search" placeholder="搜尋圖表，例如：瀑布、交叉、地圖">
+    <span id="count" class="count"></span>
+  </div>
+  <div class="frow">
+    <span class="flab">分析目的</span>
+    <div id="cats" class="chips-row"></div>
+  </div>
+  <div class="divider"></div>
+
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty" style="display:none">查無符合條件的圖表。</div>
+
+  <div id="combo" class="combo" style="display:none">
+    <div class="list" id="comboList"></div>
+    <button class="k ghost" id="clearCombo">清空組合</button>
+    <button class="k" id="copyCombo">複製組合提示詞</button>
+  </div>
+
+  <p class="note">提示：若瀏覽器不允許剪貼簿操作，請手動選取文字後以 Ctrl+C 或 ⌘+C 複製。</p>
+</div>
+
+<div id="modal" class="modal" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <button class="x" id="close" aria-label="關閉">×</button>
+    <div class="tag" id="mCat"></div>
+    <h2 id="mTitle"></h2>
+    <p id="mDesc"></p>
+    <div class="diag" id="mDiag"></div>
+    <div class="cols">
+      <div>
+        <h4>適用情境</h4>
+        <ul class="d" id="mUse"></ul>
+        <h4>資料結構</h4>
+        <p id="mData" style="color:var(--ink);font-size:14px"></p>
+      </div>
+      <div>
+        <h4>請避免</h4>
+        <ul class="d" id="mAvoid"></ul>
+      </div>
+    </div>
+    <h4>製作步驟（GOOGLE 試算表）</h4>
+    <ol class="n" id="mSteps"></ol>
+    <h4>AI 提示詞</h4>
+    <pre id="mPrompt"></pre>
+    <div class="nav">
+      <div class="r">
+        <button class="k ghost" id="prev">← 上一個</button>
+        <button class="k ghost" id="next">下一個 →</button>
+      </div>
+      <div class="r">
+        <button class="k ghost" id="addCombo">加入組合</button>
+        <button class="k" id="copyOne">複製提示詞</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+
+/* ---------- 色票與共用繪圖工具 ---------- */
+const C={ink:'#14181D',mut:'#5A646E',g1:'#8A949E',g2:'#B7BFC7',g3:'#E2E6EA',bd:'#D3D8DD',a:'#2F5D7C',a2:'#7FA3BC',hi:'#C2703D'};
+const PAL=['#2F5D7C','#7FA3BC','#C2703D','#8A949E','#B7BFC7'];
+const FONT='font-family="Noto Sans TC, PingFang TC, sans-serif"';
+const svg=s=>`<svg viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" ${FONT}>${s}</svg>`;
+const R_=(x,y,w,h,f,o='')=>`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(0,w).toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" fill="${f}" ${o}/>`;
+const T=(x,y,s,a='middle',sz=12,f=C.ink,w=400)=>`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${a}" font-size="${sz}" fill="${f}" font-weight="${w}">${s}</text>`;
+const L=(x1,y1,x2,y2,c=C.bd,w=1,d='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${d?`stroke-dasharray="${d}"`:''}/>`;
+const P=(pts,c,w=2,fill='none')=>`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="${fill}" stroke="${c}" stroke-width="${w}" stroke-linejoin="round"/>`;
+const CIRC=(x,y,r,f,o='')=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${f}" ${o}/>`;
+const CAT=['甲','乙','丙','丁','戊'];
+const MONTHS=['一月','二月','三月','四月','五月','六月'];
+const axisX=(y,x1=50,x2=600)=>L(x1,y,x2,y,C.g1,1);
+const axisY=(x,y1=40,y2=300)=>L(x,y1,x,y2,C.g1,1);
+
+/* 圓弧路徑（圓心 cx,cy；角度以弧度，0 為右方，逆時針為正） */
+function arcPath(cx,cy,r0,r1,a0,a1){
+  const p=(r,a)=>[cx+r*Math.cos(a),cy-r*Math.sin(a)];
+  const large=Math.abs(a1-a0)>Math.PI?1:0;
+  const sw=a1<a0?1:0;   /* 角度遞減時在螢幕上為順時針，SVG sweep-flag 取 1 */
+  const [x0,y0]=p(r1,a0),[x1,y1]=p(r1,a1),[x2,y2]=p(r0,a1),[x3,y3]=p(r0,a0);
+  if(r0<=0) return `M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${r1},${r1} 0 ${large} ${sw} ${x1.toFixed(1)},${y1.toFixed(1)} Z`;
+  return `M${x0.toFixed(1)},${y0.toFixed(1)} A${r1},${r1} 0 ${large} ${sw} ${x1.toFixed(1)},${y1.toFixed(1)} L${x2.toFixed(1)},${y2.toFixed(1)} A${r0},${r0} 0 ${large} ${1-sw} ${x3.toFixed(1)},${y3.toFixed(1)} Z`;
+}
+
+/* ---------- 示意圖渲染器 ---------- */
+const RD={};
+
+RD.col=()=>{const v=[42,58,35,71,49],max=80,base=300,top=60,bw=56,gap=(560-5*bw)/5;let s=axisX(base);
+v.forEach((n,i)=>{const h=n/max*(base-top),x=50+i*(bw+gap)+gap/2;s+=R_(x,base-h,bw,h,i===3?C.hi:C.a)+T(x+bw/2,base-h-8,n,'middle',13)+T(x+bw/2,base+22,CAT[i],'middle',13,C.mut)});return svg(s)};
+
+RD.hbar=()=>{const v=[71,58,49,42,35],max=80;let s=axisY(120,40,320);
+v.forEach((n,i)=>{const y=60+i*50,w=n/max*440;s+=R_(120,y,w,32,i===0?C.hi:C.a)+T(112,y+21,CAT[i],'end',13)+T(120+w+8,y+21,n,'start',13)});return svg(s)};
+
+RD.group=()=>{const a=[42,58,35,71],b=[30,40,50,45],max=80,base=300,top=60;let s=axisX(base);
+a.forEach((n,i)=>{const gx=50+i*138+30;const h1=n/max*(base-top),h2=b[i]/max*(base-top);
+s+=R_(gx,base-h1,40,h1,C.a)+R_(gx+44,base-h2,40,h2,C.a2)+T(gx+42,base+22,['第一季','第二季','第三季','第四季'][i],'middle',13,C.mut)});
+s+=R_(430,30,12,12,C.a)+T(448,40,'本年','start',12)+R_(500,30,12,12,C.a2)+T(518,40,'去年','start',12);return svg(s)};
+
+RD.stack=()=>{const a=[30,40,25,50],b=[20,25,30,15],max=100,base=300,top=60;let s=axisX(base);
+a.forEach((n,i)=>{const x=80+i*130,ha=n/max*(base-top),hb=b[i]/max*(base-top);
+s+=R_(x,base-ha,70,ha,C.a)+R_(x,base-ha-hb,70,hb,C.a2)+T(x+35,base+22,['一月','二月','三月','四月'][i],'middle',13,C.mut)});return svg(s)};
+
+RD.stack100=()=>{const a=[30,40,25,50],b=[20,25,30,15];let s=axisX(300);
+a.forEach((n,i)=>{const x=80+i*130,t=n+b[i],ha=n/t*240,hb=b[i]/t*240;
+s+=R_(x,300-ha,70,ha,C.a)+R_(x,300-ha-hb,70,hb,C.a2)+T(x+35,322,['一月','二月','三月','四月'][i],'middle',13,C.mut)});
+s+=T(610,80,'100%','end',12,C.mut)+T(610,300,'0%','end',12,C.mut);return svg(s)};
+
+RD.bullet=()=>{let s='';const rows=[['營收',78,70,100],['毛利',52,60,90],['客戶數',88,80,100]];
+rows.forEach((r,i)=>{const y=70+i*90;s+=T(60,y+18,r[0],'start',14,C.ink,500);
+s+=R_(170,y,420,36,C.g3)+R_(170,y+10,420*0.66,16,C.g2)+R_(170,y+6,r[1]/100*420,24,C.a)+L(170+r[2]/100*420,y+2,170+r[2]/100*420,y+34,C.hi,3)});
+s+=T(170,330,'目標線：橘色；實際值：深色長條；底色：區間帶','start',12,C.mut);return svg(s)};
+
+RD.radar=()=>{const cx=320,cy=180,r=125,n=5,vals=[0.8,0.6,0.9,0.5,0.7];let s='';
+[1,0.66,0.33].forEach(k=>{let pts=[];for(let i=0;i<n;i++){const a=Math.PI/2-i*2*Math.PI/n;pts.push([cx+r*k*Math.cos(a),cy-r*k*Math.sin(a)])}s+=P([...pts,pts[0]],C.bd,1)});
+const lab=['品牌','通路','價格','服務','創新'];let pv=[];
+for(let i=0;i<n;i++){const a=Math.PI/2-i*2*Math.PI/n;s+=L(cx,cy,cx+r*Math.cos(a),cy-r*Math.sin(a),C.bd,1);
+pv.push([cx+r*vals[i]*Math.cos(a),cy-r*vals[i]*Math.sin(a)]);
+s+=T(cx+(r+26)*Math.cos(a),cy-(r+20)*Math.sin(a)+4,lab[i],'middle',13,C.mut)}
+s+=P([...pv,pv[0]],C.a,2,'rgba(47,93,123,.18)');pv.forEach(p=>s+=CIRC(p[0],p[1],3.5,C.a));return svg(s)};
+
+RD.gauge=()=>{const cx=320,cy=270,r=170,f=0.72;let s='';
+s+=`<path d="${arcPath(cx,cy,r-34,r,Math.PI,0)}" fill="${C.g3}"/>`;
+s+=`<path d="${arcPath(cx,cy,r-34,r,Math.PI,Math.PI-f*Math.PI)}" fill="${C.a}"/>`;
+const na=Math.PI-f*Math.PI;s+=L(cx,cy,cx+(r-44)*Math.cos(na),cy-(r-44)*Math.sin(na),C.ink,3)+CIRC(cx,cy,7,C.ink);
+s+=T(cx,cy+40,'72%','middle',34,C.ink,900)+T(cx,cy+64,'達成率','middle',13,C.mut)+T(cx-r+10,cy+20,'0','middle',12,C.mut)+T(cx+r-10,cy+20,'100','middle',12,C.mut);return svg(s)};
+
+RD.kpi=()=>{const items=[['本月營收','1,286 萬','+12.4%',true],['訂單數','3,410','-3.1%',false],['客單價','377','+5.8%',true]];let s='';
+items.forEach((it,i)=>{const x=40+i*195;s+=R_(x,70,180,220,'#FFFFFF',`stroke="${C.bd}" rx="12"`)+T(x+18,110,it[0],'start',13,C.mut)+T(x+18,170,it[1],'start',28,C.ink,900)+T(x+18,220,(it[3]?'▲ ':'▼ ')+it[2],'start',15,it[3]?C.a:C.hi,500)+T(x+18,262,'對比上月','start',11,C.mut)});return svg(s)};
+
+function donut(r0){return ()=>{const v=[38,27,20,15],tot=v.reduce((a,b)=>a+b,0);let a0=Math.PI/2,s='';
+const cx=200,cy=180,r=140;v.forEach((n,i)=>{const a1=a0-n/tot*2*Math.PI;s+=`<path d="${arcPath(cx,cy,r0,r,a0,a1)}" fill="${PAL[i]}" stroke="#F7F8F9" stroke-width="2"/>`;a0=a1});
+s+=T(cx,cy+6,'100%','middle',r0>0?22:0,C.ink,900);
+['北區','中區','南區','東區'].forEach((k,i)=>{const y=110+i*44;s+=R_(380,y,16,16,PAL[i])+T(404,y+13,k+'　'+v[i]+'%','start',15,C.ink)});return svg(s)}}
+RD.donut=donut(70);RD.pie=donut(0);
+
+RD.treemap=()=>{const items=[['A',40],['B',25],['C',15],['D',12],['E',8]];const tot=items.reduce((a,b)=>a+b[1],0);let s='';
+const x0=40,y0=40,W=560,H=280;let x=x0;
+items.forEach((it,i)=>{const w=it[1]/tot*W;const f=PAL[i];s+=R_(x+1,y0+1,w-2,H-2,f)+T(x+w/2,y0+H/2+5,it[0]+' '+it[1]+'%','middle',14,i<2?'#FFFFFF':C.ink,500);x+=w});return svg(s)};
+
+RD.waterfall=()=>{const steps=[['起始',100,'t'],['新客',30,'d'],['流失',-20,'d'],['加購',15,'d'],['退貨',-10,'d'],['期末',0,'t']];
+let run=0,s=axisX(300),max=160,bw=60,gap=(560-6*bw)/6;
+steps.forEach((st,i)=>{const x=50+i*(bw+gap)+gap/2;let y0,y1,f;
+if(st[2]==='t'){y0=0;y1=i===0?100:run;run=y1;f=C.a}else{const from=run;run=run+st[1];y0=Math.min(from,run);y1=Math.max(from,run);f=st[1]>0?C.a2:C.hi}
+const yTop=300-y1/max*240,yBot=300-y0/max*240;s+=R_(x,yTop,bw,yBot-yTop,f)+T(x+bw/2,yTop-8,st[i===0?1:1]!=null&&st[2]==='t'?(i===0?100:run):(st[1]>0?'+'+st[1]:st[1]),'middle',13)+T(x+bw/2,322,st[0],'middle',13,C.mut)});return svg(s)};
+
+RD.line=()=>{const v=[42,55,48,66,61,79],xs=i=>70+i*100,ys=n=>300-n/90*240;let s=axisX(300)+axisY(60,40,300);
+const pts=v.map((n,i)=>[xs(i),ys(n)]);s+=P(pts,C.a,3);pts.forEach((p,i)=>{s+=CIRC(p[0],p[1],4.5,C.a)+T(p[0],322,MONTHS[i],'middle',12,C.mut)});return svg(s)};
+
+RD.area=()=>{const v=[42,55,48,66,61,79],xs=i=>70+i*100,ys=n=>300-n/90*240;let s=axisX(300);
+const pts=v.map((n,i)=>[xs(i),ys(n)]);const poly=[[xs(0),300],...pts,[xs(5),300]];s+=P(poly,'none',0,'rgba(47,93,123,.22)').replace('stroke="none" stroke-width="0"','stroke="none"')+P(pts,C.a,3);
+pts.forEach((p,i)=>s+=T(p[0],322,MONTHS[i],'middle',12,C.mut));return svg(s)};
+
+RD.combo=()=>{const b=[42,58,35,71,49],l=[30,45,38,62,55],max=80,base=300;let s=axisX(base);
+b.forEach((n,i)=>{const x=80+i*108,h=n/max*240;s+=R_(x,base-h,56,h,C.a2)+T(x+28,322,CAT[i],'middle',13,C.mut)});
+const pts=l.map((n,i)=>[80+i*108+28,base-n/max*240]);s+=P(pts,C.hi,3);pts.forEach(p=>s+=CIRC(p[0],p[1],4.5,C.hi));
+s+=R_(430,28,12,12,C.a2)+T(448,38,'營收（柱）','start',12)+R_(530,28,12,12,C.hi)+T(548,38,'毛利率（線）','start',12);return svg(s)};
+
+RD.spark=()=>{const v=[12,18,14,22,19,28,25,33,30,38];const pts=v.map((n,i)=>[60+i*52,250-(n-10)/30*160]);let s='';
+s+=P(pts,C.a,2.5)+CIRC(pts[pts.length-1][0],pts[pts.length-1][1],5,C.hi);
+s+=T(60,290,'近 10 期營收趨勢（迷你圖）','start',13,C.mut);return svg(s)};
+
+RD.pareto=()=>{const v=[[ '缺貨',40],['價格',25],['物流',18],['包裝',10],['其他',7]];const tot=v.reduce((a,b)=>a+b[1],0);let s=axisX(300);
+let cum=0;const pts=[];v.forEach((it,i)=>{const x=80+i*104,h=it[1]/tot*0+it[1]/tot*240/0.45;
+const hh=it[1]/50*200;s+=R_(x,300-hh,60,hh,i===0?C.hi:C.a)+T(x+30,322,it[0],'middle',13,C.mut);cum+=it[1];pts.push([x+30,300-cum/tot*240])});
+s+=P(pts,C.ink,2)+pts.map(p=>CIRC(p[0],p[1],3.5,C.ink)).join('');s+=T(600,300-240+4,'100%','end',11,C.mut);return svg(s)};
+
+RD.hist=()=>{const v=[3,8,15,22,18,11,6,2],max=22,base=300,bw=62;let s=axisX(base);
+v.forEach((n,i)=>{const h=n/max*230,x=50+i*bw;s+=R_(x,base-h,bw-1,h,i===3?C.hi:C.a)+T(x+bw/2,base+18,(i*10)+'–'+(i*10+10),'middle',10,C.mut)});return svg(s)};
+
+RD.box=()=>{const g=[[60,110,140,190,240],[130,170,200,240,290],[80,120,150,170,220]];const y=v=>300-(v-40)/300*260;let s=axisX(300);
+g.forEach((b,i)=>{const cx=150+i*170;s+=L(cx,y(b[0]),cx,y(b[1]),C.ink,1.5)+L(cx,y(b[3]),cx,y(b[4]),C.ink,1.5)+L(cx-14,y(b[0]),cx+14,y(b[0]),C.ink,1.5)+L(cx-14,y(b[4]),cx+14,y(b[4]),C.ink,1.5);
+s+=R_(cx-38,y(b[3]),76,y(b[1])-y(b[3]),C.a2,`stroke="${C.a}" stroke-width="1.5"`)+L(cx-38,y(b[2]),cx+38,y(b[2]),C.ink,2)+T(cx,322,['甲組','乙組','丙組'][i],'middle',13,C.mut)});return svg(s)};
+
+RD.scatter=()=>{const pts=[[60,140],[90,200],[120,170],[160,240],[190,210],[230,150],[260,260],[300,190],[340,230],[370,130],[410,200],[450,170],[490,250],[520,140],[560,210]];let s=axisX(300)+axisY(50);
+pts.forEach(p=>s+=CIRC(p[0]+50,p[1],5,C.a,'fill-opacity="0.75"'));s+=T(320,340,'廣告曝光量','middle',12,C.mut)+T(18,170,'營收','middle',12,C.mut);return svg(s)};
+
+RD.bubble=()=>{const b=[[120,200,28],[220,140,40],[330,220,18],[430,130,34],[520,230,22]];let s=axisX(300)+axisY(50);
+b.forEach((p,i)=>s+=CIRC(p[0],p[1],p[2],i===1?C.hi:C.a,'fill-opacity="0.6"'));s+=T(320,340,'成本','middle',12,C.mut)+T(18,170,'利潤','middle',12,C.mut)+T(560,60,'氣泡大小 = 市場規模','end',12,C.mut);return svg(s)};
+
+RD.heat=()=>{const rows=['北','中','南','東'],cols=['一月','二月','三月','四月','五月'];
+const v=[[12,18,25,31,22],[20,35,41,38,29],[8,14,19,24,30],[15,22,28,33,36]];let s='';
+const cw=88,ch=54,x0=110,y0=70;cols.forEach((c,j)=>s+=T(x0+j*cw+cw/2,y0-12,c,'middle',12,C.mut));
+rows.forEach((r,i)=>{s+=T(x0-14,y0+i*ch+ch/2+5,r,'end',13,C.mut);v[i].forEach((n,j)=>{const t=(n-8)/33;const col=`rgb(${Math.round(236-(236-47)*t)},${Math.round(238-(238-93)*t)},${Math.round(240-(240-123)*t)})`;
+s+=R_(x0+j*cw+2,y0+i*ch+2,cw-4,ch-4,col)+T(x0+j*cw+cw/2,y0+i*ch+ch/2+5,n,'middle',13,t>0.5?'#FFFFFF':C.ink)})});return svg(s)};
+
+RD.funnel=()=>{const v=[1000,640,320,150,60],lab=['曝光','點擊','加入購物車','下單','回購'];let s='';
+v.forEach((n,i)=>{const w=n/1000*480,y=40+i*60,x=320-w/2;s+=R_(x,y,w,50,i===4?C.hi:C.a,'rx="6"')+T(320,y+31,lab[i]+'　'+n,'middle',14,'#FFFFFF',500)});return svg(s)};
+
+RD.sankey=()=>{const nodes=[[60,'官網',[40,150]],[60,'臉書',[200,90]],[60,'電話',[300,60]],[300,'產品 A',[40,130]],[300,'產品 B',[190,120]],[540,'成交',[60,220]],[540,'未成交',[300,80]]];
+const links=[[0,3,110],[0,4,40],[1,3,40],[1,4,60],[2,4,30],[3,5,120],[4,5,80],[3,6,30],[4,6,30]];let s='';
+const pos=[[40,40,220],[40,250,80],[40,350,70],[280,40,120],[280,180,110],[520,40,180],[520,240,100]];
+const sc=0.9;links.forEach(l=>{const a=pos[l[0]],b=pos[l[1]];const y1=a[1]+a[2]/2,y2=b[1]+b[2]/2;const h=l[2]*0.45;
+const x1=a[0]+(l[0]<3?30:0)+60,x2=b[0];s+=`<path d="M${x1},${y1-h/2} C${(x1+x2)/2},${y1-h/2} ${(x1+x2)/2},${y2-h/2} ${x2},${y2-h/2} L${x2},${y2+h/2} C${(x1+x2)/2},${y2+h/2} ${(x1+x2)/2},${y1+h/2} ${x1},${y1+h/2} Z" fill="${C.a2}" fill-opacity="0.35"/>`});
+nodes.forEach((n,i)=>{const p=pos[i];s+=R_(p[0],p[1],14,p[2],C.a)+T(p[0]+(n[0]>200?-8:20),p[1]+p[2]/2,n[1],'start',12,C.ink,500)});return svg(s)};
+
+RD.choro=()=>{const vals=[[0.2,0.5,0.8,0.4,0.1],[0.6,0.9,0.7,0.3,0.2],[0.3,0.4,0.6,0.9,0.5],[0.1,0.3,0.4,0.7,0.6]];let s='';
+const w=94,h=66,x0=110,y0=50;vals.forEach((row,i)=>row.forEach((t,j)=>{const col=`rgb(${Math.round(236-(236-47)*t)},${Math.round(238-(238-93)*t)},${Math.round(240-(240-123)*t)})`;s+=R_(x0+j*w+2,y0+i*h+2,w-4,h-4,col,'rx="4"')}));
+s+=T(320,345,'示意：以區域色階表示數值高低（替換為實際地圖底圖即可）','middle',12,C.mut);return svg(s)};
+
+RD.dotmap=()=>{const pts=[[140,110,28],[240,160,18],[330,90,36],[430,200,22],[500,130,30],[300,240,14],[190,250,20]];let s='';
+for(let i=0;i<4;i++)for(let j=0;j<6;j++)s+=R_(80+j*90,40+i*70,80,60,'#E9ECEF','rx="6"');
+pts.forEach(p=>s+=CIRC(p[0],p[1],p[2]/2+4,C.a,'fill-opacity="0.55"'));s+=T(320,345,'示意：圓點大小表示數值（可依經緯度替換座標）','middle',12,C.mut);return svg(s)};
+
+RD.gantt=()=>{const tasks=[['需求訪談',0,2],['設計',1,3],['開發',3,4],['測試',6,2],['上線',8,1]];let s=axisX(300,150,600);
+for(let k=0;k<=8;k+=2)s+=L(150+k*56,46,150+k*56,300,C.g3,1)+T(150+k*56,322,'第'+(k+1)+'週','middle',11,C.mut);
+tasks.forEach((t,i)=>{const y=60+i*46;s+=T(140,y+18,t[0],'end',13,C.ink);s+=R_(150+t[1]*56,y,t[2]*56,26,i===3?C.hi:C.a,'rx="4"')});return svg(s)};
+
+RD.quad=()=>{const pts=[[100,260,C.a],[140,210,C.a],[230,130,C.a],[300,240,C.g1],[410,90,C.a],[480,150,C.hi],[520,260,C.g1],[90,120,C.g1],[260,220,C.g1]];let s='';
+s+=R_(320,50,280,130,'#EEF3F6')+L(320,50,320,300,C.g1,1,'4 4')+L(60,180,600,180,C.g1,1,'4 4');
+s+=axisX(300)+axisY(50);
+pts.forEach(p=>s+=CIRC(p[0],p[1],6,p[2]));
+s+=T(330,68,'高成長・高價值','start',12,C.a)+T(60,68,'低成長・高價值','start',12,C.mut)+T(600,320,'市占率','end',12,C.mut)+T(18,170,'成長率','middle',12,C.mut);return svg(s)};
+
+RD.pivot=()=>{const rows=['北區','中區','南區'],cols=['產品 A','產品 B','產品 C','合計'];
+const v=[[120,85,60],[90,140,70],[60,75,110]];let s='';const cw=120,ch=52,x0=80,y0=60;
+cols.forEach((c,j)=>s+=T(x0+j*cw+cw/2,y0-18,c,'middle',13,C.mut,500));
+rows.forEach((r,i)=>{s+=T(x0-10,y0+i*ch+ch/2+5,r,'end',13,C.mut,500);const sum=v[i].reduce((a,b)=>a+b,0);
+v[i].forEach((n,j)=>{const t=n/160;s+=R_(x0+j*cw+2,y0+i*ch+2,cw-4,ch-4,`rgba(47,93,123,${(0.08+t*0.4).toFixed(2)})`,'rx="4"')+T(x0+j*cw+cw/2,y0+i*ch+ch/2+5,n,'middle',14)});
+s+=R_(x0+3*cw+2,y0+i*ch+2,cw-4,ch-4,'#EEF0F2','rx="4"')+T(x0+3*cw+cw/2,y0+i*ch+ch/2+5,sum,'middle',14,C.ink,700)});
+s+=L(x0,y0+3*ch,x0+4*cw,y0+3*ch,C.g1,1);return svg(s)};
+
+/* 桑基圖（覆寫版）：節點高度與連線寬度依數值等比例 */
+RD.sankey=()=>{
+  const nodes=[
+    {n:'官網',x:40,y:30,h:128,side:'L'},{n:'臉書',x:40,y:180,h:85,side:'L'},{n:'電話',x:40,y:290,h:26,side:'L'},
+    {n:'產品 A',x:280,y:30,h:128,side:'M'},{n:'產品 B',x:280,y:180,h:110,side:'M'},
+    {n:'成交',x:520,y:30,h:170,side:'R'},{n:'未成交',x:520,y:230,h:68,side:'R'}];
+  const links=[[0,3,110],[0,4,40],[1,3,20],[1,4,60],[2,4,26],[3,5,120],[3,6,30],[4,5,80],[4,6,50]];
+  const k=0.85,outOff=nodes.map(()=>0),inOff=nodes.map(()=>0);let s='';
+  links.forEach(([a,b,v])=>{
+    const h=v*k,sx=nodes[a].x+14,tx=nodes[b].x,y1=nodes[a].y+outOff[a],y2=nodes[b].y+inOff[b];
+    outOff[a]+=h;inOff[b]+=h;const mx=(sx+tx)/2;
+    s+=`<path d="M${sx},${y1} C${mx},${y1} ${mx},${y2} ${tx},${y2} L${tx},${y2+h} C${mx},${y2+h} ${mx},${y1+h} ${sx},${y1+h} Z" fill="${C.a2}" fill-opacity="0.38"/>`;
+  });
+  nodes.forEach(nd=>{
+    s+=R_(nd.x,nd.y,14,nd.h,C.a);
+    if(nd.side==='L') s+=T(nd.x-8,nd.y+nd.h/2+4,nd.n,'end',12,C.ink,500);
+    else if(nd.side==='M') s+=T(nd.x+nd.h*0+22,nd.y+nd.h/2+4,nd.n,'start',12,C.ink,500);
+    else s+=T(nd.x+22,nd.y+nd.h/2+4,nd.n,'start',12,C.ink,500);
+  });
+  return svg(s);
+};
+
+/* ---------- 圖表資料 ---------- */
+const CH=[
+{id:'col',name:'長條圖',cat:'比較',desc:'比較各類別的數值高低，最常用的基礎圖表。',
+ use:['比較不同產品、門市或通路的業績','類別數量在 3 至 12 個之間','需要快速找出最大與最小值'],
+ data:'一欄為類別（文字），一欄為數值（數字）。每列代表一個類別。',
+ steps:['選取兩欄資料（類別欄與數值欄）','點選「插入」→「圖表」，Google 試算表通常會自動建議長條圖','於圖表編輯器的「圖表類型」選擇「直條圖」','在「自訂」→「數列」加上數值標籤，並將數值排序後再繪製'],
+ avoid:['類別名稱過長時改用橫條圖','避免使用 3D 效果','同一張圖不要混用過多顏色'],
+ p:'比較各類別數值高低，找出最大與最小值'},
+{id:'hbar',name:'橫條圖',cat:'比較',desc:'類別名稱較長，或類別數量較多時的比較圖。',
+ use:['類別名稱長，如問卷題目或產品名稱','排行榜式的前十名比較','需要閱讀長標籤的報表'],
+ data:'一欄為類別，一欄為數值；建議事先由大到小排序。',
+ steps:['整理資料並由大到小排序','選取資料後點選「插入」→「圖表」','圖表類型選擇「橫條圖」','在「自訂」中關閉格線，並開啟數值標籤'],
+ avoid:['排序後仍保持隨機順序','橫條數量超過 15 條時考慮拆分頁面','不要把橫條圖與直條圖並排比較'],
+ p:'比較長名稱類別的排名'},
+{id:'group',name:'分組長條圖',cat:'比較',desc:'同一類別下比較兩組以上的數值，例如今年與去年。',
+ use:['同期比較，如本年與去年同季','比較多個產品在不同時段的表現','需要同時看見分組與整體'],
+ data:'第一欄為類別（如季別），其餘欄為各組數值（如本年、去年）。',
+ steps:['以類別欄加上各組欄位組成表格','選取全部資料後插入圖表','圖表類型選擇「直條圖」，並確認系列分組正確','於「自訂」→「圖例」設定位置，並以不同色階區分各組'],
+ avoid:['分組超過 4 組時會難以閱讀','避免兩組色相過於接近','未標示單位'],
+ p:'同一類別下比較兩組數值的差異'},
+{id:'bullet',name:'子彈圖',cat:'比較',desc:'以一條長條呈現實際值，並同時標示目標線與績效區間。',
+ use:['KPI 達成率的單一指標檢視','與目標比較，並判斷落後或超前','多項指標整齊排列的儀表板'],
+ data:'每列包含指標名稱、實際值、目標值與區間界線（如差、普通、良好）。',
+ steps:['整理指標、實際值、目標值與區間界線','Google 試算表中以「堆疊長條圖」製作區間底色','新增實際值系列，並設為較窄的深色長條','以散佈圖或誤差線加上目標線（進階作法）'],
+ avoid:['區間色超過三階','目標線與實際值顏色混淆','指標單位不一致卻排在同一軸'],
+ p:'以實際值、目標與區間呈現指標達成狀況'},
+{id:'radar',name:'雷達圖',cat:'比較',desc:'在多個面向上同時比較一或多個對象的輪廓。',
+ use:['品牌、產品或供應商的多維度評分比較','面向數量約 4 至 6 個','需要一眼看出強弱項'],
+ data:'第一欄為面向名稱，其餘欄為各對象的評分（同一量尺，如 1 至 5 分）。',
+ steps:['整理各面向與各對象的評分表','Google 試算表的「圖表類型」中選擇「雷達圖」（若無，可改用折線圖自製）','確認各面向使用相同量尺與最大值','以半透明色塊呈現多個對象，並加上圖例'],
+ avoid:['面向超過 8 個','量尺不一致','只比較一個對象時仍使用雷達圖，會增加閱讀負擔'],
+ p:'在多個面向上比較對象的強弱項'},
+{id:'gauge',name:'目標達成計量表',cat:'比較',desc:'以半圓儀表呈現單一數值佔目標的比例。',
+ use:['單一關鍵指標的達成率','管理層會議的快速判讀','搭配 KPI 卡片作為摘要'],
+ data:'一個實際值與一個目標值，計算達成率後以 0 至 100% 呈現。',
+ steps:['計算達成率：實際值 ÷ 目標值','在儲存格中建立達成率公式','Google 試算表以「圓餅圖」加上透明覆蓋製作半圓（或使用計量表圖表類型）','依達成區間設定色彩，並於圖中央放置數字'],
+ avoid:['刻度過多，導致閱讀困難','超過 100% 的部分未說明','單獨使用而無目標脈絡'],
+ p:'以半圓儀表顯示單一指標的達成率'},
+{id:'kpi',name:'KPI 計分卡',cat:'比較',desc:'以大字數值搭配變動率，呈現關鍵指標的現況與變化。',
+ use:['每日或每月的營運摘要','與上期或去年同期比較','作為儀表板的首頁區塊'],
+ data:'每列為一個指標，欄位包含本期值、比較期值與變動率公式。',
+ steps:['建立表格：指標、本期值、比較期值、變動率','變動率公式：=(本期-比較期)/比較期','以「格式設定」設定紅綠色（上升與下降的意義需一致）','以大字體與粗體顯示數值，並以方框區隔'],
+ avoid:['同一頁放入過多指標','正負色的意義與業務方向不一致','未標示比較基準'],
+ p:'以大字數值與變動率呈現關鍵指標'},
+{id:'pie',name:'圓餅圖',cat:'組成',desc:'呈現整體中各部分的比例，適合少數類別。',
+ use:['整體中佔比的快速說明','類別數量在 2 至 5 個之間','各部分差異明顯時'],
+ data:'一欄為類別，一欄為數值（或已計算好的百分比）。',
+ steps:['選取類別與數值欄位','插入「圖表」，圖表類型選擇「圓餅圖」','於「自訂」→「圖表樣式」顯示百分比標籤','將最重要的類別放在第一順位，並避免過多細小扇區'],
+ avoid:['類別超過 6 個','3D 圓餅圖造成比例失真','各扇區總和未達 100%'],
+ p:'呈現整體中各部分的比例'},
+{id:'donut',name:'環圈圖',cat:'組成',desc:'圓餅圖的變形，中央可放置總數或關鍵數字。',
+ use:['需要在中央顯示總量或達成率','佔比說明搭配 KPI 數字','版面空間有限的摘要頁'],
+ data:'同圓餅圖：一欄為類別，一欄為數值。',
+ steps:['先依圓餅圖步驟建立圖表','圖表類型選擇「圓環圖」（Google 試算表支援環圈設定）','於「自訂」中調整內圓半徑（若可調整）','在圖表旁以文字方塊在中央位置標註總數'],
+ avoid:['中央文字與圖表重疊','扇區數量過多','類別順序每次不同'],
+ p:'以環圈呈現佔比，並於中央放置總數'},
+{id:'stack',name:'堆疊長條圖',cat:'組成',desc:'在每根長條內呈現各子類別的組成，同時比較總量。',
+ use:['比較各月份的總量與內部結構','通路或產品線的組成變化','總量與組成需同時呈現'],
+ data:'第一欄為主類別（如月份），其餘欄為子類別數值。',
+ steps:['以主類別與子類別的表格結構整理資料','選取資料後插入圖表，圖表類型選擇「堆疊直條圖」','確認子類別順序，並以圖例說明','於「自訂」→「數列」開啟數值標籤（必要時加上總計）'],
+ avoid:['子類別超過 5 個','子類別顏色彼此接近','堆疊順序每期不同'],
+ p:'在總量中呈現各子類別的組成'},
+{id:'stack100',name:'100% 堆疊長條圖',cat:'組成',desc:'每根長條總和為 100%，專注比較組成比例。',
+ use:['比較各期結構比例，不在意總量','問卷各選項的比例比較','市場佔有率的變化'],
+ data:'同堆疊長條圖，但以百分比欄位呈現（每列加總為 100%）。',
+ steps:['先以公式計算各子類別占比：=數值÷該列合計','以百分比資料插入「堆疊直條圖」','Google 試算表中可使用「百分比堆疊」選項（如可用）','於圖例與軸標上註明為百分比'],
+ avoid:['忽略總量差異導致誤解','子類別過多','未註明分母'],
+ p:'比較各期結構比例，不呈現總量'},
+{id:'treemap',name:'樹狀圖',cat:'組成',desc:'以面積大小表示各類別的比例，適合多層級的組成。',
+ use:['類別數量多，無法使用圓餅圖','產品或類別的階層式佔比','快速辨識最大的區塊'],
+ data:'一欄為類別，一欄為數值；若為階層，多加一欄為上層類別。',
+ steps:['整理類別與數值，並由大到小排序','Google 試算表中可使用樹狀圖（若版本支援），或以外部外掛製作','若無法使用，以堆疊長條或橫條圖替代','確認面積大小與數值成正比'],
+ avoid:['面積與數值不成比例','標籤無法讀取時未改用表格','超過三層級'],
+ p:'以面積大小呈現多類別的比例'},
+{id:'waterfall',name:'瀑布圖',cat:'組成',desc:'呈現從起始值到期末值之間，每個增減項目的累積過程。',
+ use:['營收或利潤的增減拆解','預算與實際的差異分析','說明期初到期末的變化原因'],
+ data:'欄位：項目名稱、增減值、起始／期末標記。需建立「基底」與「增加」「減少」三欄輔助計算。',
+ steps:['建立輔助欄：基底＝累計值（增加時取前值，減少時取當期值）','建立「增加」與「減少」欄，數值取絕對值','選取項目、基底、增加、減少，插入「堆疊直條圖」','將基底系列設為無填滿（透明），再於「自訂」調整顏色與標籤'],
+ avoid:['增減項目超過 10 個','正負色與業務意義不一致','起訖欄位未以不同顏色區別'],
+ p:'拆解期初到期末之間每個增減項目的影響'},
+{id:'line',name:'折線圖',cat:'趨勢',desc:'呈現數值隨時間變化的趨勢，是最常見的時間序列圖。',
+ use:['追蹤月度、週度或日度趨勢','比較多條趨勢線的走勢','判斷季節性與轉折點'],
+ data:'第一欄為日期（須為真正的日期格式），其餘欄為數值。',
+ steps:['確認日期欄為日期格式，並依時間順序排列','選取資料後插入圖表，圖表類型選擇「折線圖」','於「自訂」→「座標軸」確認 X 軸為日期軸','必要時加上移動平均作為參考線'],
+ avoid:['時間間隔不一致卻以等距呈現','Y 軸不從零開始且未標示，造成誇大','超過 5 條線'],
+ p:'呈現數值隨時間變化的趨勢'},
+{id:'area',name:'面積圖',cat:'趨勢',desc:'折線圖加上面積填色，強調累積量與變化幅度。',
+ use:['強調總量隨時間的累積','多系列的堆疊趨勢','呈現容量或規模的增長'],
+ data:'同折線圖：時間欄加數值欄，可多欄以堆疊呈現。',
+ steps:['整理時間序列資料','插入圖表，圖表類型選擇「區域圖」','多系列時可選擇「堆疊區域圖」','將填色設為半透明，並保留主要線條'],
+ avoid:['多系列非堆疊時互相遮擋','Y 軸未從零開始','用於不具累積意義的數值'],
+ p:'以面積強調數值的累積與變化'},
+{id:'combo',name:'組合圖（柱線圖）',cat:'趨勢',desc:'以長條表示數量，以折線表示比率或另一指標，常見於雙指標比較。',
+ use:['營收與毛利率的同時呈現','訂單數與轉換率的對照','數量與比率需同一時間軸'],
+ data:'時間或類別欄位，一欄為數量（柱），一欄為比率（線，建議使用次軸）。',
+ steps:['整理資料：時間、數量、比率三欄','選取資料後插入圖表，圖表類型選擇「組合圖」','於「數列」設定比率為「右軸」或次軸','以顏色區分長條與折線，並於圖例註明'],
+ avoid:['雙軸刻度設定不當造成誤導','兩指標之間無因果卻強行連線','圖例不清'],
+ p:'以柱與線同時呈現數量與比率'},
+{id:'spark',name:'迷你圖',cat:'趨勢',desc:'在儲存格中以微型折線呈現趨勢，適合嵌入表格。',
+ use:['表格的每一列附上趨勢','快速掃描數十個指標的走勢','報表中的趨勢摘要'],
+ data:'一列資料為一個指標，多欄為不同時間點。',
+ steps:['整理每列指標的時間序列資料','在空白欄輸入公式：=SPARKLINE(B2:G2)','以選項調整顏色、線寬與軸範圍','將迷你圖與數字欄並排，方便比對'],
+ avoid:['數值差異很小卻強調上下','沒有比較基準','超過一屏的過密排列'],
+ p:'在表格內以微型折線呈現趨勢'},
+{id:'pareto',name:'柏拉圖',cat:'趨勢',desc:'由大到小排序的長條加上累積百分比線，用於找出關鍵少數。',
+ use:['找出造成多數問題的少數原因','客訴、缺陷或成本的優先順序','80/20 分析'],
+ data:'一欄為原因或類別，一欄為數量；需先由大到小排序並計算累積百分比。',
+ steps:['依數量由大到小排序','新增「累積百分比」欄：=SUM($B$2:B2)/SUM($B$2:$B$6)','插入組合圖：長條為數量，折線為累積百分比，並設於次軸','於折線加上 80% 參考線，標示關鍵項目'],
+ avoid:['未排序就繪製','累積百分比未歸一化為 100%','原因分類過於細碎'],
+ p:'以排序與累積百分比找出關鍵少數'},
+{id:'hist',name:'直方圖',cat:'分布',desc:'將連續數值分組計數，觀察資料分布的形狀。',
+ use:['觀察客戶年齡、消費金額或等候時間的分布','判斷資料是否偏態','設定分組的起點與閾值'],
+ data:'一欄為原始連續數值（如金額），不需事先分組。',
+ steps:['插入圖表，圖表類型選擇「直方圖」','於「自訂」→「直方圖」設定分組數或區間寬度','確認區間寬度一致，並顯示每組計數','如需比較分布，可分別製作兩個直方圖並使用相同刻度'],
+ avoid:['區間寬度隨意變動','分組數過少或過多','以直方圖取代分類的長條圖'],
+ p:'觀察連續數值的分布與集中程度'},
+{id:'box',name:'箱型圖',cat:'分布',desc:'以中位數、四分位與極值呈現分布，便於比較多組差異。',
+ use:['比較多組的分布與離群值','快速判讀中位數與變異程度','品質或績效的組間比較'],
+ data:'一欄為分組，一欄為數值；每組需有足夠的樣本數。',
+ steps:['整理各組的原始數值，每組為一欄或以分組欄標示','插入圖表，圖表類型選擇「箱形圖」（如版本支援）','若無箱形圖，可用公式計算四分位（QUARTILE）後以堆疊長條模擬','於圖表中標示中位數與離群值'],
+ avoid:['樣本數過少仍使用','未說明箱體與鬚線的定義','將平均數與中位數混用'],
+ p:'比較多組數值的分布與離群值'},
+{id:'scatter',name:'散佈圖',cat:'分布',desc:'以點的位置呈現兩個變數之間的關係，判斷相關性。',
+ use:['廣告投入與營收的相關性','身高與體重等成對數值的關係','找出離群的點'],
+ data:'兩欄數值，每列為一個觀察對象（如一個門市、一個客戶）。',
+ steps:['選取 X 與 Y 兩欄資料','插入圖表，圖表類型選擇「散佈圖」','於「自訂」→「趨勢線」加上線性趨勢線，並顯示 R 平方（如需要）','標示 X 軸與 Y 軸的名稱與單位'],
+ avoid:['相關不等於因果','點數過少卻畫趨勢線','座標軸未從合理範圍開始'],
+ p:'判斷兩個數值變數之間的相關性'},
+{id:'bubble',name:'氣泡圖',cat:'分布',desc:'在散佈圖上加入第三個變數（氣泡大小），同時比較三個維度。',
+ use:['市場區隔的成本、利潤與規模比較','產品組合分析','需要同時呈現三個數值的關係'],
+ data:'三欄數值：X、Y、大小（氣泡面積），另加一欄名稱。',
+ steps:['整理 X、Y、大小與名稱四欄','Google 試算表以「散佈圖」製作，並於「數列」中設定點大小','若不支援，可改用 Python 或 Looker Studio 製作','標示氣泡大小的意義'],
+ avoid:['氣泡過多而重疊','以半徑而非面積表示大小','缺少尺寸說明'],
+ p:'以氣泡大小同時比較三個數值維度'},
+{id:'heat',name:'熱力圖',cat:'分布',desc:'以顏色深淺呈現矩陣中的數值強弱，是交叉分析的視覺化形式。',
+ use:['時段與星期的銷售分布','門市與月份的表現矩陣','快速找出高峰與低谷'],
+ data:'二維表格：列與欄為兩個維度，儲存格為數值。',
+ steps:['以樞紐表或 SUMIFS 整理成二維矩陣','選取矩陣後點選「格式」→「條件式格式設定」','選擇「色階」規則，設定最小值與最大值顏色','調整數字格式，並保留必要的數值標註'],
+ avoid:['色階超過三色','最大與最小值未固定，造成比較失真','顏色與數值意義不一致'],
+ p:'以顏色深淺呈現二維矩陣的強弱分布'},
+{id:'funnel',name:'漏斗圖',cat:'分布',desc:'呈現各階段的轉換與流失，常見於行銷與銷售流程。',
+ use:['曝光到成交的轉換分析','報名與出席的流失率','找出流失最嚴重的階段'],
+ data:'一欄為階段名稱，一欄為人數或數量；依流程順序排列。',
+ steps:['依流程順序整理階段與數量','計算各階段的轉換率：=本階段÷上一階段','Google 試算表以「堆疊長條圖」模擬，將輔助系列設為透明','於圖中標示各階段的轉換率'],
+ avoid:['階段順序錯置','將非連續流程放在同一漏斗','只顯示數量而不標示轉換率'],
+ p:'呈現各階段的轉換與流失'},
+{id:'sankey',name:'桑基圖',cat:'關係與流程',desc:'以寬度表示流量，呈現多個階段之間的流向與分配。',
+ use:['客戶來源到成交結果的流向','預算從部門到專案的分配','流量在不同路徑的分流'],
+ data:'來源、目標、流量三欄，每列為一條流向。',
+ steps:['整理來源、目標與流量三欄資料','Google 試算表沒有原生桑基圖，可安裝外掛（如 Sankey 相關的圖表外掛）','或以 Google Looker Studio 或 Python（plotly）繪製','確認每一節點的流入與流出總量相等'],
+ avoid:['節點過多，連線交錯','流量數值不守恆','未標示單位'],
+ p:'以流向寬度呈現多階段的流量分配'},
+{id:'choro',name:'分區著色地圖',cat:'關係與流程',desc:'依行政區或區域以顏色深淺呈現數值，適合地理比較。',
+ use:['各縣市或區域的銷售表現','區域市占率比較','分店密度分析'],
+ data:'兩欄：地區名稱（需與地圖對應）與數值。',
+ steps:['整理地區名稱與數值，名稱需與地圖內建的地區一致','Google 試算表選取資料後插入「地圖」圖表（支援國家與部分地區層級）','於「自訂」設定色階顏色與數值範圍','標示圖例與資料日期'],
+ avoid:['地區名稱拼寫不一致','以面積大小誤導數值','色階分段過多'],
+ p:'依地區以顏色深淺比較數值'},
+{id:'dotmap',name:'點位地圖',cat:'關係與流程',desc:'在地圖上以點的位置與大小呈現分店、客戶或事件的分布。',
+ use:['分店或據點的空間分布','客戶居住地的集中程度','事件發生地點的分析'],
+ data:'至少包含緯度、經度與數值（可選）。',
+ steps:['整理各據點的緯度、經度與數值','Google 試算表選取資料後插入「地圖」圖表，並選擇點位模式','於「自訂」設定點的大小依數值變化','若需細緻分析，可改用 Looker Studio 的地圖元件'],
+ avoid:['座標錯置','點太多而重疊','以點的大小代表非數值的分類'],
+ p:'以點位呈現空間分布與數值大小'},
+{id:'gantt',name:'甘特圖',cat:'關係與流程',desc:'以橫條表示任務的起訖時間，用於專案排程與進度追蹤。',
+ use:['專案時程與里程碑規劃','多人協作的進度追蹤','查看任務之間的時間重疊'],
+ data:'欄位：任務名稱、開始日期、結束日期（或工期天數）。',
+ steps:['建立表格：任務、開始日、工期','以公式計算結束日：=開始日+工期','插入堆疊長條圖，開始日為透明系列，工期為可見系列','將 Y 軸反向排列，並設定 X 軸為日期格式'],
+ avoid:['任務名稱過長','未標示今日位置','工期與日期欄位格式不一致'],
+ p:'以橫條呈現任務的起訖與進度'},
+{id:'quad',name:'四象限矩陣圖',cat:'關係與流程',desc:'以兩條中線將資料分成四個象限，協助優先順序判斷。',
+ use:['產品組合的成長率與市占率分析','客戶價值與互動頻率分類','行動方案的效益與成本優先排序'],
+ data:'三欄：項目名稱、X 軸指標、Y 軸指標；另可加上分類欄。',
+ steps:['整理項目與兩個指標的數值','插入圖表，圖表類型選擇「散佈圖」','於「自訂」設定 X 與 Y 軸的中線位置（如平均值）','以文字方塊標示四個象限的意義'],
+ avoid:['中線位置任意設定','四象限標籤不具行動意義','項目過多而重疊'],
+ p:'以兩條中線劃分四象限，協助優先排序'},
+{id:'pivot',name:'交叉比對表（樞紐表）',cat:'關係與流程',desc:'以列與欄交叉整理數值，是 BI 分析的基礎工具，並可搭配色階呈現。',
+ use:['兩個維度（如區域與產品）的交叉比較','快速加總與小計','作為熱力圖的資料來源'],
+ data:'原始明細表，至少包含兩個維度欄位與一個數值欄位。',
+ steps:['選取原始明細表，點選「插入」→「樞紐分析表」','列選擇區域，欄選擇產品，值選擇加總','於「值」設定計算方式（加總、平均、計數）','以條件式格式設定色階，並加入小計與總計'],
+ avoid:['列與欄的維度過多','混用不同單位的數值','未更新資料來源即直接引用'],
+ p:'以列與欄交叉整理並加總數值'}
+];
+
+/* ---------- 介面邏輯 ---------- */
+const EN=['Column Chart','Bar Chart','Clustered Column','Bullet Chart','Radar Chart','Gauge Chart','KPI Scorecard','Pie Chart','Donut Chart','Stacked Column','100% Stacked Column','Treemap','Waterfall Chart','Line Chart','Area Chart','Combo Chart','Sparkline','Pareto Chart','Histogram','Box Plot','Scatter Plot','Bubble Chart','Heat Map','Funnel Chart','Sankey Diagram','Choropleth Map','Dot Map','Gantt Chart','Quadrant Matrix','Pivot Table'];
+const CATS=['全部','比較','組成','趨勢','分布','關係與流程'];
+let state={cat:'全部',q:'',open:-1,combo:[]};
+const $=id=>document.getElementById(id);
+const topicVal=()=>$('topic').value.trim();
+
+function promptFor(c){
+  const t=topicVal()||'（請填入分析主題）';
+  return `請以「${t}」為分析情境，說明「${c.name}」的用途與適用條件。\n\n請依序提供：\n➊ 適用情境與不適用情境\n➋ 資料欄位與格式（以 Google 試算表為準）\n➌ 製作步驟（逐步條列，使用 Google 試算表操作）\n➍ 常見錯誤與請避免事項\n\n請以繁體中文回答，段落分明，並以「${c.p}」為核心。`;
+}
+
+function filtered(){
+  return CH.map((c,i)=>({c,i})).filter(({c})=>(state.cat==='全部'||c.cat===state.cat)&&(!state.q||c.name.includes(state.q)||c.desc.includes(state.q)));
+}
+
+function renderCats(){
+  const n=k=>k==='全部'?CH.length:CH.filter(c=>c.cat===k).length;
+  $('cats').innerHTML=CATS.map(k=>`<button class="chip ${k===state.cat?'on':''}" data-k="${k}">${k} <small>${n(k)}</small></button>`).join('');
+  $('cats').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.cat=b.dataset.k;renderCats();renderGrid()});
+}
+
+function renderGrid(){
+  const items=filtered();
+  $('grid').innerHTML=items.map(({c,i})=>`<div class="card" data-i="${i}"><div>${RD[c.id]()}</div><div class="cbody"><div class="cmeta"><span>BI-${String(i+1).padStart(2,'0')}</span><span class="cen">${EN[i]}</span></div><div class="ctitle">${c.name}</div><p class="cdesc">${c.desc}</p><div class="chips"><span>${c.cat}</span><span>Google 試算表</span><span>BI 圖表</span></div><div class="cfoot"><label class="chk" onclick="event.stopPropagation()"><input type="checkbox" class="cb" data-i="${i}" ${state.combo.includes(i)?'checked':''}> 加入組合</label><button class="cpy" data-i="${i}">複製提示詞</button></div></div></div>`).join('');
+  /* 卡片事件委派：整張卡片開啟詳細頁；「複製提示詞」直接複製；核取方塊加入組合 */
+  $('grid').onclick=async e=>{
+    const btn=e.target.closest('.cpy');
+    if(btn){
+      e.stopPropagation();
+      const i=+btn.dataset.i;
+      const ok=await copyText(promptFor(CH[i]));
+      if(ok){btn.classList.add('done');btn.textContent='已複製';setTimeout(()=>{btn.classList.remove('done');btn.textContent='複製提示詞'},1400)}
+      toast(ok?'已複製：'+CH[i].name+' 提示詞':'無法自動複製，請改用詳細頁手動複製');
+      return;
+    }
+    const card=e.target.closest('.card');
+    if(card&&!e.target.closest('.chk')) openModal(+card.dataset.i);
+  };
+  $('grid').onchange=e=>{
+    if(!e.target.classList.contains('cb')) return;
+    const i=+e.target.dataset.i;
+    if(e.target.checked){if(!state.combo.includes(i))state.combo.push(i)}
+    else state.combo=state.combo.filter(x=>x!==i);
+    renderCombo();
+    toast(e.target.checked?'已加入組合':'已移出組合');
+  };
+  $('empty').style.display=items.length?'none':'block';
+  $('count').textContent=items.length+' / '+CH.length+' 種';
+}
+
+function openModal(i){
+  state.open=i;const c=CH[i];
+  $('mCat').textContent=c.cat;$('mTitle').textContent=c.name;$('mDesc').textContent=c.desc;
+  $('mDiag').innerHTML=RD[c.id]();
+  $('mUse').innerHTML=c.use.map(x=>`<li>${x}</li>`).join('');
+  $('mAvoid').innerHTML=c.avoid.map(x=>`<li>${x}</li>`).join('');
+  $('mData').textContent=c.data;
+  $('mSteps').innerHTML=c.steps.map(x=>`<li>${x}</li>`).join('');
+  $('mPrompt').textContent=promptFor(c);
+  $('addCombo').textContent=state.combo.includes(i)?'已在組合中':'加入組合';
+  $('prev').disabled=i===0;$('next').disabled=i===CH.length-1;
+  $('modal').classList.add('open');$('modal').scrollTop=0;
+}
+function closeModal(){$('modal').classList.remove('open')}
+
+function toast(msg){const t=$('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',1600)}
+
+async function copyText(s){
+  try{await navigator.clipboard.writeText(s);return true}catch(e){
+    const ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+    let ok=false;try{ok=document.execCommand('copy')}catch(_){}document.body.removeChild(ta);return ok}
+}
+
+function renderCombo(){
+  const box=$('combo');
+  if(!state.combo.length){box.style.display='none';return}
+  box.style.display='flex';
+  $('comboList').textContent='已加入 '+state.combo.length+' 張：'+state.combo.map(i=>CH[i].name).join('、');
+  $('copyCombo').disabled=false;
+}
+
+$('close').onclick=closeModal;
+$('modal').onclick=e=>{if(e.target.id==='modal')closeModal()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+$('prev').onclick=()=>state.open>0&&openModal(state.open-1);
+$('next').onclick=()=>state.open<CH.length-1&&openModal(state.open+1);
+$('copyOne').onclick=async()=>{const ok=await copyText(promptFor(CH[state.open]));toast(ok?'已複製提示詞':'無法自動複製，請手動選取')};
+$('addCombo').onclick=()=>{const i=state.open;if(!state.combo.includes(i))state.combo.push(i);$('addCombo').textContent='已在組合中';renderCombo();toast('已加入組合')};
+$('clearCombo').onclick=()=>{state.combo=[];renderCombo()};
+$('copyCombo').onclick=async()=>{
+  const s=state.combo.map((i,k)=>`【${k+1}】\n`+promptFor(CH[i])).join('\n\n────────\n\n');
+  const ok=await copyText(s);toast(ok?'已複製組合提示詞':'無法自動複製，請手動選取');
+};
+$('q').oninput=e=>{state.q=e.target.value.trim();renderGrid()};
+$('topic').oninput=()=>{if(state.open>=0)$('mPrompt').textContent=promptFor(CH[state.open])};
+
+renderCats();renderGrid();
+
+</script>
+</body>
+</html>
