@@ -790,13 +790,15 @@ const WORKFLOW_RULES = {
 };
 
 /**
+ * ==========================================
  * 【待辦提醒設定】改完記得按儲存，再執行一次 setupTriggers
  * morningHour：早上幾點推播今日待辦與到期案件（0～23）
  * minutesBefore：有指定時間的待辦，提前幾分鐘用 ⏰ 再提醒一次（填 0 就是時間到才提醒）
  * checkEveryMinutes：多久檢查一次 ⏰ 提醒，只能填 1、5、10、15、30（越小越準時）
+ * ==========================================
  */
 const REMINDER_RULES = {
-  morningHour: 7,
+  morningHour: 8,
   minutesBefore: 10,
   checkEveryMinutes: 5
 };
@@ -811,8 +813,20 @@ const LINE_TOKEN = "貼上你的LINE_CHANNEL_ACCESS_TOKEN";
 const USER_ID = "貼上你的LINE_USER_ID";
 const GEMINI_API_KEY = "貼上你的GEMINI_API_KEY";
 
-// Gemini 模型名稱：這個模型下架時，程式會自動改用一個可用的 Flash 模型
+/**
+ * ==========================================
+ * 【Gemini 設定】
+ * GEMINI_MODEL：預設使用的模型。想固定用某個模型，請先在編輯器執行 listGeminiModels 確認名稱
+ * GEMINI_THINKING_LEVEL：思考程度，minimal 最快，本助理的工作（分類、轉文字）不需要深度思考
+ * ==========================================
+ */
 const GEMINI_MODEL = 'gemini-3.8-flash';
+const GEMINI_THINKING_LEVEL = 'minimal';
+const GEMINI_MAX_TOKENS_INTENT = 512;   // 文字判斷：輸出很短，限制長度可加快回應
+const GEMINI_MAX_TOKENS_AUDIO = 2048;   // 語音轉文字加判斷
+const GEMINI_SLOW_MS = 30000;           // 超過 30 秒視為模型很慢，之後 15 分鐘先改用備用模型
+const GEMINI_RETRY_UNTIL_MS = 20000;    // 第一次就超過 20 秒，不再重試（避免等太久）
+const GEMINI_BACKUP_UNTIL_MS = 30000;   // 超過 30 秒，不再改用備用模型
 
 // 試算表各工作表名稱（要和試算表分頁一字不差）
 const SHEET_PROJECTS = '案件進度';
@@ -862,12 +876,47 @@ function doPost(e) {
 
 /**
  * 處理使用者文字
+ * preAi：語音訊息已經由 Gemini 判斷過時，直接帶入，不再呼叫一次 Gemini（省一次等待）
  */
-function handleUserText(userText, replyToken) {
+function handleUserText(userText, replyToken, preAi) {
   try {
     const props = PropertiesService.getScriptProperties();
     const pendingProject = props.getProperty('PENDING_PROJECT');
     const pendingDay = props.getProperty('PENDING_DAY');
+
+    // 「我收到新案件」但沒講案件名稱：先問目前是哪一個階段，再問案件名稱
+    // PENDING_NEW_STEP：等待回答階段；PENDING_NEW_NAME：已知階段（存在這裡），等待回答案件名稱
+    const pendingNewStep = props.getProperty('PENDING_NEW_STEP');
+    const pendingNewName = props.getProperty('PENDING_NEW_NAME');
+    if (pendingNewStep || pendingNewName) {
+      const text = String(userText).trim();
+      if (text === '取消') {
+        props.deleteProperty('PENDING_NEW_STEP');
+        props.deleteProperty('PENDING_NEW_NAME');
+        replyLine(replyToken, '好的，這筆案件先不建立。');
+        return;
+      }
+      if (pendingNewStep) {
+        const stage = matchStage(text);
+        if (!stage) {
+          replyLine(replyToken, `還沒收到目前的階段喔！\n請回覆階段名稱或編號：\n${stageMenu()}\n\n不建立請回覆「取消」。`);
+          return;
+        }
+        props.deleteProperty('PENDING_NEW_STEP');
+        props.setProperty('PENDING_NEW_NAME', stage);
+        replyLine(replyToken, `好的，目前是「${stage}」。\n請告訴我案件名稱，例如「台中七期案」。\n不建立請回覆「取消」。`);
+        return;
+      }
+      // 已知階段，等待案件名稱
+      const name = text.replace(/[。！!？?\s]+$/, '');
+      if (!name) {
+        replyLine(replyToken, '請告訴我案件名稱，例如「台中七期案」。\n不建立請回覆「取消」。');
+        return;
+      }
+      props.deleteProperty('PENDING_NEW_NAME');
+      processProjectProgress(name, pendingNewName, replyToken);
+      return;
+    }
 
     // 正在等使用者回答「下禮拜幾」
     if (pendingDay) {
@@ -920,6 +969,20 @@ function handleUserText(userText, replyToken) {
       return;
     }
 
+    // 只說「我收到新案件」、沒講案件名稱：先問目前是哪一個階段
+    if (/(新案件|新案子|新的案件|新的案子|接到案件|收到案件|接到案子|收到案子)/.test(userText)) {
+      props.setProperty('PENDING_NEW_STEP', '1');
+      replyLine(replyToken, `收到新案件！\n請問這個案件目前是哪一個階段呢？請回覆階段名稱或編號：\n${stageMenu()}\n\n不建立請回覆「取消」。`);
+      return;
+    }
+
+    // 記帳：有金額（$、元、塊、圓）加上記帳線索，直接記錄，不用等 Gemini
+    const quickExpense = quickParseExpense(userText);
+    if (quickExpense) {
+      executeAction(quickExpense, userText, replyToken);
+      return;
+    }
+
     // 「幾點提醒我…」「20 分鐘後…」這類有明確時間的待辦，直接解析，不用等 Gemini
     const quickTodo = quickParseTodo(userText);
     if (quickTodo &amp;&amp; quickTodo.type === 'ASK_DAY') {
@@ -933,10 +996,13 @@ function handleUserText(userText, replyToken) {
       return;
     }
 
-    // 使用 Gemini 判斷意圖（記下「處理中」，萬一 Gemini 卡住讓程式被中斷，定時檢查會通知使用者）
-    const runKey = markAiStart(userText);
-    const aiResult = analyzeIntentWithGemini(userText);
-    markAiEnd(runKey);
+    // 其餘交給 Gemini 判斷意圖（語音已經判斷過的就直接用）
+    let aiResult = preAi || null;
+    if (!aiResult) {
+      const runKey = markAiStart(userText);
+      aiResult = analyzeIntentWithGemini(userText);
+      markAiEnd(runKey);
+    }
     if (!aiResult) {
       replyLine(replyToken, lastGeminiError
         ? '⚠️ AI 連線失敗：' + lastGeminiError
@@ -952,7 +1018,7 @@ function handleUserText(userText, replyToken) {
 }
 
 /**
- * 處理語音訊息（下載音檔傳送至 Gemini 轉譯）
+ * 處理語音訊息：一次呼叫 Gemini 同時完成「轉文字」與「判斷意圖」（原本是兩次，等待時間幾乎加倍）
  */
 function handleUserAudio(messageId, replyToken) {
   const audioBlob = fetchLineAudio(messageId);
@@ -962,17 +1028,17 @@ function handleUserAudio(messageId, replyToken) {
   }
 
   const runKey = markAiStart('（語音訊息）');
-  const transcribedText = speechToTextWithGemini(audioBlob);
+  const aiResult = analyzeAudioWithGemini(audioBlob);
   markAiEnd(runKey);
-  if (!transcribedText) {
+  if (!aiResult || !String(aiResult.transcript || '').trim()) {
     replyLine(replyToken, lastGeminiError
       ? '⚠️ 語音辨識失敗：' + lastGeminiError + '\n\n語音一定要經過 AI，忙碌時建議先改用打字。'
       : '語音辨識不清楚，請重新發送或改用文字。');
     return;
   }
 
-  // 辨識出文字後，直接走文字處理流程
-  handleUserText(transcribedText, replyToken);
+  // 辨識出的文字走文字流程；意圖已經判斷好了，直接帶入
+  handleUserText(String(aiResult.transcript).trim(), replyToken, aiResult);
 }
 
 /**
@@ -1064,13 +1130,14 @@ function processProjectProgress(projectName, stage, replyToken) {
 }
 
 /**
- * 呼叫 Gemini 進行意圖分析
+ * 組出意圖判斷的提示詞（文字與語音共用）
+ * isAudio：語音時，多要求模型先轉錄成文字放在 transcript 欄位
  */
-function analyzeIntentWithGemini(userText) {
+function buildIntentPrompt(userText, isAudio) {
   const now = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd HH:mm（EEEE）');
   const stageList = Object.keys(WORKFLOW_RULES).join('、');
 
-  const prompt = [
+  return [
     `你是一個案件與行程秘書。現在的台灣時間是 ${now}。`,
     '請判斷使用者訊息屬於哪一類，只回傳一個 JSON 物件，不要加任何說明或 markdown 標記。',
     '',
@@ -1085,12 +1152,37 @@ function analyzeIntentWithGemini(userText) {
     '- remindDate 請依現在時間換算成實際日期（「明天」「下週一」都要換成 yyyy-MM-dd）；沒提到日期就填今天。',
     '- remindTime 用 24 小時制（「下午兩點」填 14:00）；沒提到時間就填空字串。',
     '- amount 只填數字，不要加「元」。',
+    ...(isAudio ? ['- 這是語音訊息：請在 JSON 另外加上 "transcript" 欄位，填入完整的逐字轉錄文字（繁體中文）。'] : []),
     '',
     `使用者訊息：${userText}`
   ].join('\n');
+}
 
-  const text = callGemini([{ text: prompt }], { responseMimeType: 'application/json' });
-  if (!text) return null;
+/**
+ * 呼叫 Gemini 進行文字意圖分析
+ */
+function analyzeIntentWithGemini(userText) {
+  const text = callGemini(
+    [{ text: buildIntentPrompt(userText, false) }],
+    { responseMimeType: 'application/json', maxOutputTokens: GEMINI_MAX_TOKENS_INTENT }
+  );
+  return text ? parseJsonLoose(text) : null;
+}
+
+/**
+ * 呼叫 Gemini 處理語音：一次完成轉文字與意圖判斷
+ */
+function analyzeAudioWithGemini(audioBlob) {
+  const base64Audio = Utilities.base64Encode(audioBlob.getBytes());
+  const text = callGemini([
+    { text: buildIntentPrompt('（請聽下面這段語音）', true) },
+    { inline_data: { mime_type: audioBlob.getContentType() || 'audio/m4a', data: base64Audio } }
+  ], { responseMimeType: 'application/json', maxOutputTokens: GEMINI_MAX_TOKENS_AUDIO });
+  return text ? parseJsonLoose(text) : null;
+}
+
+// 從 Gemini 回覆中取出 JSON；失敗回傳 null
+function parseJsonLoose(text) {
   try {
     const match = text.match(/\{[\s\S]*\}/);
     return JSON.parse(match ? match[0] : text);
@@ -1122,19 +1214,9 @@ function fetchLineAudio(messageId) {
 }
 
 /**
- * 呼叫 Gemini 進行語音轉文字
- */
-function speechToTextWithGemini(audioBlob) {
-  const base64Audio = Utilities.base64Encode(audioBlob.getBytes());
-  return callGemini([
-    { text: '請將這段語音完整轉錄為繁體中文文字，不要輸出多餘的說明。' },
-    { inline_data: { mime_type: audioBlob.getContentType() || 'audio/m4a', data: base64Audio } }
-  ]);
-}
-
-/**
  * 呼叫 Gemini（金鑰放在 header，不放在網址，避免出錯時金鑰出現在紀錄裡）
- * 模型下架（代碼 404）時，會自動找一個這組金鑰能用的 Flash 模型重試，並記住下次直接用
+ * 模型下架（代碼 404）時，會自動找一個這組金鑰能用的 Flash 模型重試
+ * 模型忙碌或太慢時，才改用備用模型；整體以時間為上限，避免使用者等太久
  */
 function callGemini(parts, generationConfig) {
   const body = { contents: [{ parts: parts }] };
@@ -1146,6 +1228,7 @@ function callGemini(parts, generationConfig) {
   }
 
   const startedAt = Date.now();
+  const elapsed = () =&gt; Date.now() - startedAt;
   try {
     let model = currentGeminiModel();
     // 這個模型最近很慢或卡住過：15 分鐘內先用備用模型
@@ -1157,7 +1240,7 @@ function callGemini(parts, generationConfig) {
       }
     }
     let res = requestGemini(model, body);
-    if (Date.now() - startedAt &gt; 30000) markModelSlow(model);
+    if (elapsed() &gt; GEMINI_SLOW_MS) markModelSlow(model);
 
     if (res.getResponseCode() === 404) {
       const found = findAvailableModel();
@@ -1169,27 +1252,26 @@ function callGemini(parts, generationConfig) {
       }
     }
 
-    // 伺服器忙碌（503 等）：等 1.5 秒重試一次；還是不行就依序改用最多 3 個備用模型（不會記住，下次仍用原本的模型）
-    // 已經等超過 45 秒就不再重試，避免使用者等太久
+    // 伺服器忙碌（500、502、503、504）：只等 1.5 秒重試一次，且第一次太久就不重試
     const busy = c =&gt; c === 500 || c === 502 || c === 503 || c === 504;
-    const canRetry = () =&gt; Date.now() - startedAt &lt; 45000;
     const tried = [`${model} ${res.getResponseCode()}`];
-    if (busy(res.getResponseCode()) &amp;&amp; canRetry()) {
+    if (busy(res.getResponseCode()) &amp;&amp; elapsed() &lt; GEMINI_RETRY_UNTIL_MS) {
       Utilities.sleep(1500);
       res = requestGemini(model, body);
       tried.push(`${model} 重試 ${res.getResponseCode()}`);
     }
-    if (busy(res.getResponseCode()) || res.getResponseCode() === 429) {
-      const backups = findBackupModels(model).slice(0, 3);
-      if (!backups.length) tried.push('找不到備用模型');
-      for (const backup of backups) {
-        if (!canRetry()) { tried.push('超過 45 秒，停止重試'); break; }
+    // 還是忙碌或超過額度：只改用一個備用模型，而且要在時間內
+    if ((busy(res.getResponseCode()) || res.getResponseCode() === 429) &amp;&amp; elapsed() &lt; GEMINI_BACKUP_UNTIL_MS) {
+      const backup = findBackupModel(model);
+      if (backup) {
         const backupRes = requestGemini(backup, body);
         tried.push(`${backup} ${backupRes.getResponseCode()}`);
         if (backupRes.getResponseCode() === 200) {
           Logger.log('Gemini 改用備用模型成功：' + tried.join(' → '));
           return parseGeminiText(backupRes);
         }
+      } else {
+        tried.push('找不到備用模型');
       }
     }
 
@@ -1200,7 +1282,7 @@ function callGemini(parts, generationConfig) {
         400: 'API Key 格式不對，請重新複製 Google AI Studio 的金鑰，用選單「① 填入金鑰」重填',
         401: 'API Key 不正確，請重新複製金鑰，用選單「① 填入金鑰」重填',
         403: 'API Key 沒有權限，請確認金鑰是在 Google AI Studio 建立的',
-        404: `找不到可用的 Gemini 模型，請在編輯器執行 listGeminiModels 查看可用名稱，填進 GEMINI_MODEL`,
+        404: '找不到可用的 Gemini 模型，請在編輯器執行 listGeminiModels 查看可用名稱，填進 GEMINI_MODEL',
         429: '超過免費額度或傳太快，請等一分鐘再試',
         500: 'Gemini 暫時出錯，已自動重試和換模型都沒成功，請過一兩分鐘再傳一次',
         503: 'Gemini 現在使用的人太多，已自動重試和換模型都沒成功，請過一兩分鐘再傳一次。有明確時間的提醒（例如「下午3點提醒我打電話」）不受影響'
@@ -1226,7 +1308,7 @@ function parseGeminiText(res) {
   return text ? text.trim() : null;
 }
 
-// 備用模型：原本的模型忙碌時臨時改用。挑其他 Flash 模型（可含 Lite），由新到舊排好，模型清單快取 6 小時
+// 備用模型：原本的模型忙碌時臨時改用。挑其他 Flash 模型，由新到舊排好，模型清單快取 6 小時
 function findBackupModel(current) {
   return findBackupModels(current)[0] || '';
 }
@@ -1249,32 +1331,32 @@ function findBackupModels(current) {
     .sort((a, b) =&gt; (/preview/.test(a) - /preview/.test(b)) || (version(b) - version(a)) || (/lite/.test(a) - /lite/.test(b)) || (a.length - b.length));
 }
 
-// 送出一次 Gemini 請求：思考程度由低到高試（minimal → low → 不指定），記住這個模型能用的最低程度，回應最快
+/**
+ * 送出一次 Gemini 請求
+ * 固定使用 GEMINI_THINKING_LEVEL（預設 minimal）。原本的寫法在被拒絕時會落到「不指定」，
+ * 模型就改用預設的深度思考，是回應變慢（176 秒）的主要原因之一。
+ */
 function requestGemini(model, body) {
-  const props = PropertiesService.getScriptProperties();
-  const propKey = 'GEMINI_THINKING_' + model;
-  const saved = props.getProperty(propKey);
-  const levels = saved ? [saved] : ['minimal', 'low', 'none'];
-  const send = b =&gt; UrlFetchApp.fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-    method: 'post',
-    contentType: 'application/json',
-    headers: { 'x-goog-api-key': getKey('GEMINI_API_KEY') },
-    payload: JSON.stringify(b),
-    muteHttpExceptions: true
-  });
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+  const send = thinkingConfig =&gt; {
+    const b = JSON.parse(JSON.stringify(body));
+    if (thinkingConfig) b.generationConfig = Object.assign({}, b.generationConfig, { thinkingConfig: thinkingConfig });
+    return UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { 'x-goog-api-key': getKey('GEMINI_API_KEY') },
+      payload: JSON.stringify(b),
+      muteHttpExceptions: true
+    });
+  };
+  const isThinkingRejected = r =&gt; r.getResponseCode() === 400 &amp;&amp; /thinking/i.test(r.getContentText());
 
   const started = Date.now();
-  let res;
-  for (const level of levels) {
-    const b = JSON.parse(JSON.stringify(body));
-    if (level !== 'none') {
-      b.generationConfig = Object.assign({}, b.generationConfig, { thinkingConfig: { thinkingLevel: level } });
-    }
-    res = send(b);
-    const rejected = res.getResponseCode() === 400 &amp;&amp; /thinking/i.test(res.getContentText());
-    if (rejected) continue;
-    if (!saved &amp;&amp; res.getResponseCode() === 200) props.setProperty(propKey, level);
-    break;
+  let res = send({ thinkingLevel: GEMINI_THINKING_LEVEL });
+  if (isThinkingRejected(res)) {
+    res = send({ thinkingLevel: 'low' });
+    // 舊版模型完全不支援思考設定：不帶這個參數再送一次
+    if (isThinkingRejected(res)) res = send(null);
   }
 
   const seconds = (Date.now() - started) / 1000;
@@ -1330,6 +1412,15 @@ function listGeminiModels() {
 }
 
 /**
+ * 清除自動切換模型的紀錄：想回到 GEMINI_MODEL 設定的模型時，在編輯器執行一次
+ */
+function resetGeminiModel() {
+  PropertiesService.getScriptProperties().deleteProperty('GEMINI_MODEL_AUTO');
+  CacheService.getScriptCache().remove('GEMINI_MODEL_LIST');
+  Logger.log('已清除自動切換紀錄，目前使用的模型：' + GEMINI_MODEL);
+}
+
+/**
  * 回覆 LINE 訊息
  */
 function replyLine(replyToken, messageText) {
@@ -1370,7 +1461,7 @@ function pushLine(messageText) {
 }
 
 /**
- * 每天早上定時推播（時間在 REMINDER_RULES.morningHour 設定）：今天的待辦＋今天到期的案件
+ * 每天早上定時推播（時間在 REMINDER_RULES.morningHour 設定，預設 8 點）：今天的待辦＋今天到期的案件
  */
 function dailyMorningPush() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -1489,7 +1580,7 @@ function markModelSlow(model) {
  * 改了 REMINDER_RULES 之後，要再執行一次才會生效
  */
 function setupTriggers() {
-  const hour = Math.min(23, Math.max(0, parseInt(REMINDER_RULES.morningHour, 10) || 7));
+  const hour = Math.min(23, Math.max(0, parseInt(REMINDER_RULES.morningHour, 10) || 8));
   const allowed = [1, 5, 10, 15, 30];
   const every = allowed.includes(Number(REMINDER_RULES.checkEveryMinutes)) ? Number(REMINDER_RULES.checkEveryMinutes) : 5;
 
@@ -1522,11 +1613,13 @@ function ensureTriggers() {
  * 測試 Gemini 連線：在編輯器選這個函式按「執行」，結果會顯示在下方執行記錄
  */
 function testGemini() {
+  const started = Date.now();
   const result = analyzeIntentWithGemini('計程車去工地 350 元');
+  const seconds = ((Date.now() - started) / 1000).toFixed(1);
   if (result) {
-    Logger.log('✅ Gemini 連線成功（模型 ' + currentGeminiModel() + '），判斷結果：' + JSON.stringify(result));
+    Logger.log(`✅ Gemini 連線成功（模型 ${currentGeminiModel()}，耗時 ${seconds} 秒），判斷結果：` + JSON.stringify(result));
   } else {
-    Logger.log('❌ Gemini 連線失敗：' + (lastGeminiError || 'Gemini 有回應，但內容不是 JSON'));
+    Logger.log(`❌ Gemini 連線失敗（耗時 ${seconds} 秒）：` + (lastGeminiError || 'Gemini 有回應，但內容不是 JSON'));
   }
 }
 
@@ -1763,7 +1856,7 @@ function appendRowAsText(sheet, values, textColumns) {
 
 // 抓「新案件」訊息：例如「我收到一個新案件：台中七期案」「新案子 信義案，報價了」
 function quickParseNewProject(text) {
-  const m = String(text).match(/(?:新案件|新案子|新的案件|新的案子)\s*[:：，,]?\s*(.+)$/);
+  const m = String(text).match(/(?:新案件|新案子|新的案件|新的案子|接到案件|收到案件|接到案子|收到案子)\s*[:：，,]?\s*(.+)$/);
   if (!m) return null;
   const parts = m[1].split(/[，,、；;]/);
   const name = parts[0].replace(/[。！!？?\s]+$/, '').trim();
@@ -1836,13 +1929,35 @@ function quickParseTodo(text) {
   let content = t;
   removed.forEach(r =&gt; { content = content.replace(r, ' '); });
   content = content
-    .replace(/(請)?(幫我)?(提醒我|提醒一下|提醒|記得|別忘了|別忘記)/g, ' ')
+    .replace(/(請)?(幫我)?(提醒我|提醒一下|提醒|記得|別忘了|別忘記|(紀錄|記錄)我?)/g, ' ')
     .replace(/^[\s，,。]+|[\s，,。！!]+$/g, '')
     .replace(/\s+/g, ' ')
     .replace(/^(要|再)\s*/, '')
     .trim();
   if (!content) return null;
   return { type: 'TODO', content: content, remindDate: date, remindTime: time };
+}
+
+// 抓記帳訊息，不用等 Gemini：「記錄我去工地坐計程車$600」「午餐 120 元」「材料費 1,500 塊」
+// 需要同時有金額（$、元、塊、圓）與記帳線索（記錄、花了，或交通、餐飲等字眼）；有「提醒」等待辦字眼就不算記帳
+function quickParseExpense(text) {
+  const t = String(text).replace(/[０-９]/g, c =&gt; String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+    .replace(/＄/g, '$');
+  if (/提醒|待辦|記得/.test(t)) return null;
+  const m = t.match(/\$\s*(\d[\d,]*)|(\d[\d,]*)\s*(元|塊|圓)/);
+  if (!m) return null;
+  const hasHint = /記錄|紀錄|記帳|花了|付了|花費|支出|計程車|車資|捷運|高鐵|火車|公車|停車|加油|油錢|餐|吃|飯|咖啡|材料|五金|住宿|飯店/.test(t);
+  if (!hasHint) return null;
+  const amount = Number((m[1] || m[2]).replace(/,/g, ''));
+  const category = /計程車|車資|捷運|高鐵|火車|公車|停車|加油|油錢|交通/.test(t) ? '交通費'
+    : /餐|吃|飯|咖啡|飲料/.test(t) ? '餐費'
+    : /材料|五金|木料/.test(t) ? '材料費' : '雜支';
+  const item = t.replace(m[0], ' ')
+    .replace(/(請)?(幫我)?(記錄|紀錄|記帳)我?|我?(花了|付了)/g, ' ')
+    .replace(/^[\s，,。去]+|[\s，,。]+$/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return { type: 'EXPENSE', item: item || t, amount: amount, category: category };
 }
 
 // 找出訊息裡的日期。回傳 { date, matched }；只講「下禮拜」沒講禮拜幾，回傳 { ask: true, matched }
@@ -1954,7 +2069,8 @@ function parseRemind(value) {
     return { date: Utilities.formatDate(value, TZ, 'yyyy-MM-dd'), time: time === '00:00' ? '' : time };
   }
   return { date: normalizeDate(value), time: normalizeTime(value) };
-}</pre></div>
+}
+</pre></div>
     </div></details>
     <details class="more"><summary>程式碼地圖：每個函式在做什麼</summary><div class="inner">
       <div class="tbl-wrap"><table>
