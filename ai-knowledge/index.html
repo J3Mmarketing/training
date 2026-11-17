@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" class="j3m-dark-only">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,8 +45,24 @@
   .footer-brand { color:var(--gold-soft); font-weight:700; font-size:13px; margin-top:12px; }
   @media (max-width:600px) { .book { width:88px; height:200px; } .book .name { font-size:13px; } }
 </style>
+
+<!-- J3M 統一外觀層 -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../assets/j3m-skin.css">
+<script src="../assets/j3m-skin.js"></script>
 </head>
 <body>
+<div class="j3m-aura" aria-hidden="true"></div>
+<nav class="j3m-bar" aria-label="J3M 教學資源站">
+  <div class="j3m-in">
+    <a class="j3m-brand" href="../"><span class="j3m-mk">J3M</span><span>教學資源站</span></a>
+    <span class="j3m-crumbs"><span aria-hidden="true">/</span><a class="j3m-mid" href="../topic/knowledge/">AI 小知識</a><span class="j3m-sep2" aria-hidden="true">/</span><span class="j3m-here" aria-current="page">J3M AI 小知識書櫃</span></span>
+    <span class="j3m-sp"></span>
+    <a class="j3m-book" href="../#invite">授課邀約</a>
+    <button class="j3m-iconbtn j3m-theme" type="button" aria-label="切換深色／淺色模式"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
+  </div>
+</nav>
+
 <header>
   <h1>J3M AI 小知識</h1>
   <p>點選工具，即可翻閱最新資訊</p>
@@ -156,5 +172,20 @@ function closeOverlay(id) {
 document.querySelectorAll("[data-close]").forEach(btn => btn.addEventListener("click", () => closeOverlay(btn.dataset.close)));
 document.querySelectorAll(".overlay").forEach(ov => ov.addEventListener("click", (e) => { if (e.target === ov) closeOverlay(ov.id); }));
 </script>
+
+<footer class="j3m-foot">
+  <div class="j3m-in">
+    <b>J3M 教學資源站</b>
+    <a href="../topic/knowledge/">← 回到「AI 小知識」主題頁</a>
+    <a href="../">教學資源站首頁</a>
+    <a href="../aboutme/">關於 J3M</a>
+    <span class="j3m-sp" style="flex:1"></span>
+    <a class="j3m-book" href="mailto:trj3mmm@gmail.com?subject=%E6%8E%88%E8%AA%B2%E9%82%80%E7%B4%84">寫信邀課</a>
+  </div>
+</footer>
+<!-- 放在最後，確保蓋過教材頁原本的色票（有些頁面把樣式寫在 body 裡） -->
+<style id="j3m-tokens">
+:root,:root[data-theme]{--bg:#0A0C10;--panel:#14171E;--text:#EEF0F4;--muted:#8A93A2;--gold:#F5B800;color-scheme:dark}
+</style>
 </body>
 </html>
