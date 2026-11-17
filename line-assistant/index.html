@@ -283,8 +283,24 @@ dialog.lb button { position: absolute; top: 8px; right: 8px; }
   .msg { max-width: 92%; }
 }
 </style>
+
+<!-- J3M 統一外觀層 -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../assets/j3m-skin.css">
+<script src="../assets/j3m-skin.js"></script>
 </head>
 <body>
+<div class="j3m-aura" aria-hidden="true"></div>
+<nav class="j3m-bar" aria-label="J3M 教學資源站">
+  <div class="j3m-in">
+    <a class="j3m-brand" href="../"><span class="j3m-mk">J3M</span><span>教學資源站</span></a>
+    <span class="j3m-crumbs"><span aria-hidden="true">/</span><a class="j3m-mid" href="../topic/line/">LINE AI 秘書</a><span class="j3m-sep2" aria-hidden="true">/</span><span class="j3m-here" aria-current="page">LINE AI 專案管理助理</span></span>
+    <span class="j3m-sp"></span>
+    <a class="j3m-book" href="../#invite">授課邀約</a>
+    <button class="j3m-iconbtn j3m-theme" type="button" aria-label="切換深色／淺色模式"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
+  </div>
+</nav>
+
 
 <header class="hero">
   <div class="wrap hero-grid">
@@ -2240,5 +2256,23 @@ function parseRemind(value) {
 })();
 </script>
 
+
+<footer class="j3m-foot">
+  <div class="j3m-in">
+    <b>J3M 教學資源站</b>
+    <a href="../topic/line/">← 回到「LINE AI 秘書」主題頁</a>
+    <a href="../">教學資源站首頁</a>
+    <a href="../aboutme/">關於 J3M</a>
+    <span class="j3m-sp" style="flex:1"></span>
+    <a class="j3m-book" href="mailto:trj3mmm@gmail.com?subject=%E6%8E%88%E8%AA%B2%E9%82%80%E7%B4%84">寫信邀課</a>
+  </div>
+</footer>
+<!-- 放在最後，確保蓋過教材頁原本的色票（有些頁面把樣式寫在 body 裡） -->
+<style id="j3m-tokens">
+:root{--surface:#F2EFE7;--panel:#ECE8DE;--card:#FFFFFF;--ink:#14171C;--body:#4A515C;--muted:#5C6675;--hairline:#DDD7CA;--gold:#8F6A08;--surface-section:#EDE9DF;--ink-strong:#14171C;--gold-soft:#F6EBC8;--code-bg:#ECE8DE;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--surface:#0A0C10;--panel:#181B22;--card:#14171E;--ink:#EEF0F4;--body:#B4BBC6;--muted:#8A93A2;--hairline:#262B35;--gold:#F5B800;--surface-section:#0F1217;--ink-strong:#EEF0F4;--gold-soft:#2A2210;--code-bg:#181B22;color-scheme:dark}}
+:root[data-theme="dark"]{--surface:#0A0C10;--panel:#181B22;--card:#14171E;--ink:#EEF0F4;--body:#B4BBC6;--muted:#8A93A2;--hairline:#262B35;--gold:#F5B800;--surface-section:#0F1217;--ink-strong:#EEF0F4;--gold-soft:#2A2210;--code-bg:#181B22;color-scheme:dark}
+:root[data-theme="light"]{--surface:#F2EFE7;--panel:#ECE8DE;--card:#FFFFFF;--ink:#14171C;--body:#4A515C;--muted:#5C6675;--hairline:#DDD7CA;--gold:#8F6A08;--surface-section:#EDE9DF;--ink-strong:#14171C;--gold-soft:#F6EBC8;--code-bg:#ECE8DE;color-scheme:light}
+</style>
 </body>
 </html>
