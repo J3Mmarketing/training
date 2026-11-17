@@ -157,8 +157,24 @@ main{padding-block:28px}
 .ph.sand{--sky1:#C9B79C;--sky2:#EFE7DA;--mt:#8C7A63;--fg:#5A4C3C}
 @media (prefers-reduced-motion:reduce){.card{transition:none}}
 </style>
+
+<!-- J3M 統一外觀層 -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../assets/j3m-skin.css">
+<script src="../assets/j3m-skin.js"></script>
 </head>
 <body>
+<div class="j3m-aura" aria-hidden="true"></div>
+<nav class="j3m-bar" aria-label="J3M 教學資源站">
+  <div class="j3m-in">
+    <a class="j3m-brand" href="../"><span class="j3m-mk">J3M</span><span>教學資源站</span></a>
+    <span class="j3m-crumbs"><span aria-hidden="true">/</span><a class="j3m-mid" href="../topic/slides/">AI 簡報術</a><span class="j3m-sep2" aria-hidden="true">/</span><span class="j3m-here" aria-current="page">簡報技法圖鑑</span></span>
+    <span class="j3m-sp"></span>
+    <a class="j3m-book" href="../#invite">授課邀約</a>
+    <button class="j3m-iconbtn j3m-theme" type="button" aria-label="切換深色／淺色模式"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
+  </div>
+</nav>
+
 <div class="wrap">
   <header class="top">
     <div>
@@ -952,5 +968,23 @@ render();
 fromHash();
 </script>
 
+
+<footer class="j3m-foot">
+  <div class="j3m-in">
+    <b>J3M 教學資源站</b>
+    <a href="../topic/slides/">← 回到「AI 簡報術」主題頁</a>
+    <a href="../">教學資源站首頁</a>
+    <a href="../aboutme/">關於 J3M</a>
+    <span class="j3m-sp" style="flex:1"></span>
+    <a class="j3m-book" href="mailto:trj3mmm@gmail.com?subject=%E6%8E%88%E8%AA%B2%E9%82%80%E7%B4%84">寫信邀課</a>
+  </div>
+</footer>
+<!-- 放在最後，確保蓋過教材頁原本的色票（有些頁面把樣式寫在 body 裡） -->
+<style id="j3m-tokens">
+:root{--bg:#F2EFE7;--surface:#FFFFFF;--ink:#14171C;--muted:#5C6675;--line:#DDD7CA;--chip:#E9E5DB;--accent:#F5B800;--accent-ink:#14171C;--accent-soft:#F6EBC8;--f-disp:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0A0C10;--surface:#14171E;--ink:#EEF0F4;--muted:#8A93A2;--line:#262B35;--chip:#1B1F28;--accent:#F5B800;--accent-ink:#14171C;--accent-soft:#2A2210;--f-disp:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0A0C10;--surface:#14171E;--ink:#EEF0F4;--muted:#8A93A2;--line:#262B35;--chip:#1B1F28;--accent:#F5B800;--accent-ink:#14171C;--accent-soft:#2A2210;--f-disp:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;color-scheme:dark}
+:root[data-theme="light"]{--bg:#F2EFE7;--surface:#FFFFFF;--ink:#14171C;--muted:#5C6675;--line:#DDD7CA;--chip:#E9E5DB;--accent:#F5B800;--accent-ink:#14171C;--accent-soft:#F6EBC8;--f-disp:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;color-scheme:light}
+</style>
 </body>
 </html>
