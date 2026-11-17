@@ -209,8 +209,15 @@ main > nav, main > .hero, main > section{max-width:860px}
 @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;scroll-behavior:auto !important}}
 </style>
+
+<!-- J3M 統一外觀層 -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../assets/j3m-skin.css">
+<script src="../assets/j3m-skin.js"></script>
 </head>
 <body>
+<div class="j3m-aura" aria-hidden="true"></div>
+
 
 <header class="top">
   <div class="wrap">
@@ -732,5 +739,23 @@ function writeLog(userId, message, keyword, reply) {
   });
 })();
 </script>
+
+<footer class="j3m-foot">
+  <div class="j3m-in">
+    <b>J3M 教學資源站</b>
+    <a href="../topic/line/">← 回到「LINE AI 秘書」主題頁</a>
+    <a href="../">教學資源站首頁</a>
+    <a href="../aboutme/">關於 J3M</a>
+    <span class="j3m-sp" style="flex:1"></span>
+    <a class="j3m-book" href="mailto:trj3mmm@gmail.com?subject=%E6%8E%88%E8%AA%B2%E9%82%80%E7%B4%84">寫信邀課</a>
+  </div>
+</footer>
+<!-- 放在最後，確保蓋過教材頁原本的色票（有些頁面把樣式寫在 body 裡） -->
+<style id="j3m-tokens">
+:root{--paper:#F2EFE7;--surface:#FFFFFF;--ink:#14171C;--muted:#5C6675;--line:#DDD7CA;--surface-2:#E9E5DB;--ink-2:#3C4452;--accent-text:#7A5800;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#0A0C10;--surface:#14171E;--ink:#EEF0F4;--muted:#8A93A2;--line:#262B35;--surface-2:#1B1F28;--ink-2:#C3C9D3;--accent-text:#F5B800;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#0A0C10;--surface:#14171E;--ink:#EEF0F4;--muted:#8A93A2;--line:#262B35;--surface-2:#1B1F28;--ink-2:#C3C9D3;--accent-text:#F5B800;color-scheme:dark}
+:root[data-theme="light"]{--paper:#F2EFE7;--surface:#FFFFFF;--ink:#14171C;--muted:#5C6675;--line:#DDD7CA;--surface-2:#E9E5DB;--ink-2:#3C4452;--accent-text:#7A5800;color-scheme:light}
+</style>
 </body>
 </html>
