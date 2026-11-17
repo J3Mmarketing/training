@@ -8,156 +8,41 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700;900&display=swap">
+<link rel="stylesheet" href="assets/j3m.css">
+<script src="assets/j3m.js"></script>
 <style>
-/*SHARED-CSS-START*/
-:root{
-  --paper:#F5F7FA;--surface:#FFFFFF;--surface-2:#EDF0F5;--ink:#14171C;--ink-2:#3C4452;--muted:#5C6675;--line:#D8DEE7;
-  --accent:#F5B800;--accent-text:#7A5800;
-  --lift:0 1px 2px rgba(20,23,28,.05),0 10px 28px rgba(20,23,28,.08);
-  --pad-l:max(20px,env(safe-area-inset-left));--pad-r:max(20px,env(safe-area-inset-right));
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --paper:#0E1116;--surface:#161A21;--surface-2:#1D222B;--ink:#E9ECF1;--ink-2:#C2C9D4;--muted:#8A94A3;--line:#2A313C;
-    --accent-text:#F5B800;--lift:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.45);
-  }
-}
-:root[data-theme="dark"]{
-  --paper:#0E1116;--surface:#161A21;--surface-2:#1D222B;--ink:#E9ECF1;--ink-2:#C2C9D4;--muted:#8A94A3;--line:#2A313C;
-  --accent-text:#F5B800;--lift:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.45);
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:'Noto Sans TC',system-ui,sans-serif;font-size:16px;line-height:1.7;-webkit-text-size-adjust:100%}
-a{color:inherit;text-decoration:none}
-:focus-visible{outline:2px solid var(--ink);outline-offset:2px;box-shadow:0 0 0 5px var(--accent)}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.mono{font-family:'JetBrains Mono',monospace}
-.wrap{max-width:1240px;margin:0 auto;padding-left:var(--pad-l);padding-right:var(--pad-r)}
-@media (min-width:900px){.wrap{padding-left:40px;padding-right:40px}}
+/* 最新上架 */
+.latest{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:20px}
+.feat{display:flex;flex-direction:column;justify-content:space-between;min-height:300px;padding:24px;border-radius:22px;color:#fff;overflow:hidden;isolation:isolate;border:1px solid rgba(255,255,255,.12);box-shadow:var(--lift)}
+.feat::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(160deg,rgba(255,255,255,.14),transparent 40%,rgba(0,0,0,.35))}
+.feat .head{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:500;opacity:.9}
+.feat .tag-new{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;background:var(--gold);color:#14171C;font-weight:700;font-size:12px}
+.feat .fig{font-family:var(--f-mono);font-weight:700;font-size:clamp(54px,6vw,84px);line-height:1;letter-spacing:-.03em;text-shadow:0 10px 30px rgba(0,0,0,.35)}
+.feat .fig small{display:block;font-family:var(--f-body);font-size:14px;font-weight:500;letter-spacing:0;opacity:.85;margin-top:6px}
+.feat b{display:block;font-size:20px;line-height:1.35;margin-top:14px}
+.feat .d{display:block;font-size:14px;opacity:.82;margin-top:4px}
+@media (max-width:900px){.latest{grid-template-columns:1fr}.feat{min-height:230px}}
 
-/* 導覽列 */
-.top{position:sticky;top:0;z-index:10;background:var(--paper);border-bottom:1px solid var(--line)}
-.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px}
-.brand{display:inline-flex;align-items:baseline;gap:10px;min-height:44px;padding-top:8px}
-.brand b{font-family:'JetBrains Mono',monospace;font-size:18px;letter-spacing:.02em;border-bottom:3px solid var(--accent)}
-.brand span{font-family:'Noto Serif TC',serif;font-weight:700;font-size:16px}
-.top nav{display:flex;align-items:center;gap:6px}
-.navlink{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;font-size:14px;font-weight:500;color:var(--ink-2);border-radius:8px}
-.navlink:hover{background:var(--surface-2);color:var(--ink)}
-.navlink[aria-current]{color:var(--ink);font-weight:700}
-.book{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:10px;background:#F5B800;color:#14171C;font-weight:700;font-size:14px;transition:transform .15s ease,box-shadow .15s ease}
-.book:hover{transform:translateY(-2px);box-shadow:var(--lift)}
-.book.lg{min-height:52px;padding:0 22px;border-radius:12px;font-size:16px}
-.btn-line{display:inline-flex;align-items:center;min-height:52px;padding:0 22px;border-radius:12px;border:1.5px solid var(--ink);background:var(--surface);font-weight:700;font-size:16px}
-.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}
-@media (max-width:900px){.hide-m{display:none}}
-
-/* Hero */
-.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center;padding-top:56px;padding-bottom:64px}
-.hero-text{display:flex;flex-direction:column;gap:22px}
-.kicker{margin:0;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:13px;letter-spacing:.04em;color:var(--muted)}
-h1{margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:clamp(44px,6.2vw,86px);line-height:1.08;letter-spacing:-.01em;white-space:nowrap}
-h1 i{font-style:normal;color:var(--accent)}
-.tagline{margin:0;font-family:'Noto Serif TC',serif;font-weight:700;font-size:22px;line-height:1.5}
-.lead{margin:0;max-width:34em;color:var(--ink-2)}
-.cta-row{display:flex;flex-wrap:wrap;gap:10px}
-.socs{display:flex;flex-wrap:wrap;gap:8px}
-.soc{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px 0 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-size:14px;font-weight:500;transition:transform .15s ease,border-color .15s ease}
-.soc:hover{transform:translateY(-2px);border-color:var(--ink)}
-.soc.round{padding:0;width:44px;justify-content:center}
-.soc svg,.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-@media (max-width:900px){.hero{grid-template-columns:minmax(0,1fr);gap:32px}}
-
-/* 區塊 */
-.band{background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.sec{padding-top:48px;padding-bottom:48px;display:flex;flex-direction:column;gap:24px;scroll-margin-top:60px}
-.sec-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px}
-h2{margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:30px;line-height:1.3}
-.sec-head p{margin:0;color:var(--muted);font-size:14px}
-.label{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:12px;letter-spacing:.08em;color:var(--muted)}
-.pill{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:26px;padding:0 8px;border-radius:999px;border:1px solid rgba(255,255,255,.22);color:#fff;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px}
-.card{padding:20px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
-
-/* 授課邀約 */
-.invite-band{background:#F5B800;color:#14171C;scroll-margin-top:60px}
-.invite{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:48px;align-items:center;padding-top:56px;padding-bottom:56px}
-.invite-text{display:flex;flex-direction:column;gap:16px}
-.invite-text p{margin:0}
-.invite h2{font-size:clamp(28px,4.4vw,48px);line-height:1.25}
-.btn-ink{display:inline-flex;align-items:center;gap:10px;min-height:56px;padding:0 24px;border-radius:12px;background:#14171C;color:#fff;font-weight:700;font-size:17px}
-.btn-ink-line{display:inline-flex;align-items:center;gap:8px;min-height:56px;padding:0 22px;border-radius:12px;border:1.5px solid #14171C;color:#14171C;font-weight:700;font-size:16px}
-.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.stat{padding:20px;border-radius:14px;background:rgba(20,23,28,.09);display:flex;flex-direction:column;gap:2px;font-size:14px}
-.stat b{font-family:'JetBrains Mono',monospace;font-size:40px;line-height:1.15}
-.stat b small{font-size:15px}
-@media (max-width:900px){.invite{grid-template-columns:minmax(0,1fr);gap:28px}}
-
-/* 頁尾 */
-footer .wrap{padding-top:28px;padding-bottom:max(32px,env(safe-area-inset-bottom));display:flex;flex-wrap:wrap;gap:16px 48px;justify-content:space-between}
-footer p{margin:0;flex:1 1 320px;max-width:46em;font-size:13px;line-height:1.8;color:var(--muted)}
-footer nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:14px}
-
-.rise{animation:rise .6s ease both}
-@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;scroll-behavior:auto !important}}
-/*SHARED-CSS-END*/
-
-/* 首頁專用 */
-.search{display:flex;flex-direction:column;gap:8px;max-width:520px}
-.search label{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
-.search input{flex:1 1 auto;min-width:0;height:44px;border:0;outline:0;background:transparent;color:var(--ink);font:400 15px 'Noto Sans TC',sans-serif}
-.results{display:flex;flex-direction:column;padding:6px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--lift)}
-.results[hidden]{display:none}
-.results p{margin:0;padding:10px 0;font-size:14px;color:var(--muted)}
-.row{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 8px;margin:0 -8px;border-radius:8px;font-size:14px;font-weight:700;line-height:1.4;transition:background .15s ease}
-a.row:hover{background:var(--surface-2)}
-.row .t{flex:1 1 auto;min-width:0}
-.row .t small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
-.row .arr{flex:0 0 auto;color:var(--accent-text)}
-.row .dot{flex:0 0 auto;width:9px;height:9px;border-radius:50%;border:1px solid rgba(128,128,128,.5)}
-.new{flex:0 0 auto;display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:999px;background:#F5B800;color:#14171C;font-size:11px;font-weight:700}
-
-.feats{display:flex;flex-direction:column;gap:12px;animation:float 7s ease-in-out infinite}
-.feats-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.feat{display:flex;flex-direction:column;justify-content:space-between;color:#fff;transition:transform .25s ease,box-shadow .25s ease}
-.feat:hover{transform:translateY(-4px);box-shadow:var(--lift)}
-.feat.big{gap:28px;min-height:250px;padding:22px 24px;border-radius:18px}
-.feat.sm{gap:18px;min-height:150px;padding:16px 18px;border-radius:16px}
-.feat .head{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;font-weight:700}
-.feat .head .mono{font-weight:500;font-size:13px}
-.feat .tag-new{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;background:#F5B800;color:#14171C}
-.feat.big .foot{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
-.feat.big .txt{display:flex;flex-direction:column;gap:6px;min-width:0;font-size:14px}
-.feat.big .txt b{font-family:'Noto Serif TC',serif;font-weight:900;font-size:28px;line-height:1.25}
-.feat.big .txt .topic{font-size:13px;font-weight:700}
-.feat.big .fig{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;line-height:1;font-size:13px;font-weight:700;gap:8px}
-.feat.big .fig b{font-family:'JetBrains Mono',monospace;font-size:56px}
-.feat.sm .foot{display:flex;flex-direction:column;gap:4px}
-.feat.sm .fig{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:26px;line-height:1}
-.feat.sm .fig small{font-family:'Noto Sans TC',sans-serif;font-size:12px}
-.feat.sm .foot b{font-family:'Noto Serif TC',serif;font-size:16px;line-height:1.35}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
-.tile{display:flex;flex-direction:column;gap:12px;animation:rise .5s ease both;transition:box-shadow .2s ease,border-color .2s ease}
-.tile:hover{box-shadow:var(--lift);border-color:var(--muted)}
+/* 主題卡 */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.tile{display:flex;flex-direction:column;gap:14px;padding:24px}
 .tile-head{display:flex;align-items:center;gap:10px}
-.tile-head .count{margin-left:auto}
-.tile h3{margin:0;font-family:'Noto Serif TC',serif;font-weight:700;font-size:22px;line-height:1.3}
-.tile>p{margin:0;font-size:14px;color:var(--ink-2)}
-.tile .block{display:flex;flex-direction:column;gap:6px;padding-top:12px;border-top:1px solid var(--line)}
-.tile .block.grow{flex-grow:1}
-.tile ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;font-size:14px}
-.tile ol li{display:flex;gap:8px}
-.tile ol li span:first-child{color:var(--accent-text)}
-.tile .items{gap:0}
-.tile-link{display:inline-flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 14px;border-radius:10px;background:var(--surface-2);font-weight:700;font-size:14px}
-@media (max-width:640px){
-  .tiles{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
-  .tile{flex:0 0 84%;scroll-snap-align:start}
-  .feats{animation:none}
-}
+.tile-head .label{color:var(--muted)}
+.tile-head .count{margin-left:auto;color:var(--gold-text)}
+.tile h3{margin:0;font-size:24px;font-weight:900;line-height:1.3}
+.tile > p{margin:0;color:var(--ink-2);font-size:15px}
+.tile ol{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.tile li{display:flex;gap:10px;font-size:14px;color:var(--ink-2)}
+.tile li span:first-child{color:var(--gold-text)}
+.block{border-top:1px solid var(--glass-line);padding-top:12px}
+.grow{flex:1}
+.items .row{display:flex;align-items:center;gap:10px;min-height:44px;padding:4px 10px;margin:4px -10px 0;border-radius:10px;font-weight:500;font-size:15px;transition:background .2s}
+.items .row:hover{background:var(--glass-line)}
+.items .t{flex:1;min-width:0}
+.items .new{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--gold);color:#14171C}
+.items .arr{color:var(--gold-text)}
+.tile-link{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 16px;border-radius:12px;background:var(--glass-line);font-weight:700;font-size:15px;transition:background .2s,color .2s}
+.tile-link:hover{background:var(--gold);color:#14171C}
 </style>
 </head>
 <body id="top">
@@ -172,77 +57,91 @@ a.row:hover{background:var(--surface-2)}
   <symbol id="i-theme" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></symbol>
 </svg>
 
+<canvas id="stage" aria-hidden="true"></canvas>
+<div class="aura" aria-hidden="true"></div>
+<div class="tip" id="tip" role="presentation"></div>
+
+<div class="page">
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="./"><b>J3M</b><span>教學資源站</span></a>
+    <a class="brand" href="./"><span class="mk">J3M</span><span>教學資源站</span></a>
     <nav aria-label="主要導覽">
+      <a class="navlink hide-m" href="#latest">最新上架</a>
       <a class="navlink hide-m" href="#topics">教學主題</a>
       <a class="navlink hide-m" href="aboutme/">關於 J3M</a>
       <a class="book" href="#invite">授課邀約</a>
-      <button class="iconbtn" id="themeBtn" type="button" aria-label="切換深色／淺色模式"><svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-theme"/></svg></button>
+      <button class="iconbtn" id="themeBtn" type="button" aria-label="切換深色／淺色模式"><svg class="ico" aria-hidden="true"><use href="#i-theme"/></svg></button>
     </nav>
   </div>
 </header>
 
 <main>
-  <div class="wrap hero">
-    <div class="hero-text rise">
-      <p class="kicker">J3M 數學行銷人 · Math · Marketing · Management</p>
-      <h1>教學資源站<i>．</i></h1>
-      <p class="tagline">不寫一行程式，也能讓 AI 把事做完。</p>
-      <p class="lead">J3M 的 AI 課程延伸教材：圖鑑、手冊、工具與示範，依主題整理。上過課的學員在這裡找教材；還沒上過的，歡迎邀請到你的單位開課。</p>
-      <div class="cta-row">
-        <a class="book lg" href="#invite">授課邀約 <span aria-hidden="true">→</span></a>
-        <a class="btn-line" href="#topics">看教學主題</a>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-text">
+        <p class="kicker"><i></i>J3M 數學行銷人<span class="hide-s"> · Math · Marketing · Management</span></p>
+        <h1>教學資源站<i>．</i></h1>
+        <p class="tagline">不寫一行程式，也能讓 <b>AI</b> 把事做完。</p>
+        <p class="lead">J3M 的 AI 課程延伸教材：圖鑑、手冊、工具與示範，依主題整理。上過課的學員在這裡找教材；還沒上過的，歡迎邀請到你的單位開課。</p>
+        <div class="cta-row">
+          <a class="book lg" href="#invite">授課邀約 <span aria-hidden="true">→</span></a>
+          <a class="ghost" href="#topics">看教學主題</a>
+        </div>
+        <div class="search">
+          <label>
+            <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+            <span class="sr">搜尋教材</span>
+            <input id="q" type="search" placeholder="學員找教材：輸入名稱，例如 字幕、圖鑑、LINE" autocomplete="off">
+          </label>
+          <div class="results" id="results" aria-live="polite" hidden></div>
+        </div>
+        <nav class="socs" aria-label="追蹤與聯絡">
+          <a class="soc" href="https://www.youtube.com/@J3M_AI" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-yt"/></svg>YouTube</a>
+          <a class="soc" href="https://www.threads.com/@j3m_ai" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-th"/></svg>Threads</a>
+          <a class="soc" href="https://www.facebook.com/trj3m" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-fb"/></svg>Facebook</a>
+          <a class="soc" href="https://www.instagram.com/j3m_ai/" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-ig"/></svg>Instagram</a>
+          <a class="soc" href="mailto:trj3mmm@gmail.com"><svg aria-hidden="true"><use href="#i-mail"/></svg>Email</a>
+        </nav>
       </div>
-      <div class="search">
-        <label>
-          <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
-          <span class="sr">搜尋教材</span>
-          <input id="q" type="search" placeholder="學員找教材：輸入名稱，例如 字幕、圖鑑、LINE" autocomplete="off">
-        </label>
-        <div class="results" id="results" aria-live="polite" hidden></div>
-      </div>
-      <nav class="socs" aria-label="追蹤與聯絡">
-        <a class="soc" href="https://www.youtube.com/@J3M_AI" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-yt"/></svg>YouTube</a>
-        <a class="soc" href="https://www.threads.com/@j3m_ai" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-th"/></svg>Threads</a>
-        <a class="soc" href="https://www.facebook.com/trj3m" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-fb"/></svg>Facebook</a>
-        <a class="soc" href="https://www.instagram.com/j3m_ai/" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-ig"/></svg>Instagram</a>
-        <a class="soc" href="mailto:trj3mmm@gmail.com"><svg aria-hidden="true"><use href="#i-mail"/></svg>Email</a>
-      </nav>
     </div>
-    <div class="feats" id="feats"></div>
-  </div>
-
-  <section class="band" id="topics">
-    <div class="wrap sec">
-      <div class="sec-head">
-        <h2><span id="topicTotal">7</span> 個教學主題</h2>
-        <p>每個主題都能開成一堂課。點教材直接開啟，完整說明在主題頁。</p>
-      </div>
-      <div class="tiles" id="tiles"></div>
-      <noscript><p>請開啟瀏覽器的 JavaScript 以顯示教材清單。</p></noscript>
-    </div>
+    <div class="hint" aria-hidden="true"><b></b>滑過抽出 · 拖曳翻卡 · 點擊進入</div>
   </section>
 
-  <section class="invite-band" id="invite">
-    <div class="wrap invite">
-      <div class="invite-text">
-        <p class="mono" style="font-weight:700;font-size:13px;letter-spacing:.08em">WORKSHOP · 授課邀約</p>
+  <section class="wrap sec" id="latest">
+    <div class="sec-head reveal">
+      <div><span class="label">Latest · 最新上架</span><h2>最近上架的教材</h2></div>
+      <p>新教材會先出現在這裡，也收在下方對應的主題裡。</p>
+    </div>
+    <div class="latest" id="feats"></div>
+  </section>
+
+  <section class="wrap sec" id="topics">
+    <div class="sec-head reveal">
+      <div><span class="label">Topics · 教學主題</span><h2><span id="topicTotal">7</span> 個教學主題</h2></div>
+      <p>每個主題都能開成一堂課。滑過卡片，背景對應的 3D 主題卡會抽出來；點教材直接開啟，完整說明在主題頁。</p>
+    </div>
+    <div class="tiles" id="tiles"></div>
+    <noscript><p>請開啟瀏覽器的 JavaScript 以顯示教材清單。</p></noscript>
+  </section>
+
+  <section class="wrap sec" id="invite">
+    <div class="invite glass reveal">
+      <div>
+        <span class="label">Workshop · 授課邀約</span>
         <h2>把這些教材，帶到你的單位上一堂課。</h2>
         <p>企業內訓、公部門研習、大專院校講座。上面每個主題都有完整教材，學員課後可以回到這個站繼續練習。</p>
-        <p style="font-size:14px">教過：新北市政府警察局、臺中市政府、勞動力發展署，中興、逢甲、弘光等大學，以及鄉林集團、大雅廚具等企業內訓。</p>
-        <div class="cta-row" style="padding-top:6px">
-          <a class="btn-ink" href="mailto:trj3mmm@gmail.com?subject=%E6%8E%88%E8%AA%B2%E9%82%80%E7%B4%84"><svg class="ico" aria-hidden="true"><use href="#i-mail"/></svg>寫信邀課</a>
-          <a class="btn-ink-line" href="aboutme/">看講師經歷 <span aria-hidden="true">→</span></a>
+        <p class="who">教過：新北市政府警察局、臺中市政府、勞動力發展署，中興、逢甲、弘光等大學，以及鄉林集團、大雅廚具等企業內訓。</p>
+        <div class="cta-row">
+          <a class="book lg" href="mailto:trj3mmm@gmail.com?subject=%E6%8E%88%E8%AA%B2%E9%82%80%E7%B4%84"><svg class="ico" aria-hidden="true"><use href="#i-mail"/></svg>寫信邀課</a>
+          <a class="ghost" href="aboutme/">看講師經歷 <span aria-hidden="true">→</span></a>
         </div>
-        <p class="mono" style="font-size:14px">trj3mmm@gmail.com</p>
+        <p class="mono" style="font-size:14px;margin-top:16px">trj3mmm@gmail.com</p>
       </div>
       <div class="stats">
-        <div class="stat"><b>500+<small> 小時</small></b>授課實戰</div>
-        <div class="stat"><b>95%</b>學員滿意度</div>
-        <div class="stat"><b>20+</b>政府與企業單位</div>
-        <div class="stat"><b>15<small> 年</small></b>品牌營運與專案管理</div>
+        <div class="stat tilt"><b class="pop"><span data-count="500">500</span>+<small> 小時</small></b>授課實戰</div>
+        <div class="stat tilt"><b class="pop"><span data-count="95">95</span>%</b>學員滿意度</div>
+        <div class="stat tilt"><b class="pop"><span data-count="20">20</span>+</b>政府與企業單位</div>
+        <div class="stat tilt"><b class="pop"><span data-count="15">15</span><small> 年</small></b>品牌營運與專案管理</div>
       </div>
     </div>
   </section>
@@ -262,24 +161,10 @@ a.row:hover{background:var(--surface-2)}
     </nav>
   </div>
 </footer>
+</div>
 
 <script>
-/*THEME-START*/
-(function () {
-  var root = document.documentElement;
-  var saved = null;
-  try { saved = localStorage.getItem('j3m-theme'); } catch (e) {}
-  if (saved === 'dark' || saved === 'light') root.setAttribute('data-theme', saved);
-  var btn = document.getElementById('themeBtn');
-  if (btn) btn.addEventListener('click', function () {
-    var now = root.getAttribute('data-theme') ||
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    var next = now === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    try { localStorage.setItem('j3m-theme', next); } catch (e) {}
-  });
-})();
-/*THEME-END*/
+
 
 (function () {
   /* ====== 教材資料：新增教材只要改這裡 ======
@@ -344,6 +229,8 @@ a.row:hover{background:var(--surface-2)}
   }
   var topicById = {};
   TOPICS.forEach(function (t) { topicById[t.id] = t; });
+  TOPICS.forEach(function (t) { t.count = ITEMS.filter(function (it) { return it.topic === t.id; }).length; });
+  window.J3M = { TOPICS: TOPICS, ITEMS: ITEMS };
 
   var byDate = ITEMS.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
   var now = new Date();
@@ -357,31 +244,21 @@ a.row:hover{background:var(--surface-2)}
   function arrow(it) { return it.ext ? '↗' : '→'; }
   function coverStyle(t) { return 'background-color:' + t.cover + ';background-image:' + t.pattern + ';background-size:' + t.psize; }
 
-  /* Hero 右側：最新三筆 */
-  var latest = byDate.slice(0, 3);
-  var featsHtml = '';
-  if (latest[0]) {
-    var a = latest[0], ta = topicById[a.topic];
-    featsHtml += '<a class="feat big" ' + linkAttrs(a) + ' style="' + coverStyle(ta) + '">' +
-      '<span class="head"><span class="tag-new">最新上架</span><span class="mono">' + ta.no + '-' + a.no + '</span></span>' +
-      '<span class="foot"><span class="txt"><span class="topic">' + esc(ta.name) + '</span><b>' + esc(a.title) + ' ' + arrow(a) + '</b><span>' + esc(a.desc) + '</span></span>' +
-      '<span class="fig"><b>' + esc(a.fig) + '</b>' + esc(a.unit) + '</span></span></a>';
-  }
-  if (latest.length > 1) {
-    featsHtml += '<div class="feats-2">' + latest.slice(1).map(function (it) {
-      var t = topicById[it.topic];
-      return '<a class="feat sm" ' + linkAttrs(it) + ' style="' + coverStyle(t) + '">' +
-        '<span class="head"><span>' + esc(t.name) + '</span><span class="mono">' + t.no + '-' + it.no + '</span></span>' +
-        '<span class="foot"><span class="fig">' + esc(it.fig) + ' <small>' + esc(it.unit) + '</small></span><b>' + esc(it.title) + ' ' + arrow(it) + '</b></span></a>';
-    }).join('') + '</div>';
-  }
-  document.getElementById('feats').innerHTML = featsHtml;
+  /* 最新上架：三張 3D 傾斜卡 */
+  document.getElementById('feats').innerHTML = byDate.slice(0, 3).map(function (it, i) {
+    var t = topicById[it.topic];
+    return '<a class="feat tilt reveal" data-tilt="8" ' + linkAttrs(it) + ' style="' + coverStyle(t) + ';transition-delay:' + (i * 90) + 'ms">' +
+      '<span class="head">' + (i === 0 ? '<span class="tag-new">最新上架</span>' : '<span>' + esc(t.name) + '</span>') +
+      '<span class="mono">' + t.no + '-' + it.no + '</span></span>' +
+      '<span class="pop"><span class="fig">' + esc(it.fig) + '<small>' + esc(it.unit) + '</small></span>' +
+      '<b>' + esc(it.title) + ' ' + arrow(it) + '</b><span class="d">' + esc(it.desc) + '</span></span></a>';
+  }).join('');
 
   /* 主題卡 */
   document.getElementById('topicTotal').textContent = TOPICS.length;
   document.getElementById('tiles').innerHTML = TOPICS.map(function (t, i) {
     var items = ITEMS.filter(function (it) { return it.topic === t.id; });
-    return '<article class="card tile" style="animation-delay:' + (i * 50) + 'ms">' +
+    return '<article class="glass tile tilt reveal" data-tilt="4" data-stack="' + i + '" style="transition-delay:' + (i % 3 * 80) + 'ms">' +
       '<div class="tile-head"><span class="pill" style="background:' + t.cover + '">' + t.no + '</span>' +
       '<span class="label">' + esc(t.en) + '</span><span class="label count">' + items.length + ' 份</span></div>' +
       '<h3>' + esc(t.name) + '</h3><p>' + esc(t.intro) + '</p>' +
@@ -396,6 +273,8 @@ a.row:hover{background:var(--surface-2)}
       '<a class="tile-link" href="topic/' + t.slug + '/"><span>進入主題頁</span><span aria-hidden="true">→</span></a>' +
       '</article>';
   }).join('');
+
+  window.j3mInit && window.j3mInit();
 
   /* 搜尋 */
   var q = document.getElementById('q'), box = document.getElementById('results');
@@ -414,6 +293,17 @@ a.row:hover{background:var(--surface-2)}
     box.hidden = false;
   });
 })();
+</script>
+
+<!-- ====== 3D 場景：七個主題畫卡斜向層疊，滑過會抽出 ====== -->
+<script type="module">
+import { mountStack } from './assets/j3m-stack.js';
+const { TOPICS } = window.J3M;
+mountStack(TOPICS.map((t, i) => ({
+  kicker: t.no + ' / ' + t.en, title: t.name, desc: t.intro, foot: t.count + ' 份教材　進入主題 →',
+  color: t.cover, motif: i, mark: t.no, href: 'topic/' + t.slug + '/',
+  tip: { title: t.no + '｜' + t.name, body: t.intro, go: t.count + ' 份教材 · 點擊進入主題頁 →' }
+})));
 </script>
 </body>
 </html>
