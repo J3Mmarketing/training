@@ -1,0 +1,45 @@
+/* J3M 教材頁外觀層：給既有教材頁（圖鑑、手冊、講義、工具）套上教學資源站的統一外觀。
+   只用 .j3m- 開頭的類別，不碰教材頁自己的版面；配色由每頁的 #j3m-tokens 把原本的色票換成黑金色票。 */
+:root{--j3m-bg:#0A0C10;--j3m-glass:rgba(16,19,25,.82);--j3m-line:rgba(255,255,255,.09);--j3m-ink:#EEF0F4;--j3m-ink2:#C3C9D3;--j3m-muted:#8A93A2;--j3m-gold:#F5B800;--j3m-gold-text:#F5B800}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--j3m-bg:#F2EFE7;--j3m-glass:rgba(255,255,255,.8);--j3m-line:rgba(20,23,28,.1);--j3m-ink:#14171C;--j3m-ink2:#3C4452;--j3m-muted:#5C6675;--j3m-gold-text:#7A5800}}
+:root[data-theme="light"]{--j3m-bg:#F2EFE7;--j3m-glass:rgba(255,255,255,.8);--j3m-line:rgba(20,23,28,.1);--j3m-ink:#14171C;--j3m-ink2:#3C4452;--j3m-muted:#5C6675;--j3m-gold-text:#7A5800}
+:root.j3m-dark-only{--j3m-bg:#0A0C10;--j3m-glass:rgba(16,19,25,.82);--j3m-line:rgba(255,255,255,.09);--j3m-ink:#EEF0F4;--j3m-ink2:#C3C9D3;--j3m-muted:#8A93A2;--j3m-gold-text:#F5B800}
+
+body{background-color:var(--j3m-bg)}
+.j3m-aura{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(55vw 55vw at 85% -10%,rgba(245,184,0,.10),transparent 60%),radial-gradient(45vw 45vw at -5% 105%,rgba(91,75,138,.10),transparent 60%)}
+
+/* 頂部：回到教學資源站的導覽條 */
+.j3m-bar{position:relative;z-index:50;font-family:"Noto Sans TC",system-ui,sans-serif;font-size:14px;line-height:1.4;color:var(--j3m-ink);
+  background:var(--j3m-glass);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid var(--j3m-line)}
+.j3m-bar *{box-sizing:border-box}
+.j3m-bar .j3m-in{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:10px;min-height:56px;
+  padding:env(safe-area-inset-top,0px) max(20px,env(safe-area-inset-right)) 0 max(20px,env(safe-area-inset-left))}
+.j3m-bar a{color:inherit;text-decoration:none}
+.j3m-brand{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-weight:700;white-space:nowrap}
+.j3m-mk{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;font-weight:700;color:#14171C;
+  background:linear-gradient(135deg,#FFD45C,#F5B800 55%,#B8860B);box-shadow:0 6px 16px -6px rgba(245,184,0,.6)}
+.j3m-crumbs{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;color:var(--j3m-muted)}
+.j3m-crumbs a,.j3m-crumbs span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.j3m-crumbs a{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;color:var(--j3m-ink2)}
+.j3m-crumbs a:hover{color:var(--j3m-gold-text)}
+.j3m-crumbs .j3m-here{color:var(--j3m-ink);font-weight:700}
+.j3m-sp{flex:1}
+.j3m-book{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:10px;font-weight:700;font-size:13px;color:#14171C!important;white-space:nowrap;
+  background:linear-gradient(135deg,#FFD45C,#F5B800 60%);box-shadow:0 8px 20px -10px rgba(245,184,0,.7)}
+.j3m-iconbtn{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:10px;border:1px solid var(--j3m-line);background:transparent;color:var(--j3m-ink);cursor:pointer;padding:0}
+.j3m-iconbtn:hover{border-color:var(--j3m-gold)}
+.j3m-iconbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
+.j3m-dark-only .j3m-iconbtn{display:none}
+@media (max-width:720px){.j3m-crumbs .j3m-sep2,.j3m-crumbs .j3m-here{display:none}.j3m-brand span:last-child{display:none}}
+
+/* 底部：回主題頁與邀課 */
+.j3m-foot{position:relative;z-index:1;margin-top:48px;font-family:"Noto Sans TC",system-ui,sans-serif;font-size:14px;color:var(--j3m-muted);
+  background:var(--j3m-glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--j3m-line)}
+.j3m-foot .j3m-in{max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;min-height:64px;
+  padding:16px max(20px,env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left))}
+.j3m-foot a{color:var(--j3m-ink2);text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
+.j3m-foot a:hover{color:var(--j3m-gold-text)}
+.j3m-foot .j3m-book{color:#14171C!important}
+.j3m-foot b{color:var(--j3m-ink)}
+:focus-visible{outline-color:#F5B800}
