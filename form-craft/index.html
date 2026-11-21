@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="40 種表單元件，每一種都能直接試用，附使用時機、實作要點、無障礙重點、程式碼骨架與 AI 提示詞。">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>表單元件圖鑑｜J3M 教學資源站</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout：型錄式目錄。標頭與使用步驟 → 篩選列 → 卡片網格；卡片上方是可以直接操作的元件示範 */
+:root{
+  --bg:#EEF0F3; --surface:#FFFFFF; --ink:#14171C; --muted:#5D6674; --line:#D6DCE4; --chip:#E3E7ED;
+  --accent:#F5B800; --accent-ink:#14171C; --accent-text:#8A6400; --overlay:rgba(14,18,24,.6);
+  --f-disp:"Noto Serif TC","Songti TC",serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1216; --surface:#171B21; --ink:#E8EBF0; --muted:#98A2AF; --line:#2A313B; --chip:#222831;
+    --accent:#F5B800; --accent-ink:#14171C; --accent-text:#F5C933; --overlay:rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1216; --surface:#171B21; --ink:#E8EBF0; --muted:#98A2AF; --line:#2A313B; --chip:#222831;
+  --accent:#F5B800; --accent-ink:#14171C; --accent-text:#F5C933; --overlay:rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+.wrap{max-width:1280px;margin:0 auto}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header.top{padding-block:48px 24px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:40px;align-items:end}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.eyebrow a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line)}
+h1{font-family:var(--f-disp);font-weight:900;font-size:clamp(36px,6vw,64px);line-height:1.08;margin:10px 0 14px;text-wrap:balance}
+h1 .hl{background:linear-gradient(transparent 62%,var(--accent) 62%,var(--accent) 92%,transparent 92%);padding-inline:2px}
+.lede{color:var(--muted);max-width:36em;margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;font-size:13px;color:var(--muted)}
+.stats b{display:block;font-family:var(--f-mono);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:baseline}
+.steps b{font-size:18px;color:var(--accent-text);font-weight:500}
+.setup{margin-top:18px;display:grid;grid-template-columns:minmax(0,1fr);gap:8px 10px;align-items:end}
+.setup label{font-size:13px;color:var(--muted)}
+.field{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;font-size:15px}
+.field::placeholder{color:var(--muted);opacity:.8}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface);justify-self:start}
+.seg button{border:0;background:transparent;padding:9px 12px;font-size:13px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.bar{background:var(--bg);padding-block:14px;border-bottom:1px solid var(--line);border-top:1px solid var(--line);display:grid;gap:10px;z-index:5;margin-top:8px}
+@media (min-width:860px){.bar{position:sticky;top:env(safe-area-inset-top,0px)}}
+.bar-row{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.bar-row .lbl{font-size:12px;color:var(--muted);min-width:4.5em}
+.search{flex:1 1 260px;max-width:440px}
+.count{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+.chip{border:1px solid transparent;background:var(--chip);border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer;line-height:1.5;display:inline-flex;gap:6px;align-items:center}
+.chip:hover{border-color:var(--line)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chip small{font-family:var(--f-mono);font-size:11px;opacity:.65}
+main{padding-block:26px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:22px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-width:0;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 28px -16px rgba(0,0,0,.35)}
+.card.is-picked{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.meta{padding:14px 16px 16px;display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.row1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.no{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.card h3{font-family:var(--f-disp);font-weight:900;font-size:19px;line-height:1.3;margin:2px 0 0}
+.card h3 button{all:unset;cursor:pointer}
+.card h3 button:hover{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:4px}
+.card h3 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.code{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin:0;overflow-wrap:anywhere}
+.desc{margin:4px 0 0;font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.tag{font-size:11px;border:1px solid var(--line);color:var(--muted);border-radius:4px;padding:0 6px}
+.tag.src{background:var(--chip);border-color:transparent;color:var(--ink)}
+.acts{margin-top:auto;padding-top:10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.acts .r{display:flex;gap:6px}
+.pick{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer}
+.pick input{accent-color:var(--accent-text);width:16px;height:16px}
+.btn{border:1px solid var(--line);background:transparent;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.btn.primary:hover{filter:brightness(1.06)}
+.empty{padding:60px 20px;text-align:center;color:var(--muted)}
+/* Detail */
+.overlay{position:fixed;inset:0;background:var(--overlay);z-index:20;display:grid;place-items:center;
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.panel{background:var(--surface);border-radius:14px;width:min(1120px,100%);max-height:100%;overflow:auto;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+.panel .stage{background:var(--chip);padding:26px;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.nav{display:flex;justify-content:space-between;gap:8px}
+.panel .info{padding:26px;display:flex;flex-direction:column;gap:13px;min-width:0}
+.panel h2{font-family:var(--f-disp);font-weight:900;font-size:28px;line-height:1.25;margin:0}
+.panel h4{font-size:12px;letter-spacing:.12em;color:var(--muted);margin:0 0 4px;font-weight:500}
+.panel p{margin:0}
+.rule{border-left:3px solid var(--accent);padding-left:10px;color:var(--muted);font-size:14px}
+pre.cmd{font-family:var(--f-mono);font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.prompt{font-family:var(--f-body);font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;white-space:pre-wrap;margin:0;max-height:220px;overflow:auto;line-height:1.6}
+.x{margin-left:auto;border:0;background:var(--chip);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1}
+.src-info{font-size:13px;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two p{font-size:14px}
+@media (max-width:860px){
+  .panel{grid-template-columns:minmax(0,1fr)}
+  .panel .stage,.panel .info{padding:18px}
+  header.top{grid-template-columns:minmax(0,1fr);gap:24px;padding-block:32px 18px}
+  .two{grid-template-columns:1fr}
+}
+.tray{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--ink);color:var(--bg);
+  padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.tray-in{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tray .names{flex:1 1 240px;font-size:13px;opacity:.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tray .btn{border-color:rgba(127,127,127,.5);color:var(--bg)}
+.tray .btn.primary{color:var(--accent-ink)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px}
+.fb textarea{width:100%;min-height:220px;font-size:13px}
+
+/* ================= 元件示範舞台 =================
+   示範的是做出來的成品，固定使用淺色產品介面色票，不隨網站深淺色反轉 */
+.fs{--d-bg:#F4F2EC;--d-card:#FFFFFF;--d-ink:#14171C;--d-mut:#6B7280;--d-line:#D5D9E0;--d-soft:#F1F3F6;
+  --d-acc:#F5B800;--d-acc2:#7A5800;--d-err:#C2410C;--d-ok:#1F8A4C;
+  position:relative;height:270px;overflow:hidden;display:grid;place-items:center;padding:14px;
+  background:radial-gradient(circle at 15% 10%,#FFF6D6,transparent 45%),linear-gradient(160deg,#F7F5EF,#ECE8DE);
+  color:var(--d-ink);font-family:var(--f-body);font-size:13px;line-height:1.45;color-scheme:light;border-bottom:1px solid var(--line)}
+.fs *{box-sizing:border-box}
+.fs .fc{width:100%;max-width:330px;background:var(--d-card);border:1px solid var(--d-line);border-radius:12px;padding:14px;box-shadow:0 12px 28px -18px rgba(20,23,28,.45);display:grid;gap:8px}
+.panel .fs{height:auto;min-height:380px;font-size:15px;border:0;border-radius:12px}
+.panel .fs .fc{max-width:420px;padding:20px;gap:10px}
+.fs label.l,.fs .l{font-weight:700;font-size:12.5px;display:block}
+.panel .fs label.l,.panel .fs .l{font-size:14px}
+.fs .l .req{color:var(--d-err);margin-left:2px}
+.fs .hint{font-size:11.5px;color:var(--d-mut)}
+.panel .fs .hint{font-size:13px}
+.fs .err{color:var(--d-err);font-size:11.5px}
+.fs .ok{color:var(--d-ok);font-size:11.5px}
+.fs .in,.fs select.in,.fs textarea.in{width:100%;min-height:36px;border:1px solid var(--d-line);border-radius:8px;background:#fff;padding:7px 10px;font-size:inherit;color:var(--d-ink);outline:0;transition:border-color .15s,box-shadow .15s}
+.fs .in:focus,.fs .in:focus-within{border-color:var(--d-acc);box-shadow:0 0 0 3px rgba(245,184,0,.28)}
+.fs .in.bad{border-color:var(--d-err);box-shadow:0 0 0 3px rgba(194,65,12,.15)}
+.fs .in.good{border-color:var(--d-ok)}
+.fs .in::placeholder{color:#9AA1AC}
+.fs textarea.in{resize:vertical;min-height:64px;line-height:1.5}
+.fs .row{display:flex;gap:6px;align-items:center}
+.fs .row > .in{flex:1;min-width:0}
+.fs .b{border:1px solid var(--d-line);background:#fff;border-radius:8px;min-height:34px;padding:0 12px;cursor:pointer;font-size:inherit;color:var(--d-ink);white-space:nowrap}
+.fs .b:hover{border-color:var(--d-ink)}
+.fs .b.p{background:var(--d-ink);border-color:var(--d-ink);color:#fff;font-weight:700}
+.fs .b.g{background:var(--d-acc);border-color:var(--d-acc);color:#14171C;font-weight:700}
+.fs .b:disabled{opacity:.45;cursor:not-allowed}
+.fs .wrapin{position:relative;display:flex;align-items:center;gap:6px;padding:0 8px}
+.fs .wrapin input{border:0;outline:0;flex:1;min-width:0;background:transparent;min-height:34px;font-size:inherit;color:var(--d-ink)}
+.fs .wrapin .ic{width:16px;height:16px;flex:none;fill:none;stroke:var(--d-mut);stroke-width:2;stroke-linecap:round}
+.fs .aff{color:var(--d-mut);font-size:12px;white-space:nowrap}
+.fs .iconb{border:0;background:transparent;cursor:pointer;color:var(--d-mut);padding:4px;border-radius:6px;font-size:12px}
+.fs .iconb:hover{color:var(--d-ink);background:var(--d-soft)}
+.fs .meter{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.fs .meter i{height:5px;border-radius:3px;background:var(--d-line)}
+.fs .opt{display:flex;align-items:center;gap:8px;min-height:28px;cursor:pointer}
+.fs .opt input{width:17px;height:17px;accent-color:#14171C;margin:0}
+.fs .grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.fs .list{border:1px solid var(--d-line);border-radius:8px;background:#fff;max-height:120px;overflow:auto;margin:0;padding:4px;list-style:none}
+.fs .list li{padding:6px 8px;border-radius:6px;cursor:pointer}
+.fs .list li[aria-selected="true"],.fs .list li:hover{background:#FFF4CC}
+.fs mark{background:#FFE58A;color:inherit;padding:0 1px;border-radius:2px}
+.fs .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center;min-height:36px;padding:4px 6px;cursor:text}
+.fs .tg{display:inline-flex;align-items:center;gap:4px;background:#FFF1BF;border:1px solid #F2D16B;border-radius:999px;padding:1px 4px 1px 9px;font-size:12px}
+.fs .tg button{border:0;background:transparent;cursor:pointer;width:18px;height:18px;border-radius:50%;line-height:1;color:var(--d-mut)}
+.fs .tg button:hover{background:#F2D16B;color:var(--d-ink)}
+.fs .chips input{border:0;outline:0;flex:1;min-width:70px;min-height:26px;font-size:inherit;background:transparent}
+.fs .flt{position:relative}
+.fs .flt input{width:100%;min-height:46px;padding:18px 10px 4px}
+.fs .flt span{position:absolute;left:11px;top:13px;color:var(--d-mut);pointer-events:none;transition:all .15s}
+.fs .flt input:focus + span,.fs .flt input:not(:placeholder-shown) + span{top:5px;font-size:10.5px;color:var(--d-acc2);font-weight:700}
+.fs .sw{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:34px}
+.fs .sw button{width:44px;height:26px;border-radius:999px;border:0;background:#C9CED6;position:relative;cursor:pointer;transition:background .2s;flex:none}
+.fs .sw button::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+.fs .sw button[aria-checked="true"]{background:#14171C}
+.fs .sw button[aria-checked="true"]::after{transform:translateX(18px);background:var(--d-acc)}
+.fs .segc{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--d-soft);border-radius:9px;padding:3px;gap:3px}
+.fs .segc button{border:0;background:transparent;border-radius:7px;min-height:30px;cursor:pointer;font-size:inherit;color:var(--d-mut)}
+.fs .segc button[aria-pressed="true"]{background:#fff;color:var(--d-ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.fs .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.fs .cards label{border:1.5px solid var(--d-line);border-radius:10px;padding:8px;cursor:pointer;display:grid;gap:2px;position:relative}
+.fs .cards label:has(:checked){border-color:var(--d-acc);background:#FFFAEA;box-shadow:0 0 0 2px rgba(245,184,0,.3)}
+.fs .cards input{position:absolute;opacity:0;pointer-events:none}
+.fs .cards label:has(:focus-visible){outline:2px solid var(--d-ink);outline-offset:2px}
+.fs .cards b{font-size:13px}
+.fs .cards small{color:var(--d-mut);font-size:11px}
+.fs .pop{position:relative}
+.fs .pop .panelx{position:absolute;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--d-line);border-radius:8px;padding:6px;z-index:3;box-shadow:0 10px 24px -12px rgba(0,0,0,.35)}
+.fs .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:11.5px}
+.panel .fs .cal{font-size:13px;gap:4px}
+.fs .cal .dw{color:var(--d-mut);font-size:10.5px;padding:2px 0}
+.fs .cal button{border:0;background:transparent;border-radius:6px;min-height:24px;cursor:pointer;font-size:inherit;color:var(--d-ink)}
+.panel .fs .cal button{min-height:32px}
+.fs .cal button:hover{background:var(--d-soft)}
+.fs .cal button.today{box-shadow:inset 0 0 0 1px var(--d-acc)}
+.fs .cal button[aria-pressed="true"]{background:#14171C;color:#fff;font-weight:700}
+.fs .cal button:disabled{color:#C3C8D0;cursor:not-allowed;background:transparent}
+.fs .calh{display:flex;align-items:center;justify-content:space-between;font-weight:700}
+.fs .slots{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.fs .slots button{border:1px solid var(--d-line);background:#fff;border-radius:7px;min-height:30px;cursor:pointer;font-family:var(--f-mono);font-size:12px}
+.fs .slots button[aria-pressed="true"]{background:#14171C;color:#fff;border-color:#14171C}
+.fs .slots button:disabled{text-decoration:line-through;color:#B9BFC8;cursor:not-allowed}
+.fs .step{display:grid;grid-template-columns:38px 1fr 38px;border:1px solid var(--d-line);border-radius:8px;overflow:hidden;max-width:170px}
+.fs .step button{border:0;background:var(--d-soft);cursor:pointer;font-size:18px;color:var(--d-ink)}
+.fs .step button:disabled{opacity:.35;cursor:not-allowed}
+.fs .step input{border:0;text-align:center;min-height:36px;font-family:var(--f-mono);font-size:inherit;outline:0;width:100%;-moz-appearance:textfield}
+.fs .step input::-webkit-inner-spin-button{display:none}
+.fs input[type=range]{width:100%;accent-color:#14171C;margin:0}
+.fs .rng{position:relative;padding-top:26px}
+.fs .bub{position:absolute;top:0;transform:translateX(-50%);background:#14171C;color:#fff;font-family:var(--f-mono);font-size:11px;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.fs .dual{position:relative;height:30px}
+.fs .dual .tr{position:absolute;left:0;right:0;top:13px;height:4px;border-radius:2px;background:var(--d-line)}
+.fs .dual .fl{position:absolute;top:13px;height:4px;border-radius:2px;background:var(--d-acc)}
+.fs .dual input{position:absolute;left:0;right:0;top:4px;pointer-events:none;background:transparent;-webkit-appearance:none;appearance:none;height:22px}
+.fs .dual input::-webkit-slider-thumb{pointer-events:auto;-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#14171C;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);cursor:pointer}
+.fs .dual input::-moz-range-thumb{pointer-events:auto;width:16px;height:16px;border-radius:50%;background:#14171C;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);cursor:pointer}
+.fs .dual input::-webkit-slider-runnable-track{background:transparent}
+.fs .dual input::-moz-range-track{background:transparent}
+.fs .stars{display:flex;gap:2px}
+.fs .stars button{border:0;background:transparent;cursor:pointer;font-size:26px;line-height:1;color:#D5D9E0;padding:0 2px}
+.panel .fs .stars button{font-size:34px}
+.fs .stars button.on{color:var(--d-acc)}
+.fs .nps{display:grid;grid-template-columns:repeat(11,1fr);gap:3px}
+.fs .nps button{border:1px solid var(--d-line);background:#fff;border-radius:6px;min-height:30px;cursor:pointer;font-family:var(--f-mono);font-size:11.5px;padding:0}
+.fs .nps button[aria-pressed="true"]{background:#14171C;color:#fff;border-color:#14171C}
+.fs .npsl{display:flex;justify-content:space-between;font-size:10.5px;color:var(--d-mut)}
+.fs .sws{display:flex;gap:6px;flex-wrap:wrap}
+.fs .sws button{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--d-line);cursor:pointer}
+.fs .sws button[aria-pressed="true"]{box-shadow:0 0 0 2px #14171C}
+.fs input[type=color]{width:44px;height:36px;border:1px solid var(--d-line);border-radius:8px;padding:2px;background:#fff;cursor:pointer}
+.fs .files{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.fs .files li{display:flex;justify-content:space-between;gap:8px;background:var(--d-soft);border-radius:6px;padding:5px 8px;font-size:12px}
+.fs .files li span:last-child{font-family:var(--f-mono);color:var(--d-mut)}
+.fs .drop{border:2px dashed #C3C8D0;border-radius:12px;padding:16px 10px;text-align:center;color:var(--d-mut);cursor:pointer;transition:all .15s;display:grid;gap:4px;place-items:center}
+.fs .drop.over{border-color:var(--d-acc);background:#FFF8DF;color:var(--d-ink)}
+.fs .drop b{color:var(--d-ink)}
+.fs .drop svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8}
+.fs .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.fs .ava{width:64px;height:64px;border-radius:50%;background:var(--d-soft) center/cover;border:1px solid var(--d-line);display:grid;place-items:center;color:var(--d-mut);font-size:11px;flex:none}
+.fs canvas.sig{width:100%;height:110px;border:1px solid var(--d-line);border-radius:8px;background:#fff linear-gradient(transparent 78%,#E5E7EB 78%,#E5E7EB 79%,transparent 79%);touch-action:none;cursor:crosshair;display:block}
+.fs .otp{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.fs .otp input{width:100%;min-height:42px;text-align:center;font-family:var(--f-mono);font-size:18px;border:1px solid var(--d-line);border-radius:8px;outline:0;color:var(--d-ink);background:#fff}
+.fs .otp input:focus{border-color:var(--d-acc);box-shadow:0 0 0 3px rgba(245,184,0,.28)}
+.fs .tb{display:flex;gap:2px;border:1px solid var(--d-line);border-bottom:0;border-radius:8px 8px 0 0;padding:4px;background:var(--d-soft)}
+.fs .tb button{border:0;background:transparent;min-width:28px;height:26px;border-radius:5px;cursor:pointer;font-size:12.5px;color:var(--d-ink)}
+.fs .tb button:hover,.fs .tb button[aria-pressed="true"]{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.fs .ed{border:1px solid var(--d-line);border-radius:0 0 8px 8px;min-height:84px;padding:8px 10px;outline:0;background:#fff;line-height:1.55}
+.fs .ed:focus{border-color:var(--d-acc);box-shadow:0 0 0 3px rgba(245,184,0,.28)}
+.fs .ed ul{margin:0;padding-left:1.2em}
+.fs .rules{list-style:none;margin:0;padding:0;display:grid;gap:2px;font-size:12px}
+.fs .rules li{color:var(--d-mut)}
+.fs .rules li::before{content:"○ ";}
+.fs .rules li.y{color:var(--d-ok)}
+.fs .rules li.y::before{content:"● "}
+.fs .wiz{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:11px;color:var(--d-mut);text-align:center}
+.fs .wiz span{border-top:3px solid var(--d-line);padding-top:4px}
+.fs .wiz span.on{border-color:var(--d-acc);color:var(--d-ink);font-weight:700}
+.fs .wiz span.done{border-color:#14171C;color:var(--d-ink)}
+.fs .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:fs-spin .7s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes fs-spin{to{transform:rotate(360deg)}}
+.fs .ccrow{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.fs .brand{font-family:var(--f-mono);font-size:10.5px;font-weight:700;background:var(--d-soft);border-radius:4px;padding:1px 6px;color:var(--d-mut)}
+.fs .rank{list-style:none;margin:0;padding:0;display:grid;gap:4px;counter-reset:r}
+.fs .rank li{display:flex;align-items:center;gap:8px;border:1px solid var(--d-line);border-radius:8px;padding:4px 6px 4px 8px;background:#fff;cursor:grab;counter-increment:r}
+.fs .rank li::before{content:counter(r);font-family:var(--f-mono);font-size:11px;color:var(--d-acc2);font-weight:700;width:14px}
+.fs .rank li.drag{opacity:.4}
+.fs .rank li span{flex:1}
+.fs .rank button{border:0;background:var(--d-soft);border-radius:5px;width:24px;height:24px;cursor:pointer;font-size:11px}
+.fs .rank button:disabled{opacity:.3}
+.fs table.lk{border-collapse:collapse;width:100%;font-size:11.5px}
+.fs table.lk th{font-weight:500;color:var(--d-mut);font-size:10.5px;padding:2px}
+.fs table.lk td{text-align:center;padding:4px 2px;border-top:1px solid var(--d-soft)}
+.fs table.lk td:first-child{text-align:left;font-size:12px}
+.fs table.lk input{width:16px;height:16px;accent-color:#14171C;margin:0}
+.fs .prog{height:8px;border-radius:4px;background:var(--d-soft);overflow:hidden}
+.fs .prog i{display:block;height:100%;background:var(--d-acc);transition:width .3s}
+.fs .sum{background:#FFF4EE;border:1px solid #F6C9B3;border-radius:8px;padding:8px 10px;font-size:12px;color:var(--d-err)}
+.fs .sum ul{margin:4px 0 0;padding-left:1.1em}
+.fs .sum a{color:inherit}
+.fs .addr{display:grid;grid-template-columns:90px 1fr;gap:6px}
+/* 卡片裡空間較小：月曆縮小、部分輔助欄位只在詳細視窗顯示 */
+.card .fs .xo{display:none}
+.card .fs .cal button{min-height:20px}
+.card .fs .cal{gap:1px}
+@media (prefers-reduced-motion:reduce){.fs *{transition:none!important;animation:none!important}}
+</style>
+
+<!-- J3M 統一外觀層 -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="../assets/j3m-skin.css">
+<script src="../assets/j3m-skin.js"></script>
+</head>
+<body>
+<div class="j3m-aura" aria-hidden="true"></div>
+<nav class="j3m-bar" aria-label="J3M 教學資源站">
+  <div class="j3m-in">
+    <a class="j3m-brand" href="../"><span class="j3m-mk">J3M</span><span>教學資源站</span></a>
+    <span class="j3m-crumbs"><span aria-hidden="true">/</span><a class="j3m-mid" href="../topic/vibe/">Vibe Coding</a><span class="j3m-sep2" aria-hidden="true">/</span><span class="j3m-here" aria-current="page">表單元件圖鑑</span></span>
+    <span class="j3m-sp"></span>
+    <a class="j3m-book" href="../#invite">授課邀約</a>
+    <button class="j3m-iconbtn j3m-theme" type="button" aria-label="切換深色／淺色模式"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
+  </div>
+</nav>
+
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow"><a href="../">J3M 教學資源站</a> · Vibe Coding · Form Craft Library</div>
+      <h1>表單元件圖鑑<span class="hl">．</span></h1>
+      <p class="lede">做報名表、問卷、預約系統時常用的表單元件，收在同一處。每一種都能直接在卡片上試用，附使用時機、實作要點、無障礙重點與程式碼骨架，以及可以直接交給 AI 製作的提示詞。</p>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div>
+      <ol class="steps">
+        <li><b>➊</b><span>依「類別」與「使用情境」篩選，直接在卡片上操作試用</span></li>
+        <li><b>➋</b><span>點元件名稱，查看何時用、實作要點、無障礙與程式碼骨架</span></li>
+        <li><b>➌</b><span>複製提示詞，或勾選多個元件，組成整張表單交給 AI 製作</span></li>
+      </ol>
+      <div class="setup">
+        <label for="topic">表單用途與製作方式（會自動帶入所有提示詞）</label>
+        <input class="field" id="topic" type="text" placeholder="例如：AI 工作坊報名表、課後滿意度問卷" autocomplete="off">
+        <div class="seg" role="group" aria-label="製作方式"><button type="button" data-fmt="html" aria-pressed="true">單一 HTML</button><button type="button" data-fmt="react" aria-pressed="false">React</button><button type="button" data-fmt="gas" aria-pressed="false">Apps Script＋試算表</button></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="bar">
+    <div class="bar-row"><input class="field search" id="q" type="search" placeholder="搜尋元件，例如：日期、上傳、評分、驗證" autocomplete="off" aria-label="搜尋表單元件"><span class="count" id="count"></span></div>
+    <div class="bar-row" id="fCat" role="group" aria-label="類別"></div>
+    <div class="bar-row" id="fSt" role="group" aria-label="使用情境"></div>
+    <div class="bar-row" id="fSrc" role="group" aria-label="實作方式"></div>
+  </div>
+  <main>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" hidden><p>找不到符合的元件。試著換個關鍵字，或清除篩選條件。</p><button class="btn" id="reset" type="button">清除篩選</button></div>
+  </main>
+</div>
+
+<div class="tray" id="tray" hidden>
+  <div class="tray-in">
+    <strong id="trayCount"></strong>
+    <span class="names" id="trayNames"></span>
+    <button class="btn" id="trayClear" type="button">清除</button>
+    <button class="btn primary" id="trayCopy" type="button">複製整張表單提示詞</button>
+  </div>
+</div>
+
+<div class="overlay" id="detail" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <div class="stage">
+      <div id="dPv"></div>
+      <div class="nav"><button class="btn" id="dPrev" type="button">← 上一個</button><button class="btn" id="dNext" type="button">下一個 →</button></div>
+      <p class="src-info" id="dSrcFull"></p>
+    </div>
+    <div class="info">
+      <div class="row1"><span class="no" id="dNo"></span><button class="x" id="dClose" type="button" aria-label="關閉">×</button></div>
+      <div><div class="tags" id="dTags"></div><h2 id="dTitle" style="margin-top:6px"></h2><p class="code" id="dCode"></p></div>
+      <p id="dDesc"></p>
+      <div class="two"><div><h4>適合使用</h4><p id="dUse"></p></div><div><h4>避免使用</h4><p id="dAvoid"></p></div></div>
+      <div><h4>實作要點</h4><p id="dHow"></p></div>
+      <div><h4>無障礙重點</h4><p id="dA11y"></p></div>
+      <div><h4>程式碼骨架</h4><pre class="cmd" id="dCmd"></pre></div>
+      <div><h4>使用規則</h4><p class="rule" id="dRule"></p></div>
+      <div><h4>AI 提示詞</h4><pre class="prompt" id="dPrompt"></pre></div>
+      <div class="acts" style="padding-top:0"><label class="pick"><input type="checkbox" id="dPick"> 加入表單</label><button class="btn primary" id="dCopy" type="button">複製提示詞</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay fb" id="fallback" hidden>
+  <div class="panel" style="grid-template-columns:minmax(0,1fr);max-width:640px">
+    <div class="info">
+      <div class="row1"><strong>請手動複製</strong><button class="x" id="fbClose" type="button" aria-label="關閉">×</button></div>
+      <p style="color:var(--muted)">此環境不允許自動寫入剪貼簿。文字已全選，請按 Ctrl＋C 或 ⌘＋C。</p>
+      <textarea class="field" id="fbText" readonly></textarea>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const CATS={text:"文字輸入",choice:"選擇",date:"日期時間",num:"數值評分",file:"檔案媒體",adv:"進階互動"};
+const STATES={signup:"報名註冊",login:"登入帳號",search:"搜尋篩選",setting:"設定偏好",booking:"預約訂位",pay:"結帳付款",survey:"問卷回饋",content:"內容編輯"};
+const SRC={
+  native:{name:"原生 HTML",full:"原生 HTML：瀏覽器內建的表單元件，鍵盤操作、螢幕報讀與手機專用鍵盤都已內建，只需用 CSS 調整外觀。",rule:"能用原生元件就不要自己重做。每個欄位都要有看得見的 label，placeholder 只當範例，不能取代 label。必填欄位要標示，並在送出前檢查。"},
+  enh:{name:"原生＋少量 JS",full:"原生＋少量 JS：以原生元件為基礎，JavaScript 只負責加值，例如格式化、字數計算、即時提示。",rule:"JavaScript 失效時，表單仍要能填寫與送出。錯誤訊息放在欄位正下方，用 aria-describedby 連到欄位；不要只用顏色表示對錯。"},
+  custom:{name:"自製元件",full:"自製元件：瀏覽器沒有內建，需要用 HTML、CSS、JavaScript 組出來的互動元件。",rule:"先確認沒有原生元件能做到，再自製。要補齊鍵盤操作與 ARIA 角色（role、aria-checked、aria-expanded 等），觸控區至少 44×44 px，並實際用鍵盤從頭操作一次。"}
+};
+const FMT={html:"單一 HTML 檔（HTML＋CSS＋原生 JavaScript，不使用框架）",react:"React 元件（函式元件與 Hooks，樣式使用 Tailwind CSS）",gas:"Google Apps Script 網頁（HtmlService 產生表單頁，送出後寫入 Google 試算表）"};
+const store={get(k,d){try{const v=localStorage.getItem("formcraft-"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("formcraft-"+k,JSON.stringify(v))}catch(e){}}};
+
+/* 小工具：示範用 */
+const q1=(r,s)=>r.querySelector(s), qa=(r,s)=>[...r.querySelectorAll(s)];
+const IC={search:'<svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+  up:'<svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>'};
+const kb=n=>n<1024?n+" B":n<1048576?(n/1024).toFixed(1)+" KB":(n/1048576).toFixed(1)+" MB";
+
+/* ================= 元件資料 =================
+   h：示範 HTML（{n} 會換成唯一編號，讓同一元件在卡片與詳細視窗各自獨立）
+   js：示範的互動行為 */
+const E=[
+/* ---------- 文字輸入 ---------- */
+{id:"F01",src:"native",cat:"text",st:["signup","login","setting"],zh:"文字輸入框",code:'<input type="text">',
+desc:"單行文字的基本欄位，用於姓名、公司名稱、職稱這類短答案。",
+use:"答案在一行以內、沒有固定格式的資料。",avoid:"選項固定時改用選單或選項按鈕；答案很長時改用多行文字框。",
+how:"label 放在欄位上方，欄位寬度對應答案長度；用 autocomplete 讓瀏覽器自動帶入姓名、組織等資料。",
+a11y:"用 <label for> 或把 input 包在 label 裡建立關聯；說明文字以 aria-describedby 連到欄位。",
+snip:'<label for="name">姓名 *</label>\n<input id="name" name="name" type="text"\n       autocomplete="name" required\n       aria-describedby="name-hint">\n<p id="name-hint">請填寫與證件相同的姓名</p>',
+h:`<div class="fc"><label class="l">姓名<span class="req">*</span><input class="in" type="text" placeholder="例如：王小明" autocomplete="off" style="margin-top:4px"></label><span class="hint">請填寫與證件相同的姓名，證書將使用此名稱</span><label class="l">公司或單位<input class="in" type="text" placeholder="例如：臺中市政府" style="margin-top:4px"></label></div>`},
+
+{id:"F02",src:"enh",cat:"text",st:["survey","content","signup"],zh:"多行文字框",code:'<textarea maxlength>',
+desc:"可輸入多行的文字區，加上字數計算與自動長高，適合意見與說明。",
+use:"開放式問答、留言、需求說明。",avoid:"只需要一兩個詞的答案；需要粗體或清單格式時改用富文字編輯器。",
+how:"設定 maxlength 並即時顯示剩餘字數；輸入時依內容自動調整高度，避免出現內捲軸。",
+a11y:"字數提示用 aria-live=\"polite\" 播報，接近上限時再提醒，不要每打一個字就播報。",
+snip:'<label for="msg">想問講師的問題</label>\n<textarea id="msg" maxlength="200" rows="3"\n          aria-describedby="msg-count"></textarea>\n<p id="msg-count" aria-live="polite">還可輸入 200 字</p>',
+h:`<div class="fc"><label class="l" for="ta{n}">想問講師的問題</label><textarea class="in" id="ta{n}" maxlength="120" rows="2" placeholder="例如：NotebookLM 能讀取哪些檔案格式？"></textarea><div class="row" style="justify-content:space-between"><span class="hint">課程中會挑選回答</span><span class="hint" data-c aria-live="polite">0 ／ 120</span></div></div>`,
+js(r){const t=q1(r,"textarea"),c=q1(r,"[data-c]");const f=()=>{c.textContent=`${t.value.length} ／ 120`;c.style.color=t.value.length>100?"var(--d-err)":"";t.style.height="auto";t.style.height=Math.min(t.scrollHeight+2,160)+"px"};t.addEventListener("input",f)}},
+
+{id:"F03",src:"enh",cat:"text",st:["login","signup"],zh:"密碼欄",code:'<input type="password">',
+desc:"輸入時遮蔽文字，附「顯示密碼」切換與強度提示。",
+use:"註冊、登入、修改密碼。",avoid:"不要要求重複輸入兩次密碼，改用顯示切換讓使用者自己確認。",
+how:"切換鈕改變 type（password ↔ text）；強度依長度、大小寫、數字、符號計分；設定 autocomplete=\"new-password\" 或 \"current-password\"。",
+a11y:"切換鈕用 aria-pressed 表示狀態，按鈕文字同步改成「隱藏密碼」；強度結果要有文字，不只靠色條。",
+snip:'<label for="pw">密碼</label>\n<input id="pw" type="password"\n       autocomplete="new-password" minlength="8">\n<button type="button" aria-pressed="false"\n        aria-controls="pw">顯示密碼</button>',
+h:`<div class="fc"><label class="l" for="pw{n}">設定密碼</label><div class="in wrapin"><input id="pw{n}" type="password" placeholder="至少 8 個字元" autocomplete="new-password"><button class="iconb" type="button" aria-pressed="false">顯示</button></div><div class="meter"><i></i><i></i><i></i><i></i></div><span class="hint" data-s aria-live="polite">建議混合大小寫英文、數字與符號</span></div>`,
+js(r){const i=q1(r,"input"),b=q1(r,"button"),bars=qa(r,".meter i"),s=q1(r,"[data-s]");
+b.addEventListener("click",()=>{const on=i.type==="password";i.type=on?"text":"password";b.textContent=on?"隱藏":"顯示";b.setAttribute("aria-pressed",on)});
+i.addEventListener("input",()=>{const v=i.value;let n=0;if(v.length>=8)n++;if(/[a-z]/.test(v)&&/[A-Z]/.test(v))n++;if(/\d/.test(v))n++;if(/[^\w]/.test(v))n++;if(!v)n=0;
+const col=["#C2410C","#E8A33D","#C9B12C","#1F8A4C"][Math.max(0,n-1)];bars.forEach((x,k)=>x.style.background=k<n?col:"");s.textContent=v?["太弱","偏弱","普通","強"][Math.max(0,n-1)]+"：建議混合大小寫英文、數字與符號":"建議混合大小寫英文、數字與符號"})}},
+
+{id:"F04",src:"enh",cat:"text",st:["search"],zh:"搜尋欄",code:'<input type="search">',
+desc:"帶放大鏡圖示與清除鈕的搜尋框，輸入時即時篩選結果並標出符合字詞。",
+use:"在清單、課程、商品中找資料。",avoid:"選項少於 7 個時，直接列出比搜尋更快。",
+how:"使用 type=\"search\" 與 role=\"search\" 的表單；輸入停頓約 200 毫秒再篩選；符合的字用 <mark> 標示；沒有結果時給替代建議。",
+a11y:"結果數量用 aria-live 播報（例如「找到 3 筆」）；清除鈕要有文字標籤。",
+snip:'<form role="search">\n  <label for="q" class="sr-only">搜尋課程</label>\n  <input id="q" type="search" placeholder="搜尋課程">\n</form>\n<p aria-live="polite">找到 3 筆</p>',
+h:`<div class="fc"><div class="in wrapin">${IC.search}<input type="search" placeholder="搜尋課程，例如：簡報" aria-label="搜尋課程"><button class="iconb" type="button" hidden aria-label="清除搜尋">✕</button></div><span class="hint" data-n aria-live="polite">共 6 堂課</span><ul class="list" data-l style="max-height:96px"></ul></div>`,
+js(r){const D=["AI 簡報術","AI 影片字幕","Vibe Coding 入門","LINE AI 秘書","NotebookLM 知識庫","Gemini 公文寫作"];const i=q1(r,"input"),x=q1(r,"button"),l=q1(r,"[data-l]"),n=q1(r,"[data-n]");
+const f=()=>{const v=i.value.trim();const m=D.filter(d=>d.toLowerCase().includes(v.toLowerCase()));x.hidden=!v;n.textContent=v?`找到 ${m.length} 筆`:"共 6 堂課";
+l.innerHTML=m.length?m.map(d=>"<li>"+(v?d.replace(new RegExp("("+v.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig"),"<mark>$1</mark>"):d)+"</li>").join(""):"<li style='cursor:default;color:#6B7280'>沒有符合的課程，試試「AI」</li>"};
+i.addEventListener("input",f);x.addEventListener("click",()=>{i.value="";f();i.focus()});f()}},
+
+{id:"F05",src:"enh",cat:"text",st:["signup","login"],zh:"Email 欄位",code:'<input type="email">',
+desc:"手機會跳出含 @ 的鍵盤，離開欄位時檢查格式並提示常見錯字。",
+use:"註冊、報名、寄送證書或講義。",avoid:"不要在使用者還在打字時就顯示錯誤。",
+how:"type=\"email\" 加 autocomplete=\"email\"；在 blur（離開欄位）時才驗證；偵測 gmial.com 這類常見錯字並提供一鍵修正。",
+a11y:"錯誤時設 aria-invalid=\"true\"，錯誤訊息以 aria-describedby 連結，訊息說明怎麼修正。",
+snip:'<label for="email">Email</label>\n<input id="email" type="email" autocomplete="email"\n       required aria-describedby="email-err">\n<p id="email-err" hidden>Email 格式不正確，例如 name@gmail.com</p>',
+h:`<div class="fc"><label class="l" for="em{n}">Email<span class="req">*</span></label><input class="in" id="em{n}" type="email" placeholder="name@example.com" autocomplete="off" aria-describedby="eme{n}"><span id="eme{n}" class="hint">講義與證書會寄到這個信箱</span></div>`,
+js(r){const i=q1(r,"input"),m=q1(r,".hint");const T={"gmial.com":"gmail.com","gmai.com":"gmail.com","gmail.con":"gmail.com","yahoo.com.t":"yahoo.com.tw","hotmial.com":"hotmail.com"};
+const chk=()=>{const v=i.value.trim();if(!v){i.className="in";m.className="hint";m.textContent="講義與證書會寄到這個信箱";i.removeAttribute("aria-invalid");return}
+const dom=v.split("@")[1]||"";if(T[dom]){i.className="in bad";m.className="err";m.innerHTML=`你是不是要輸入 <button type="button" class="iconb" style="color:#C2410C;text-decoration:underline">${v.split("@")[0]}@${T[dom]}</button>？`;q1(m,"button").onclick=()=>{i.value=v.split("@")[0]+"@"+T[dom];chk()};return}
+const ok=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);i.className="in "+(ok?"good":"bad");i.setAttribute("aria-invalid",!ok);m.className=ok?"ok":"err";m.textContent=ok?"格式正確":"Email 格式不正確，例如 name@gmail.com"};
+i.addEventListener("blur",chk);i.addEventListener("input",()=>{if(i.classList.contains("bad"))chk()})}},
+
+{id:"F06",src:"enh",cat:"text",st:["signup","pay","booking"],zh:"電話號碼",code:'<input type="tel">',
+desc:"國碼選單加電話欄位，輸入時自動加上分隔線，方便核對。",
+use:"聯絡電話、簡訊通知、訂位確認。",avoid:"不要用 type=\"number\"，電話不是數字，開頭的 0 會被吃掉。",
+how:"type=\"tel\" 叫出數字鍵盤，inputmode=\"tel\"；輸入時格式化為 0912-345-678，送出前移除分隔線。",
+a11y:"國碼選單與電話欄位各自要有標籤；用 <fieldset> 和 <legend> 把兩個欄位包成一組。",
+snip:'<fieldset>\n  <legend>手機號碼</legend>\n  <select aria-label="國碼"><option>+886</option></select>\n  <input type="tel" inputmode="tel"\n         autocomplete="tel-national" aria-label="號碼">\n</fieldset>',
+h:`<div class="fc"><span class="l">手機號碼<span class="req">*</span></span><div class="row"><select class="in" aria-label="國碼" style="flex:0 0 92px"><option>+886 台灣</option><option>+852 香港</option><option>+86 中國</option><option>+65 新加坡</option></select><input class="in" type="tel" inputmode="tel" placeholder="0912-345-678" aria-label="手機號碼" maxlength="12"></div><span class="hint" data-h>上課前一天會傳簡訊提醒</span></div>`,
+js(r){const i=q1(r,"input[type=tel]");i.addEventListener("input",()=>{const d=i.value.replace(/\D/g,"").slice(0,10);i.value=d.length>7?d.slice(0,4)+"-"+d.slice(4,7)+"-"+d.slice(7):d.length>4?d.slice(0,4)+"-"+d.slice(4):d})}},
+
+{id:"F07",src:"custom",cat:"text",st:["content","setting","survey"],zh:"標籤輸入",code:'tag input',
+desc:"輸入後按 Enter 或逗號變成一顆標籤，可逐一刪除，適合關鍵字與興趣。",
+use:"自由輸入多個短詞，例如興趣、技能、關鍵字。",avoid:"選項固定時改用多選下拉或核取方塊。",
+how:"Enter 或逗號新增，Backspace 在空白時刪除最後一顆；去除重複與前後空白；設定上限並提示剩餘數量。",
+a11y:"每顆標籤的刪除鈕要有完整標籤（例如「移除 Python」）；新增或刪除後以 aria-live 播報。",
+snip:'<label for="tag-in">興趣主題</label>\n<ul aria-label="已加入的主題">\n  <li>簡報 <button aria-label="移除 簡報">×</button></li>\n</ul>\n<input id="tag-in" type="text"\n       aria-describedby="tag-hint">',
+h:`<div class="fc"><label class="l" for="tg{n}">想學的主題（最多 5 個）</label><div class="in chips" data-box><input id="tg{n}" type="text" placeholder="輸入後按 Enter"></div><span class="hint" data-h aria-live="polite">可再加入 3 個</span></div>`,
+js(r){const box=q1(r,"[data-box]"),i=q1(r,"input"),h=q1(r,"[data-h]");let T=["簡報","Gemini"];
+const draw=()=>{qa(box,".tg").forEach(x=>x.remove());T.forEach((t,k)=>{const s=document.createElement("span");s.className="tg";s.innerHTML=`${t}<button type="button" aria-label="移除 ${t}">×</button>`;s.querySelector("button").onclick=()=>{T.splice(k,1);draw();i.focus()};box.insertBefore(s,i)});h.textContent=T.length>=5?"已達上限":`可再加入 ${5-T.length} 個`;i.disabled=T.length>=5};
+i.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===","||e.key==="，")&&i.value.trim()){e.preventDefault();const v=i.value.replace(/[,，]/g,"").trim();if(v&&!T.includes(v)&&T.length<5)T.push(v);i.value="";draw()}else if(e.key==="Backspace"&&!i.value&&T.length){T.pop();draw()}});
+box.addEventListener("click",e=>{if(e.target===box)i.focus()});draw()}},
+
+{id:"F08",src:"native",cat:"text",st:["login","signup"],zh:"浮動標籤輸入框",code:':placeholder-shown',
+desc:"標籤先顯示在欄位內，開始輸入後縮小移到上方，節省版面又不會讓標籤消失。",
+use:"登入、註冊等欄位少、版面精簡的表單。",avoid:"欄位很多的長表單；標籤文字過長時會被截斷。",
+how:"純 CSS 完成：input 設 placeholder=\" \"，用 :focus 與 :not(:placeholder-shown) 讓 label 縮小上移。",
+a11y:"label 仍是真正的 <label>，不要只用 placeholder；縮小後的字級不低於 11px，對比度要足夠。",
+snip:'<div class="float">\n  <input id="acc" placeholder=" ">\n  <label for="acc">帳號</label>\n</div>\n/* input:focus + label,\n   input:not(:placeholder-shown) + label { 上移縮小 } */',
+h:`<div class="fc"><label class="flt"><input class="in" type="text" placeholder=" "><span>帳號或 Email</span></label><label class="flt"><input class="in" type="password" placeholder=" "><span>密碼</span></label><button class="b p" type="button">登入</button></div>`},
+
+{id:"F09",src:"enh",cat:"text",st:["pay","survey","setting"],zh:"前後綴輸入框",code:'prefix / suffix',
+desc:"在欄位前後加上單位或符號，例如 NT$ 與「元」，離開欄位時自動加千分位。",
+use:"金額、重量、百分比、網址前綴。",avoid:"單位會變動時改用下拉選單讓使用者選。",
+how:"前後綴是視覺元素，不是輸入內容的一部分；inputmode=\"numeric\" 叫出數字鍵盤；送出前移除千分位逗號。",
+a11y:"把單位寫進 label 或用 aria-describedby，例如「預算（新台幣元）」，螢幕報讀才知道單位。",
+snip:'<label for="budget">課程預算（新台幣）</label>\n<div class="affix">\n  <span aria-hidden="true">NT$</span>\n  <input id="budget" inputmode="numeric">\n  <span aria-hidden="true">元</span>\n</div>',
+h:`<div class="fc"><label class="l" for="af{n}">單位內訓預算（新台幣）</label><div class="in wrapin"><span class="aff">NT$</span><input id="af{n}" inputmode="numeric" placeholder="50,000"><span class="aff">元</span></div><label class="l" for="af2{n}">預計參加人數</label><div class="in wrapin" style="max-width:160px"><input id="af2{n}" inputmode="numeric" placeholder="30"><span class="aff">人</span></div></div>`,
+js(r){qa(r,"input").forEach(i=>{i.addEventListener("input",()=>{i.value=i.value.replace(/[^\d,]/g,"")});i.addEventListener("blur",()=>{const d=i.value.replace(/\D/g,"");i.value=d?Number(d).toLocaleString("en-US"):""});i.addEventListener("focus",()=>{i.value=i.value.replace(/,/g,"")})})}},
+
+/* ---------- 選擇 ---------- */
+{id:"F10",src:"enh",cat:"choice",st:["survey","signup","setting"],zh:"核取方塊（多選）",code:'<input type="checkbox">',
+desc:"可以勾選多個選項，加上「全選」並以半勾選狀態顯示部分已選。",
+use:"選項 2 到 7 個、可以複選的問題。",avoid:"只能選一個時改用選項按鈕；選項超過 10 個時改用多選下拉。",
+how:"用 <fieldset> 包住一組選項；「全選」依子項狀態設定 checked 或 indeterminate（半勾選）。",
+a11y:"題目放在 <legend>；整個文字都可點擊（label 包住 input）；觸控區至少 44px 高。",
+snip:'<fieldset>\n  <legend>想參加的場次（可複選）</legend>\n  <label><input type="checkbox" name="s" value="am"> 上午場</label>\n  <label><input type="checkbox" name="s" value="pm"> 下午場</label>\n</fieldset>',
+h:`<div class="fc"><fieldset style="border:0;margin:0;padding:0;display:grid;gap:2px"><legend class="l" style="margin-bottom:4px">使用過的 AI 工具（可複選）</legend><label class="opt"><input type="checkbox" data-all> <b>全選</b></label><div class="grid2"><label class="opt"><input type="checkbox" data-i checked> ChatGPT</label><label class="opt"><input type="checkbox" data-i> Claude</label><label class="opt"><input type="checkbox" data-i checked> Gemini</label><label class="opt"><input type="checkbox" data-i> Copilot</label></div></fieldset><span class="hint" data-h aria-live="polite"></span></div>`,
+js(r){const a=q1(r,"[data-all]"),I=qa(r,"[data-i]"),h=q1(r,"[data-h]");const sync=()=>{const n=I.filter(x=>x.checked).length;a.checked=n===I.length;a.indeterminate=n>0&&n<I.length;h.textContent=`已選 ${n} 項`};a.addEventListener("change",()=>{I.forEach(x=>x.checked=a.checked);sync()});I.forEach(x=>x.addEventListener("change",sync));sync()}},
+
+{id:"F11",src:"native",cat:"choice",st:["survey","signup","booking"],zh:"選項按鈕（單選）",code:'<input type="radio">',
+desc:"一組選項中只能選一個，所有選項一次攤開，方便比較。",
+use:"2 到 6 個互斥選項，需要使用者看完所有選項再決定。",avoid:"選項超過 7 個時改用下拉選單；是／否的單一設定改用開關。",
+how:"同一組使用相同 name；有合理預設時預先選好；選項依邏輯順序排列（由少到多、由近到遠）。",
+a11y:"用 <fieldset>＋<legend>；方向鍵可在同組之間移動，這是原生行為，不要用 div 重做。",
+snip:'<fieldset>\n  <legend>上課方式</legend>\n  <label><input type="radio" name="mode" value="onsite" checked> 實體</label>\n  <label><input type="radio" name="mode" value="online"> 線上</label>\n</fieldset>',
+h:`<div class="fc"><fieldset style="border:0;margin:0;padding:0;display:grid;gap:2px"><legend class="l" style="margin-bottom:4px">上課方式<span class="req">*</span></legend><label class="opt"><input type="radio" name="rd{n}" checked> 實體課程（臺中）</label><label class="opt"><input type="radio" name="rd{n}"> 線上直播</label><label class="opt"><input type="radio" name="rd{n}"> 課後看錄影</label></fieldset><span class="hint">線上直播會在開課前一天寄送連結</span></div>`},
+
+{id:"F12",src:"native",cat:"choice",st:["signup","setting","booking"],zh:"下拉選單",code:'<select>',
+desc:"從清單中選一個，節省版面；選項多時用分組整理。",
+use:"7 到 15 個選項，且使用者知道自己要選什麼，例如縣市、產業別。",avoid:"選項少於 5 個時直接攤開成選項按鈕；選項非常多時改用自動完成。",
+how:"第一個選項用「請選擇」並設為 disabled；用 <optgroup> 分組；手機會使用系統原生選單，體驗最好。",
+a11y:"一定要有 label；不要用選單切換整頁內容（onchange 直接跳頁）。",
+snip:'<label for="ind">產業別</label>\n<select id="ind" required>\n  <option value="" disabled selected>請選擇</option>\n  <optgroup label="公部門">\n    <option>中央機關</option>\n  </optgroup>\n</select>',
+h:`<div class="fc"><label class="l" for="sl{n}">服務單位類型<span class="req">*</span></label><select class="in" id="sl{n}"><option value="" disabled selected>請選擇</option><optgroup label="公部門"><option>中央機關</option><option>地方政府</option><option>學校</option></optgroup><optgroup label="民間"><option>企業</option><option>非營利組織</option><option>個人工作室</option></optgroup></select><span class="hint">用來安排適合的課程案例</span></div>`},
+
+{id:"F13",src:"native",cat:"choice",st:["signup","search"],zh:"可輸入下拉",code:'<input list> + <datalist>',
+desc:"可以從建議清單挑選，也能自己輸入清單裡沒有的答案。",
+use:"有常見答案，但也允許其他答案，例如職稱、學校。",avoid:"答案必須是清單中的值時，改用下拉選單或自動完成並驗證。",
+how:"<input list=\"id\"> 搭配 <datalist>，不需要 JavaScript；送出的值就是輸入框的文字。",
+a11y:"各瀏覽器的建議清單樣式不同但都可用鍵盤操作；label 要說明「可自行輸入」。",
+snip:'<label for="job">職稱（可自行輸入）</label>\n<input id="job" list="jobs">\n<datalist id="jobs">\n  <option value="行政專員">\n  <option value="行銷企劃">\n</datalist>',
+h:`<div class="fc"><label class="l" for="dl{n}">職稱（可選擇或自行輸入）</label><input class="in" id="dl{n}" list="dll{n}" placeholder="點一下看建議，或直接輸入"><datalist id="dll{n}"><option value="行政專員"><option value="行銷企劃"><option value="專案經理"><option value="人資專員"><option value="教師"><option value="主管"></datalist><span class="hint">清單沒有的職稱也可以直接輸入</span></div>`},
+
+{id:"F14",src:"custom",cat:"choice",st:["search","signup","booking"],zh:"自動完成",code:'role="combobox"',
+desc:"輸入幾個字就列出符合的選項，可用方向鍵挑選，適合選項非常多的清單。",
+use:"選項超過 15 個，例如學校、車站、城市、商品。",avoid:"選項少時用下拉選單；不需要比對時用一般輸入框。",
+how:"輸入 1 個字以上才顯示清單；比對中文與注音、英文大小寫；方向鍵移動、Enter 選定、Esc 關閉；點選後把值填回輸入框。",
+a11y:"輸入框 role=\"combobox\"、aria-expanded、aria-controls；清單 role=\"listbox\"，項目 role=\"option\" 與 aria-selected；用 aria-activedescendant 標示目前項目。",
+snip:'<label for="city">上課城市</label>\n<input id="city" role="combobox"\n       aria-expanded="false" aria-controls="city-list"\n       aria-autocomplete="list">\n<ul id="city-list" role="listbox" hidden>\n  <li role="option" id="c1">臺中市</li>\n</ul>',
+h:`<div class="fc"><label class="l" for="ac{n}">上課城市</label><div class="pop"><input class="in" id="ac{n}" role="combobox" aria-expanded="false" aria-controls="acl{n}" aria-autocomplete="list" placeholder="輸入「台」或「新」試試" autocomplete="off"><ul class="list panelx" id="acl{n}" role="listbox" hidden></ul></div><span class="hint" data-h>用 ↑ ↓ 選擇，Enter 確定</span></div>`,
+js(r){const C=["臺北市","新北市","桃園市","臺中市","臺南市","高雄市","基隆市","新竹市","新竹縣","苗栗縣","彰化縣","南投縣","雲林縣","嘉義市","屏東縣","宜蘭縣","花蓮縣","臺東縣"];const i=q1(r,"input"),l=q1(r,"ul"),h=q1(r,"[data-h]");let m=[],a=-1;
+const norm=s=>s.replace(/台/g,"臺");const show=()=>{const v=norm(i.value.trim());m=v?C.filter(c=>c.includes(v)):[];a=m.length?0:-1;l.hidden=!m.length;i.setAttribute("aria-expanded",!!m.length);
+l.innerHTML=m.map((c,k)=>`<li role="option" id="${l.id}-${k}" aria-selected="${k===a}">${c.replace(v,"<mark>"+v+"</mark>")}</li>`).join("");upd()};
+const upd=()=>{qa(l,"li").forEach((x,k)=>x.setAttribute("aria-selected",k===a));if(a>=0){i.setAttribute("aria-activedescendant",l.id+"-"+a);const el=l.children[a];if(el)el.scrollIntoView({block:"nearest"})}};
+const pick=k=>{i.value=m[k];l.hidden=true;i.setAttribute("aria-expanded",false);h.textContent=`已選擇：${m[k]}`};
+i.addEventListener("input",show);i.addEventListener("keydown",e=>{if(l.hidden)return;if(e.key==="ArrowDown"){e.preventDefault();a=(a+1)%m.length;upd()}else if(e.key==="ArrowUp"){e.preventDefault();a=(a-1+m.length)%m.length;upd()}else if(e.key==="Enter"&&a>=0){e.preventDefault();pick(a)}else if(e.key==="Escape"){l.hidden=true;i.setAttribute("aria-expanded",false)}});
+l.addEventListener("mousedown",e=>{const li=e.target.closest("li");if(li){e.preventDefault();pick([...l.children].indexOf(li))}});i.addEventListener("blur",()=>setTimeout(()=>{l.hidden=true},120))}},
+
+{id:"F15",src:"custom",cat:"choice",st:["setting"],zh:"開關",code:'role="switch"',
+desc:"立即生效的開啟／關閉設定，例如通知、深色模式。",
+use:"單一設定，切換後馬上生效，不需要按「儲存」。",avoid:"需要按送出才生效的表單選項，改用核取方塊。",
+how:"用 <button role=\"switch\" aria-checked> 實作，點擊切換；旁邊的文字說明「開啟時會發生什麼」。",
+a11y:"role=\"switch\" 搭配 aria-checked；空白鍵與 Enter 都能切換；不要只靠顏色表示狀態，旋鈕位置也要改變。",
+snip:'<span id="n-lbl">課前提醒通知</span>\n<button type="button" role="switch"\n        aria-checked="true" aria-labelledby="n-lbl">\n</button>',
+h:`<div class="fc"><div class="sw"><span id="sw1{n}"><b>課前提醒</b><br><span class="hint">開課前一天以 Email 提醒</span></span><button type="button" role="switch" aria-checked="true" aria-labelledby="sw1{n}"></button></div><div class="sw"><span id="sw2{n}"><b>新課程通知</b><br><span class="hint">每月最多一封</span></span><button type="button" role="switch" aria-checked="false" aria-labelledby="sw2{n}"></button></div><div class="sw"><span id="sw3{n}"><b>同意拍照紀錄</b><br><span class="hint">僅用於課程成果分享</span></span><button type="button" role="switch" aria-checked="false" aria-labelledby="sw3{n}"></button></div></div>`,
+js(r){qa(r,"[role=switch]").forEach(b=>b.addEventListener("click",()=>b.setAttribute("aria-checked",b.getAttribute("aria-checked")!=="true")))}},
+
+{id:"F16",src:"custom",cat:"choice",st:["setting","search","booking"],zh:"分段控制",code:'segmented control',
+desc:"2 到 4 個並排的切換按鈕，像實體開關一樣選一個，常用於切換檢視方式。",
+use:"選項很短、數量少，例如「月／週／日」「個人／團體」。",avoid:"選項文字長或超過 5 個時，改用選項按鈕或下拉選單。",
+how:"一組 button 搭配 aria-pressed，或 radio 搭配 CSS；選中項有明顯底色；切換後立即更新下方內容。",
+a11y:"外層 role=\"group\" 並加 aria-label；若作為表單值，用隱藏的 radio 保留原生鍵盤行為。",
+snip:'<div role="group" aria-label="報名身分">\n  <button aria-pressed="true">個人</button>\n  <button aria-pressed="false">團體</button>\n</div>',
+h:`<div class="fc"><span class="l">報名身分</span><div class="segc" role="group" aria-label="報名身分"><button type="button" aria-pressed="true">個人</button><button type="button" aria-pressed="false">團體（3 人以上）</button><button type="button" aria-pressed="false">企業包班</button></div><span class="hint" data-h aria-live="polite">個人報名：每人 NT$ 2,800</span></div>`,
+js(r){const P=["個人報名：每人 NT$ 2,800","團體報名：每人 NT$ 2,400，請填寫所有成員","企業包班：由專人與您聯繫報價"];const B=qa(r,".segc button"),h=q1(r,"[data-h]");B.forEach((b,k)=>b.addEventListener("click",()=>{B.forEach(x=>x.setAttribute("aria-pressed",x===b));h.textContent=P[k]}))}},
+
+{id:"F17",src:"native",cat:"choice",st:["signup","pay","booking"],zh:"選項卡片",code:'radio card',
+desc:"把單選項目做成卡片，可以放價格、說明與標示，適合方案選擇。",
+use:"每個選項需要額外資訊比較，例如方案、票種、運送方式。",avoid:"選項只有一兩個字時用一般選項按鈕即可。",
+how:"label 包住隱藏的 radio 與卡片內容，用 :has(:checked) 標示選中；隱藏方式要保留鍵盤焦點（opacity:0，不用 display:none）。",
+a11y:"radio 仍在，方向鍵可切換；用 :focus-visible 顯示焦點框；推薦標示要用文字，不只靠顏色。",
+snip:'<fieldset>\n  <legend>選擇票種</legend>\n  <label class="card">\n    <input type="radio" name="plan" value="early">\n    <b>早鳥票</b> <span>NT$ 2,400</span>\n  </label>\n</fieldset>',
+h:`<div class="fc"><span class="l">選擇票種</span><div class="cards"><label><input type="radio" name="cd{n}"><b>單堂</b><small>NT$ 1,200</small><small>3 小時</small></label><label><input type="radio" name="cd{n}" checked><b>早鳥</b><small>NT$ 2,400</small><small>推薦・省 20%</small></label><label><input type="radio" name="cd{n}"><b>全修</b><small>NT$ 6,000</small><small>含課後諮詢</small></label></div></div>`},
+
+{id:"F18",src:"custom",cat:"choice",st:["search","setting","survey"],zh:"多選下拉",code:'multi-select listbox',
+desc:"點開後可勾選多個項目，已選的項目以標籤顯示，節省版面。",
+use:"可複選且選項超過 8 個，例如篩選地區、科系、技能。",avoid:"選項少時直接攤開核取方塊，使用者一眼就能看到全部。",
+how:"按鈕顯示已選數量，點開是一組核取方塊；點外面或按 Esc 關閉；已選項目在按鈕下方以標籤呈現，可直接移除。",
+a11y:"按鈕加 aria-expanded 與 aria-controls；面板內使用原生 checkbox；關閉後焦點回到按鈕。",
+snip:'<button aria-expanded="false" aria-controls="area-panel">\n  上課地區（已選 2）\n</button>\n<fieldset id="area-panel" hidden>\n  <label><input type="checkbox"> 北部</label>\n</fieldset>',
+h:`<div class="fc"><span class="l">可上課的地區</span><div class="pop"><button class="in b" type="button" aria-expanded="false" style="text-align:left;display:flex;justify-content:space-between;align-items:center"><span data-t>請選擇</span><span aria-hidden="true">▾</span></button><div class="panelx" hidden><div class="grid2"><label class="opt"><input type="checkbox" value="臺北"> 臺北</label><label class="opt"><input type="checkbox" value="新北"> 新北</label><label class="opt"><input type="checkbox" value="桃園"> 桃園</label><label class="opt"><input type="checkbox" value="臺中" checked> 臺中</label><label class="opt"><input type="checkbox" value="臺南"> 臺南</label><label class="opt"><input type="checkbox" value="高雄"> 高雄</label></div></div></div><div class="row" data-tags style="flex-wrap:wrap"></div></div>`,
+js(r){const b=q1(r,".pop > button"),p=q1(r,".panelx"),t=q1(r,"[data-t]"),tg=q1(r,"[data-tags]"),C=qa(r,".panelx input");
+const draw=()=>{const s=C.filter(c=>c.checked);t.textContent=s.length?`已選 ${s.length} 個地區`:"請選擇";tg.innerHTML=s.map(c=>`<span class="tg">${c.value}<button type="button" aria-label="移除 ${c.value}" data-v="${c.value}">×</button></span>`).join("")};
+b.addEventListener("click",()=>{p.hidden=!p.hidden;b.setAttribute("aria-expanded",!p.hidden)});C.forEach(c=>c.addEventListener("change",draw));
+tg.addEventListener("click",e=>{const x=e.target.closest("[data-v]");if(x){C.find(c=>c.value===x.dataset.v).checked=false;draw()}});
+r.addEventListener("keydown",e=>{if(e.key==="Escape"&&!p.hidden){p.hidden=true;b.setAttribute("aria-expanded",false);b.focus()}});
+document.addEventListener("click",e=>{if(!r.isConnected)return;if(!q1(r,".pop").contains(e.target)){p.hidden=true;b.setAttribute("aria-expanded",false)}});draw()}},
+
+{id:"F19",src:"enh",cat:"choice",st:["signup","pay","booking"],zh:"連動選單",code:'cascading select',
+desc:"第一個選單決定第二個選單的內容，例如縣市連動行政區。",
+use:"有上下層關係的資料：縣市與鄉鎮、類別與項目。",avoid:"層級超過三層時，改用搜尋或自動完成會更快。",
+how:"第二個選單在第一層未選時設為 disabled；第一層改變時清空並重建第二層選項；資料放在 JSON 物件中方便維護。",
+a11y:"兩個選單各自有 label；第二層啟用時不要自動移動焦點，讓使用者自己按 Tab。",
+snip:'<label for="city">縣市</label>\n<select id="city"></select>\n<label for="dist">行政區</label>\n<select id="dist" disabled>\n  <option>請先選擇縣市</option>\n</select>',
+h:`<div class="fc"><div class="grid2"><label class="l">縣市<select class="in" data-a style="margin-top:4px"><option value="">請選擇</option><option>臺北市</option><option>臺中市</option><option>高雄市</option></select></label><label class="l">行政區<select class="in" data-b disabled style="margin-top:4px"><option>請先選縣市</option></select></label></div><label class="l">詳細地址<input class="in" type="text" placeholder="路名、門牌" style="margin-top:4px"></label></div>`,
+js(r){const D={"臺北市":["中正區","大安區","信義區","內湖區"],"臺中市":["西屯區","北屯區","南屯區","豐原區","大雅區"],"高雄市":["苓雅區","左營區","鳳山區","前鎮區"]};const a=q1(r,"[data-a]"),b=q1(r,"[data-b]");
+a.addEventListener("change",()=>{const l=D[a.value];b.disabled=!l;b.innerHTML=l?'<option value="">請選擇</option>'+l.map(x=>`<option>${x}</option>`).join(""):"<option>請先選縣市</option>"})}},
+
+/* ---------- 日期時間 ---------- */
+{id:"F20",src:"custom",cat:"date",st:["booking","signup"],zh:"日期選擇器",code:'calendar picker',
+desc:"以月曆挑選日期，可停用過去日期與額滿日，比手動輸入更不容易出錯。",
+use:"預約、報名場次等需要看星期幾的日期。",avoid:"生日這類久遠的日期，用三個下拉或直接輸入比翻月曆快。",
+how:"也可直接用原生 <input type=\"date\">；自製月曆時要標出今天、停用不可選日期、支援上下月切換；顯示格式用 2026/11/21（六）。",
+a11y:"月曆採表格結構或 role=\"grid\"；方向鍵移動日期、PageUp／PageDown 換月；停用日期要有原因說明（例如「額滿」）。",
+snip:'<!-- 最簡單：原生日期欄位 -->\n<label for="d">上課日期</label>\n<input id="d" type="date" min="2026-11-21">\n\n<!-- 自製月曆：role="grid"，每格是 button -->',
+h:`<div class="fc"><div class="row xo"><input class="in" data-o readonly placeholder="請選擇日期" aria-label="已選日期"></div><div class="calh"><button class="iconb" type="button" data-p aria-label="上個月">‹</button><span data-m aria-live="polite"></span><button class="iconb" type="button" data-n aria-label="下個月">›</button></div><div class="cal" data-g></div></div>`,
+js(r){const g=q1(r,"[data-g]"),m=q1(r,"[data-m]"),o=q1(r,"[data-o]");const t=new Date();t.setHours(0,0,0,0);let y=t.getFullYear(),mo=t.getMonth(),sel=null;const W="日一二三四五六";
+const draw=()=>{m.textContent=`${y} 年 ${mo+1} 月`;const f=new Date(y,mo,1).getDay(),n=new Date(y,mo+1,0).getDate();let h=[...W].map(w=>`<span class="dw">${w}</span>`).join("")+"<span></span>".repeat(f);
+for(let d=1;d<=n;d++){const dt=new Date(y,mo,d);const past=dt<t,full=dt.getDay()===0;const lab=`${mo+1}月${d}日`+(full?"（週日不開課）":past?"（已過）":"");h+=`<button type="button" data-d="${d}" aria-label="${lab}"${past||full?" disabled":""} class="${+dt===+t?"today":""}" aria-pressed="${sel&&+sel===+dt}">${d}</button>`}g.innerHTML=h};
+g.addEventListener("click",e=>{const b=e.target.closest("[data-d]");if(!b)return;sel=new Date(y,mo,+b.dataset.d);o.value=`${y}/${String(mo+1).padStart(2,"0")}/${String(b.dataset.d).padStart(2,"0")}（${W[sel.getDay()]}）`;draw()});
+q1(r,"[data-p]").onclick=()=>{mo--;if(mo<0){mo=11;y--}draw()};q1(r,"[data-n]").onclick=()=>{mo++;if(mo>11){mo=0;y++}draw()};draw()}},
+
+{id:"F21",src:"enh",cat:"date",st:["booking"],zh:"時間選擇器",code:'<input type="time"> / time slots',
+desc:"以時段按鈕挑選時間，已被預約的時段直接停用，比自由輸入時間清楚。",
+use:"預約諮詢、場地借用等固定時段。",avoid:"任意時間都可以時，改用原生 <input type=\"time\">。",
+how:"時段以 30 或 60 分鐘為單位，用 24 小時制避免上午下午混淆；額滿時段停用並標示；選定後顯示完整的「日期＋時段」確認文字。",
+a11y:"時段按鈕用 aria-pressed；停用的時段在 aria-label 寫明「已額滿」；時段區用 role=\"group\" 加標籤。",
+snip:'<div role="group" aria-label="可預約時段">\n  <button aria-pressed="false">09:00</button>\n  <button disabled aria-label="10:00 已額滿">10:00</button>\n</div>\n<!-- 或：<input type="time" step="1800"> -->',
+h:`<div class="fc"><span class="l">諮詢時段（11/27 週四）</span><div class="slots" role="group" aria-label="可預約時段"></div><span class="hint" data-h aria-live="polite">灰色刪除線為已額滿</span></div>`,
+js(r){const S=["09:00","09:30","10:00","10:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30"],F=["10:00","13:30","15:00"];const g=q1(r,".slots"),h=q1(r,"[data-h]");
+g.innerHTML=S.map(s=>`<button type="button" aria-pressed="false"${F.includes(s)?` disabled aria-label="${s} 已額滿"`:""}>${s}</button>`).join("");
+g.addEventListener("click",e=>{const b=e.target.closest("button:not(:disabled)");if(!b)return;qa(g,"button").forEach(x=>x.setAttribute("aria-pressed",x===b));h.textContent=`已選：11/27（四）${b.textContent}–${(()=>{const[a,c]=b.textContent.split(":").map(Number);const m=a*60+c+30;return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0")})()}`})}},
+
+{id:"F22",src:"enh",cat:"date",st:["booking","pay"],zh:"日期區間",code:'start / end date',
+desc:"開始與結束兩個日期欄位，結束日不能早於開始日，並即時計算天數。",
+use:"住宿、租借、請假、活動期間。",avoid:"只需要單一日期時不要拆成兩欄。",
+how:"選了開始日後，把結束日的 min 設為開始日；結束早於開始時自動清空並提示；計算並顯示「共 N 天」。",
+a11y:"兩個欄位用 <fieldset> 包住，legend 說明這是一個期間；天數結果用 aria-live 播報。",
+snip:'<fieldset>\n  <legend>租借期間</legend>\n  <label>開始 <input type="date" id="s"></label>\n  <label>結束 <input type="date" id="e"></label>\n</fieldset>\n<p aria-live="polite">共 3 天</p>',
+h:`<div class="fc"><fieldset style="border:0;margin:0;padding:0"><legend class="l" style="margin-bottom:4px">設備租借期間</legend><div class="grid2"><label class="hint">開始<input class="in" type="date" data-s style="margin-top:2px"></label><label class="hint">結束<input class="in" type="date" data-e style="margin-top:2px"></label></div></fieldset><span class="hint" data-h aria-live="polite">請先選擇開始日期</span></div>`,
+js(r){const s=q1(r,"[data-s]"),e=q1(r,"[data-e]"),h=q1(r,"[data-h]");const iso=d=>d.toISOString().slice(0,10);s.min=iso(new Date());
+const f=()=>{if(s.value)e.min=s.value;if(s.value&&e.value&&e.value<s.value){e.value="";h.className="err";h.textContent="結束日期不能早於開始日期，已清空請重選";return}
+if(s.value&&e.value){const n=Math.round((new Date(e.value)-new Date(s.value))/864e5)+1;h.className="ok";h.textContent=`共 ${n} 天（含開始與結束日）`}else{h.className="hint";h.textContent=s.value?"請選擇結束日期":"請先選擇開始日期"}};s.addEventListener("change",f);e.addEventListener("change",f)}},
+
+/* ---------- 數值評分 ---------- */
+{id:"F23",src:"enh",cat:"num",st:["pay","booking","signup"],zh:"數字輸入",code:'<input type="number"> stepper',
+desc:"加減按鈕搭配數字欄位，有上下限，適合人數、數量這類小範圍整數。",
+use:"0 到 20 左右的整數，例如參加人數、購買數量。",avoid:"電話、郵遞區號、卡號不是數值，不要用 number；範圍很大時直接輸入比按加減快。",
+how:"設定 min、max、step；到達上下限時停用對應按鈕；直接輸入超出範圍時，離開欄位自動拉回範圍內並提示。",
+a11y:"加減按鈕要有 aria-label（「增加人數」）；數值變更以 aria-live 播報；欄位保留原生 spinbutton 行為。",
+snip:'<label for="qty">參加人數</label>\n<button aria-label="減少人數">−</button>\n<input id="qty" type="number" min="1" max="10" value="1">\n<button aria-label="增加人數">＋</button>',
+h:`<div class="fc"><label class="l" for="nm{n}">同行人數（含本人）</label><div class="step"><button type="button" data-d="-1" aria-label="減少人數">−</button><input id="nm{n}" type="number" min="1" max="6" value="1" inputmode="numeric"><button type="button" data-d="1" aria-label="增加人數">＋</button></div><span class="hint" data-h aria-live="polite">每筆報名最多 6 人，小計 NT$ 2,800</span></div>`,
+js(r){const i=q1(r,"input"),B=qa(r,"[data-d]"),h=q1(r,"[data-h]");const set=v=>{v=Math.max(1,Math.min(6,v||1));i.value=v;B[0].disabled=v<=1;B[1].disabled=v>=6;h.textContent=`每筆報名最多 6 人，小計 NT$ ${(v*2800).toLocaleString("en-US")}`};
+B.forEach(b=>b.addEventListener("click",()=>set(+i.value+ +b.dataset.d)));i.addEventListener("change",()=>set(+i.value));set(1)}},
+
+{id:"F24",src:"enh",cat:"num",st:["survey","setting","search"],zh:"滑桿",code:'<input type="range">',
+desc:"拖曳選擇一個大概的數值，上方即時顯示目前的值。",
+use:"不需要精確數字的程度、比例、預算範圍。",avoid:"需要精確數值時，旁邊加一個數字欄位或直接改用數字輸入。",
+how:"設定 min、max、step；用浮動數值顯示目前值；兩端標示意義（例如「完全不熟」「非常熟練」）。",
+a11y:"原生 range 支援方向鍵；用 aria-valuetext 提供有意義的文字（例如「熟練度 7 分，熟練」）。",
+snip:'<label for="lv">AI 工具熟練度</label>\n<input id="lv" type="range" min="0" max="10" step="1"\n       aria-valuetext="5 分，普通">\n<output for="lv">5</output>',
+h:`<div class="fc"><label class="l" for="rg{n}">AI 工具熟練度</label><div class="rng"><span class="bub" data-b>5</span><input id="rg{n}" type="range" min="0" max="10" value="5"></div><div class="npsl"><span>0 完全沒用過</span><span>10 每天使用</span></div></div>`,
+js(r){const i=q1(r,"input"),b=q1(r,"[data-b]");const L=["完全沒用過","幾乎沒用","偶爾試用","偶爾試用","會基本操作","會基本操作","常常使用","常常使用","熟練","熟練","每天使用"];
+const f=()=>{const v=+i.value;b.textContent=`${v} 分・${L[v]}`;b.style.left=`calc(${v*10}% + ${8-v*1.6}px)`;i.setAttribute("aria-valuetext",`${v} 分，${L[v]}`)};i.addEventListener("input",f);f()}},
+
+{id:"F25",src:"custom",cat:"num",st:["search","pay"],zh:"範圍滑桿",code:'dual range',
+desc:"一條軌道上兩個把手，同時設定最小值與最大值，常用於價格篩選。",
+use:"篩選價格、時數、人數等區間。",avoid:"手機上精準拖曳困難時，搭配兩個數字欄位讓使用者直接輸入。",
+how:"兩個 range 疊在同一條軌道，中間填色表示選取範圍；兩把手不能交叉（最小值不得大於最大值）；旁邊同步顯示數字。",
+a11y:"兩個把手各自有 aria-label（「最低價格」「最高價格」）；鍵盤可分別調整；結果用文字顯示。",
+snip:'<fieldset>\n  <legend>價格區間</legend>\n  <input type="range" aria-label="最低價格" min="0" max="10000">\n  <input type="range" aria-label="最高價格" min="0" max="10000">\n</fieldset>',
+h:`<div class="fc"><span class="l">課程費用區間</span><div class="dual"><span class="tr"></span><span class="fl" data-f></span><input type="range" min="0" max="10000" step="500" value="1500" aria-label="最低費用"><input type="range" min="0" max="10000" step="500" value="6000" aria-label="最高費用"></div><div class="row" style="justify-content:space-between"><span class="brand" data-a></span><span class="hint" data-h aria-live="polite"></span><span class="brand" data-b></span></div></div>`,
+js(r){const[a,b]=qa(r,"input"),f=q1(r,"[data-f]"),la=q1(r,"[data-a]"),lb=q1(r,"[data-b]"),h=q1(r,"[data-h]");
+const draw=e=>{let x=+a.value,y=+b.value;if(x>y-500){if(e&&e.target===a){x=y-500;a.value=x}else{y=x+500;b.value=y}}f.style.left=x/100+"%";f.style.width=(y-x)/100+"%";la.textContent="NT$ "+x.toLocaleString("en-US");lb.textContent="NT$ "+y.toLocaleString("en-US");h.textContent=`符合 ${Math.max(1,Math.round((y-x)/900))} 堂課`};
+a.addEventListener("input",draw);b.addEventListener("input",draw);draw()}},
+
+{id:"F26",src:"custom",cat:"num",st:["survey"],zh:"星級評分",code:'star rating',
+desc:"點選 1 到 5 顆星表示滿意程度，滑過時預覽，並顯示對應文字。",
+use:"課後滿意度、商品評價等快速評分。",avoid:"需要細分原因時，評分後再追加一題開放式問題。",
+how:"本質是 5 個選項的單選題，用 radio 實作最穩；滑過預覽、點擊確定；每個分數搭配文字（1 很不滿意 … 5 非常滿意）。",
+a11y:"以 radio group 實作，每顆星的標籤是「3 顆星，普通」；方向鍵可調整；不要只靠星星顏色。",
+snip:'<fieldset>\n  <legend>整體滿意度</legend>\n  <label><input type="radio" name="r" value="1">\n    <span aria-hidden="true">★</span>\n    <span class="sr-only">1 顆星，很不滿意</span></label>\n  <!-- …共 5 個 -->\n</fieldset>',
+h:`<div class="fc"><span class="l" id="st{n}">整體課程滿意度</span><div class="stars" role="radiogroup" aria-labelledby="st{n}"></div><span class="hint" data-h aria-live="polite">請點選星星評分</span></div>`,
+js(r){const L=["很不滿意","不滿意","普通","滿意","非常滿意"];const g=q1(r,".stars"),h=q1(r,"[data-h]");let v=0;
+g.innerHTML=L.map((l,k)=>`<button type="button" role="radio" aria-checked="false" aria-label="${k+1} 顆星，${l}" data-v="${k+1}">★</button>`).join("");const S=qa(g,"button");
+const paint=n=>S.forEach((s,k)=>s.classList.toggle("on",k<n));const set=n=>{v=n;S.forEach((s,k)=>{s.setAttribute("aria-checked",k===n-1);s.tabIndex=(n?k===n-1:k===0)?0:-1});paint(n);h.textContent=n?`${n} 顆星・${L[n-1]}`:"請點選星星評分"};
+g.addEventListener("mouseover",e=>{const b=e.target.closest("button");if(b)paint(+b.dataset.v)});g.addEventListener("mouseleave",()=>paint(v));g.addEventListener("click",e=>{const b=e.target.closest("button");if(b)set(+b.dataset.v)});
+g.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key==="ArrowUp"){e.preventDefault();set(Math.min(5,v+1));S[v-1].focus()}if(e.key==="ArrowLeft"||e.key==="ArrowDown"){e.preventDefault();set(Math.max(1,v-1));S[v-1].focus()}});set(0)}},
+
+{id:"F27",src:"custom",cat:"num",st:["survey"],zh:"推薦分數（NPS）",code:'0–10 scale',
+desc:"0 到 10 分的推薦意願量表，是衡量口碑最常用的單一題目。",
+use:"「你有多大可能推薦這門課給朋友？」這類推薦意願題。",avoid:"一般滿意度用 5 分量表即可，11 個選項在手機上較擠。",
+how:"11 個按鈕排成一列，兩端標示「完全不可能」「非常可能」；選定後依分數追問：0–6 問改進建議，9–10 問推薦理由。",
+a11y:"以 radiogroup 實作；兩端的文字要和題目一起被讀到（aria-describedby）。",
+snip:'<fieldset>\n  <legend>你推薦這門課給朋友的可能性？</legend>\n  <!-- 0 到 10，共 11 個 radio -->\n  <p id="nps-ends">0 完全不可能，10 非常可能</p>\n</fieldset>',
+h:`<div class="fc"><span class="l">你有多大可能把這門課推薦給同事？</span><div class="nps" role="radiogroup" aria-label="推薦分數 0 到 10"></div><div class="npsl"><span>0 完全不可能</span><span>10 非常可能</span></div><span class="hint" data-h aria-live="polite"></span></div>`,
+js(r){const g=q1(r,".nps"),h=q1(r,"[data-h]");g.innerHTML=Array.from({length:11},(_,k)=>`<button type="button" role="radio" aria-checked="false" aria-pressed="false">${k}</button>`).join("");
+g.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;qa(g,"button").forEach(x=>{x.setAttribute("aria-pressed",x===b);x.setAttribute("aria-checked",x===b)});const v=+b.textContent;h.textContent=v<=6?"謝謝！下一題會請你提供改進建議":v<=8?"謝謝！哪個部分最實用？":"謝謝！下一題會請你分享推薦理由"})}},
+
+{id:"F28",src:"enh",cat:"num",st:["setting","content"],zh:"顏色選擇器",code:'<input type="color">',
+desc:"原生調色盤加上品牌色票，點色票直接套用，並同步顯示色碼。",
+use:"主題色設定、圖卡或簡報的配色選擇。",avoid:"一般使用者只需挑選幾個預設色時，只給色票不給完整調色盤。",
+how:"<input type=\"color\"> 回傳 #RRGGBB；色票是一組 button；色碼欄位可手動輸入，格式正確才套用；即時預覽套用效果。",
+a11y:"每個色票要有顏色名稱（aria-label=\"J3M 金\"），不能只靠色塊；選中狀態用 aria-pressed。",
+snip:'<label for="c">主題色</label>\n<input id="c" type="color" value="#F5B800">\n<div role="group" aria-label="品牌色票">\n  <button aria-label="J3M 金" style="background:#F5B800"></button>\n</div>',
+h:`<div class="fc"><span class="l">圖卡主色</span><div class="row"><input type="color" value="#F5B800" aria-label="自訂顏色"><input class="in" data-x value="#F5B800" maxlength="7" aria-label="色碼" style="font-family:var(--f-mono);max-width:110px"><span class="b" data-pv style="flex:1;display:grid;place-items:center;font-weight:700">預覽文字</span></div><div class="sws" role="group" aria-label="品牌色票"></div></div>`,
+js(r){const P=[["J3M 金","#F5B800"],["墨黑","#14171C"],["森林綠","#1F6F5C"],["深海藍","#1F3A5F"],["紫羅蘭","#5B4B8A"],["磚紅","#C2410C"]];const c=q1(r,"input[type=color]"),x=q1(r,"[data-x]"),pv=q1(r,"[data-pv]"),s=q1(r,".sws");
+s.innerHTML=P.map(([n,h])=>`<button type="button" aria-label="${n} ${h}" title="${n}" data-h="${h}" style="background:${h}"></button>`).join("");
+const set=h=>{c.value=h;x.value=h.toUpperCase();pv.style.background=h;const l=parseInt(h.slice(1,3),16)*.299+parseInt(h.slice(3,5),16)*.587+parseInt(h.slice(5,7),16)*.114;pv.style.color=l>150?"#14171C":"#fff";qa(s,"button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.h.toLowerCase()===h.toLowerCase()))};
+c.addEventListener("input",()=>set(c.value));x.addEventListener("input",()=>{if(/^#[0-9a-f]{6}$/i.test(x.value))set(x.value)});s.addEventListener("click",e=>{const b=e.target.closest("[data-h]");if(b)set(b.dataset.h)});set("#F5B800")}},
+
+/* ---------- 檔案媒體 ---------- */
+{id:"F29",src:"enh",cat:"file",st:["signup","content"],zh:"檔案上傳",code:'<input type="file">',
+desc:"自訂外觀的上傳按鈕，列出已選檔案的名稱與大小，並檢查格式與容量。",
+use:"上傳作業、履歷、證明文件。",avoid:"一次要上傳很多檔案時，改用拖放區。",
+how:"用 accept 限制格式（例如 .pdf,.docx），multiple 允許多檔；選檔後檢查單檔大小並列出清單；保留原生 input，只把它的外觀藏起來。",
+a11y:"上傳按鈕實際上是 label 指向 input，鍵盤可以操作；在說明文字寫出接受的格式與大小上限。",
+snip:'<label for="hw">上傳作業（PDF，5 MB 以內）</label>\n<input id="hw" type="file" accept=".pdf"\n       aria-describedby="hw-rule">\n<p id="hw-rule">接受 PDF，單檔 5 MB 以內</p>',
+h:`<div class="fc"><span class="l">上傳課前作業</span><div class="row"><label class="b g" style="display:inline-flex;align-items:center;cursor:pointer">選擇檔案<input class="vh" type="file" multiple accept=".pdf,.docx,.pptx,.png,.jpg"></label><span class="hint" data-h>尚未選擇檔案</span></div><ul class="files" data-l></ul><span class="hint">接受 PDF、Word、PowerPoint、圖片；單檔 5 MB 以內</span></div>`,
+js(r){const i=q1(r,"input"),l=q1(r,"[data-l]"),h=q1(r,"[data-h]");i.addEventListener("change",()=>{const F=[...i.files];h.textContent=F.length?`已選 ${F.length} 個檔案`:"尚未選擇檔案";l.innerHTML=F.map(f=>`<li style="${f.size>5242880?"color:#C2410C":""}"><span>${f.name}${f.size>5242880?"（超過 5 MB）":""}</span><span>${kb(f.size)}</span></li>`).join("")})}},
+
+{id:"F30",src:"custom",cat:"file",st:["content","signup"],zh:"拖放區",code:'drag & drop zone',
+desc:"把檔案直接拖進虛線框即可上傳，也能點擊選擇，拖曳經過時會亮起提示。",
+use:"一次上傳多個檔案、照片集、素材包。",avoid:"手機上無法拖曳，一定要同時保留「點擊選擇檔案」。",
+how:"監聽 dragover（要 preventDefault）、dragleave、drop；drop 時讀取 dataTransfer.files；整個區域可點擊並觸發隱藏的 file input。",
+a11y:"拖放區本身用 <label> 或 button 讓鍵盤可以開啟選檔；上傳結果用 aria-live 播報。",
+snip:'<label class="drop" for="files">\n  拖曳檔案到這裡，或 <u>點擊選擇</u>\n  <input id="files" type="file" multiple hidden>\n</label>\n// dropzone.addEventListener("drop", e => e.dataTransfer.files)',
+h:`<div class="fc"><label class="drop" data-z>${IC.up}<b>拖曳檔案到這裡</b><span>或點擊選擇檔案（可多選）</span><input class="vh" type="file" multiple></label><ul class="files" data-l aria-live="polite"></ul></div>`,
+js(r){const z=q1(r,"[data-z]"),i=q1(r,"input"),l=q1(r,"[data-l]");const show=F=>{l.innerHTML=[...F].map(f=>`<li><span>${f.name}</span><span>${kb(f.size)}</span></li>`).join("")};
+["dragenter","dragover"].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();z.classList.add("over")}));["dragleave","drop"].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();z.classList.remove("over")}));
+z.addEventListener("drop",e=>show(e.dataTransfer.files));i.addEventListener("change",()=>show(i.files))}},
+
+{id:"F31",src:"enh",cat:"file",st:["signup","setting"],zh:"圖片上傳預覽",code:'URL.createObjectURL',
+desc:"選擇照片後立刻顯示預覽，確認無誤再送出，適合大頭照與作品圖。",
+use:"大頭照、名牌照片、作品截圖。",avoid:"需要裁切或調整時，要另外加入裁切工具，不要只靠預覽。",
+how:"accept=\"image/*\"，手機可直接開相機；用 URL.createObjectURL 產生預覽；提供「重新選擇」與「移除」。",
+a11y:"預覽圖加上 alt（例如「已選擇的大頭照預覽」）；移除按鈕要有文字。",
+snip:'<label for="avatar">大頭照</label>\n<input id="avatar" type="file" accept="image/*">\n<img id="preview" alt="大頭照預覽" hidden>\n// preview.src = URL.createObjectURL(file)',
+h:`<div class="fc"><span class="l">學員證照片</span><div class="row" style="gap:12px"><div class="ava" data-a role="img" aria-label="尚未選擇照片">照片</div><div style="display:grid;gap:6px"><label class="b" style="display:inline-flex;align-items:center;cursor:pointer">選擇照片<input class="vh" type="file" accept="image/*"></label><button class="b" type="button" data-x hidden>移除</button></div></div><span class="hint">建議正面、淺色背景；手機可直接拍照</span></div>`,
+js(r){const i=q1(r,"input"),a=q1(r,"[data-a]"),x=q1(r,"[data-x]");i.addEventListener("change",()=>{const f=i.files[0];if(!f)return;a.style.backgroundImage=`url(${URL.createObjectURL(f)})`;a.textContent="";a.setAttribute("aria-label","已選擇的照片預覽");x.hidden=false});
+x.addEventListener("click",()=>{i.value="";a.style.backgroundImage="";a.textContent="照片";a.setAttribute("aria-label","尚未選擇照片");x.hidden=true})}},
+
+{id:"F32",src:"custom",cat:"file",st:["signup","pay"],zh:"簽名板",code:'<canvas> signature',
+desc:"用滑鼠或手指直接簽名，可清除重簽，送出時轉成圖片。",
+use:"同意書、借用切結、出席簽到。",avoid:"具法律效力的電子簽章要使用專門服務，不要只靠畫布圖片。",
+how:"Canvas 搭配 Pointer Events（同時支援滑鼠、觸控、觸控筆）；設定 touch-action:none 避免畫的時候頁面捲動；送出時用 toDataURL 轉成 PNG。",
+a11y:"提供替代方案：勾選「我同意」並輸入全名，讓無法用手簽名的人也能完成。",
+snip:'<canvas id="sig" width="600" height="200"\n        aria-label="簽名區"></canvas>\n<button type="button">清除重簽</button>\n// pointerdown / pointermove / pointerup\n// canvas.toDataURL("image/png")',
+h:`<div class="fc"><span class="l">簽名確認</span><canvas class="sig" aria-label="簽名區，用滑鼠或手指簽名"></canvas><div class="row" style="justify-content:space-between"><span class="hint" data-h>請在框內簽名</span><button class="b" type="button" data-c>清除重簽</button></div></div>`,
+js(r){const c=q1(r,"canvas"),h=q1(r,"[data-h]");const fit=()=>{const b=c.getBoundingClientRect();if(!b.width)return;c.width=b.width*2;c.height=b.height*2;const x=c.getContext("2d");x.scale(2,2);x.lineWidth=2.2;x.lineCap="round";x.lineJoin="round";x.strokeStyle="#14171C"};
+let d=false,p=null;requestAnimationFrame(fit);const pt=e=>{const b=c.getBoundingClientRect();return[e.clientX-b.left,e.clientY-b.top]};
+c.addEventListener("pointerdown",e=>{if(!c.width||c.width<10)fit();d=true;p=pt(e);c.setPointerCapture(e.pointerId)});c.addEventListener("pointermove",e=>{if(!d)return;const x=c.getContext("2d"),n=pt(e);x.beginPath();x.moveTo(...p);x.lineTo(...n);x.stroke();p=n;h.textContent="已簽名"});
+c.addEventListener("pointerup",()=>d=false);q1(r,"[data-c]").addEventListener("click",()=>{c.getContext("2d").clearRect(0,0,c.width,c.height);h.textContent="請在框內簽名"})}},
+
+/* ---------- 進階互動 ---------- */
+{id:"F33",src:"custom",cat:"adv",st:["login","signup","pay"],zh:"驗證碼輸入",code:'one-time code',
+desc:"6 格的一次性驗證碼，輸入一格自動跳下一格，可一次貼上整組號碼。",
+use:"簡訊或 Email 驗證、雙重驗證。",avoid:"格數不固定的代碼，用一般單一輸入框即可。",
+how:"也可以只用一個 input 搭配 autocomplete=\"one-time-code\"（手機會自動帶入簡訊驗證碼）；分格版要處理自動跳格、Backspace 退回、整組貼上。",
+a11y:"分格版每格加 aria-label（「驗證碼第 1 碼」）；簡單又最穩的做法是單一欄位加 letter-spacing 做出分格效果。",
+snip:'<label for="otp">簡訊驗證碼</label>\n<input id="otp" inputmode="numeric"\n       autocomplete="one-time-code"\n       maxlength="6" pattern="\\d{6}">',
+h:`<div class="fc"><span class="l">輸入簡訊驗證碼</span><span class="hint">已傳送 6 位數驗證碼至 0912-***-678</span><div class="otp" role="group" aria-label="驗證碼"></div><span class="hint" data-h aria-live="polite">可直接貼上整組號碼（試試 135790）</span></div>`,
+js(r){const g=q1(r,".otp"),h=q1(r,"[data-h]");g.innerHTML=Array.from({length:6},(_,k)=>`<input inputmode="numeric" maxlength="1" aria-label="驗證碼第 ${k+1} 碼"${k===0?' autocomplete="one-time-code"':""}>`).join("");const I=qa(g,"input");
+const chk=()=>{const v=I.map(i=>i.value).join("");if(v.length===6){h.className=v==="135790"?"ok":"err";h.textContent=v==="135790"?"驗證成功":"驗證碼錯誤，請重新輸入或重寄驗證碼"}else{h.className="hint";h.textContent="可直接貼上整組號碼（試試 135790）"}};
+I.forEach((i,k)=>{i.addEventListener("input",()=>{i.value=i.value.replace(/\D/g,"").slice(-1);if(i.value&&I[k+1])I[k+1].focus();chk()});
+i.addEventListener("keydown",e=>{if(e.key==="Backspace"&&!i.value&&I[k-1]){I[k-1].focus();I[k-1].value="";chk()}if(e.key==="ArrowLeft"&&I[k-1])I[k-1].focus();if(e.key==="ArrowRight"&&I[k+1])I[k+1].focus()});
+i.addEventListener("paste",e=>{const t=(e.clipboardData.getData("text")||"").replace(/\D/g,"").slice(0,6);if(!t)return;e.preventDefault();[...t].forEach((c,j)=>{if(I[j])I[j].value=c});(I[t.length]||I[5]).focus();chk()})})}},
+
+{id:"F34",src:"custom",cat:"adv",st:["content"],zh:"富文字編輯器",code:'contenteditable',
+desc:"可加粗、斜體、清單與連結的文字編輯區，適合需要格式的長篇內容。",
+use:"課程介紹、公告、作業心得等需要排版的內容。",avoid:"只需要純文字時用多行文字框；正式產品建議採用 TipTap、Quill 等成熟套件。",
+how:"示範用 contenteditable 搭配工具列；工具列按鈕要反映目前游標位置的格式；送出前清理 HTML，只保留允許的標籤，避免 XSS。",
+a11y:"編輯區 role=\"textbox\" aria-multiline=\"true\" 並有標籤；工具列 role=\"toolbar\"，按鈕有文字標籤與 aria-pressed；支援 Ctrl＋B、Ctrl＋I 快捷鍵。",
+snip:'<div role="toolbar" aria-label="文字格式">\n  <button aria-pressed="false" aria-label="粗體">B</button>\n</div>\n<div contenteditable="true" role="textbox"\n     aria-multiline="true" aria-label="課程心得"></div>',
+h:`<div class="fc"><span class="l" id="rt{n}">課後心得</span><div><div class="tb" role="toolbar" aria-label="文字格式"><button type="button" data-c="bold" aria-label="粗體" aria-pressed="false"><b>B</b></button><button type="button" data-c="italic" aria-label="斜體" aria-pressed="false"><i>I</i></button><button type="button" data-c="underline" aria-label="底線" aria-pressed="false"><u>U</u></button><button type="button" data-c="insertUnorderedList" aria-label="項目清單">• 清單</button><button type="button" data-c="removeFormat" aria-label="清除格式">清除</button></div><div class="ed" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="rt{n}">今天學到最實用的是<b>用 AI 整理會議紀錄</b>，回去馬上可以用。</div></div><span class="hint">選取文字後點工具列，或按 Ctrl＋B</span></div>`,
+js(r){const ed=q1(r,".ed"),B=qa(r,".tb button");const sync=()=>B.forEach(b=>{if(["bold","italic","underline"].includes(b.dataset.c)){try{b.setAttribute("aria-pressed",document.queryCommandState(b.dataset.c))}catch(e){}}});
+B.forEach(b=>{b.addEventListener("mousedown",e=>e.preventDefault());b.addEventListener("click",()=>{ed.focus();try{document.execCommand(b.dataset.c)}catch(e){}sync()})});
+ed.addEventListener("keyup",sync);ed.addEventListener("mouseup",sync);document.addEventListener("selectionchange",()=>{if(r.isConnected&&ed.contains(document.getSelection().anchorNode))sync()})}},
+
+{id:"F35",src:"enh",cat:"adv",st:["signup","login"],zh:"即時驗證",code:'live validation',
+desc:"輸入時逐條檢查規則並打勾，使用者在送出前就知道還缺什麼。",
+use:"帳號、密碼這類有明確規則的欄位。",avoid:"不要在使用者打第一個字時就顯示紅色錯誤，先顯示規則清單即可。",
+how:"把規則列成清單，每條規則即時打勾；全部通過才把欄位標為正確；送出前再做一次完整驗證（伺服器端也要驗證）。",
+a11y:"規則清單以 aria-describedby 連到欄位；通過與未通過要有文字或符號差異，不只靠顏色。",
+snip:'<label for="uid">帳號</label>\n<input id="uid" aria-describedby="uid-rules">\n<ul id="uid-rules">\n  <li data-rule="len">4 到 16 個字元</li>\n  <li data-rule="chars">只能用英文、數字、底線</li>\n</ul>',
+h:`<div class="fc"><label class="l" for="lv{n}">設定帳號</label><input class="in" id="lv{n}" placeholder="例如：j3m_student" aria-describedby="lvr{n}" autocomplete="off"><ul class="rules" id="lvr{n}"><li data-r="a">4 到 16 個字元</li><li data-r="b">只能使用英文、數字與底線</li><li data-r="c">以英文字母開頭</li><li data-r="d">不能與已註冊的帳號重複（admin、test）</li></ul></div>`,
+js(r){const i=q1(r,"input");const R={a:v=>v.length>=4&&v.length<=16,b:v=>!!v&&/^\w+$/.test(v),c:v=>/^[A-Za-z]/.test(v),d:v=>!!v&&!["admin","test"].includes(v.toLowerCase())};
+i.addEventListener("input",()=>{const v=i.value;let all=true;qa(r,"[data-r]").forEach(li=>{const ok=R[li.dataset.r](v);li.classList.toggle("y",ok);if(!ok)all=false});i.className="in"+(v?all?" good":"":"")})}},
+
+{id:"F36",src:"custom",cat:"adv",st:["signup","pay","booking"],zh:"多步驟表單",code:'wizard / stepper',
+desc:"把長表單拆成幾個步驟，上方顯示進度，每一步驗證通過才能前進。",
+use:"欄位超過 10 個、可以自然分段的表單，例如報名＋付款＋確認。",avoid:"欄位少於 6 個時一頁完成即可，拆步驟反而變慢。",
+how:"每一步是一個區塊，只顯示目前步驟；「下一步」先驗證本頁；可以回上一步且保留已填資料；最後一步顯示摘要讓使用者確認。",
+a11y:"步驟指示用 aria-current=\"step\"；換步驟後把焦點移到新步驟的標題；告知「第 2 步，共 3 步」。",
+snip:'<ol aria-label="報名進度">\n  <li aria-current="step">基本資料</li>\n  <li>選擇場次</li>\n  <li>確認送出</li>\n</ol>\n<section aria-labelledby="s1-title">…</section>',
+h:`<div class="fc"><div class="wiz" aria-label="報名進度"><span>1 基本資料</span><span>2 選擇場次</span><span>3 確認</span></div><div data-p="0"><label class="l">姓名<span class="req">*</span><input class="in" data-n placeholder="王小明" style="margin-top:4px"></label><span class="err" data-e hidden>請填寫姓名才能繼續</span></div><div data-p="1" hidden><fieldset style="border:0;margin:0;padding:0"><legend class="l">場次</legend><label class="opt"><input type="radio" name="wz{n}" value="12/6（六）上午" checked> 12/6（六）上午</label><label class="opt"><input type="radio" name="wz{n}" value="12/13（六）下午"> 12/13（六）下午</label></fieldset></div><div data-p="2" hidden><p class="l" style="margin:0" tabindex="-1" data-sum></p><span class="hint">確認無誤後送出，會寄出報名確認信</span></div><div class="row" style="justify-content:space-between"><button class="b" type="button" data-b>上一步</button><button class="b p" type="button" data-f>下一步</button></div></div>`,
+js(r){let s=0;const P=qa(r,"[data-p]"),W=qa(r,".wiz span"),bk=q1(r,"[data-b]"),fw=q1(r,"[data-f]"),n=q1(r,"[data-n]"),er=q1(r,"[data-e]");
+const go=k=>{s=k;P.forEach((p,j)=>p.hidden=j!==s);W.forEach((w,j)=>{w.className=j<s?"done":j===s?"on":"";j===s?w.setAttribute("aria-current","step"):w.removeAttribute("aria-current")});bk.disabled=s===0;fw.textContent=s===2?"送出報名":"下一步";
+if(s===2){const sm=q1(r,"[data-sum]");sm.textContent=`${n.value}・${q1(r,"input[type=radio]:checked").value}`;sm.focus()}};
+fw.addEventListener("click",()=>{if(s===0&&!n.value.trim()){er.hidden=false;n.classList.add("bad");n.focus();return}er.hidden=true;n.classList.remove("bad");if(s<2)go(s+1);else{fw.textContent="已送出";fw.disabled=true;bk.disabled=true}});bk.addEventListener("click",()=>go(s-1));go(0)}},
+
+{id:"F37",src:"enh",cat:"adv",st:["signup","pay","booking"],zh:"同意條款與送出",code:'consent + submit states',
+desc:"勾選同意後才能送出，送出時顯示處理中，完成後回饋成功訊息，避免重複送出。",
+use:"所有需要送出的表單結尾。",avoid:"不要預先幫使用者勾選同意；不要把行銷訂閱與必要條款綁在同一個勾選框。",
+how:"同意框未勾時按鈕停用，或允許點擊但顯示提示；送出後立刻停用按鈕並顯示「送出中」；完成後顯示成功狀態與下一步說明。",
+a11y:"條款連結開新視窗要註明；狀態改變用 aria-live 播報；停用的按鈕要說明原因（例如「請先勾選同意」）。",
+snip:'<label><input type="checkbox" id="agree" required>\n  我已閱讀並同意<a href="/terms">報名須知</a></label>\n<button type="submit" aria-describedby="submit-hint">送出報名</button>\n<p id="submit-hint" aria-live="polite"></p>',
+h:`<div class="fc"><label class="opt" style="align-items:flex-start"><input type="checkbox" data-a style="margin-top:2px"> <span>我已閱讀並同意<u>報名須知與退費辦法</u></span></label><label class="opt"><input type="checkbox"> <span class="hint" style="font-size:12.5px">訂閱新課程通知（選填）</span></label><button class="b p" type="button" data-s style="min-height:40px">送出報名</button><span class="hint" data-h aria-live="polite">請先勾選同意，才能送出</span></div>`,
+js(r){const a=q1(r,"[data-a]"),b=q1(r,"[data-s]"),h=q1(r,"[data-h]");const f=()=>{b.disabled=!a.checked;h.className="hint";h.textContent=a.checked?"確認資料無誤後送出":"請先勾選同意，才能送出"};a.addEventListener("change",f);
+b.addEventListener("click",()=>{b.disabled=true;a.disabled=true;b.innerHTML='<span class="spin"></span>送出中…';h.textContent="正在送出，請勿關閉頁面";setTimeout(()=>{b.textContent="報名完成 ✓";b.style.background="#1F8A4C";b.style.borderColor="#1F8A4C";h.className="ok";h.textContent="已寄出確認信，請到信箱查看"},1400)});f()}},
+
+{id:"F38",src:"enh",cat:"adv",st:["pay"],zh:"信用卡輸入",code:'cc-number / cc-exp / cc-csc',
+desc:"卡號自動每 4 碼分組並辨識卡別，有效期限自動補斜線，減少輸入錯誤。",
+use:"自建結帳頁的付款資訊欄位。",avoid:"實際收款請使用金流商提供的付款元件（例如綠界、藍新、Stripe），卡號不要經過自己的伺服器。",
+how:"inputmode=\"numeric\"；autocomplete 用 cc-number、cc-exp、cc-csc 讓瀏覽器帶入；卡號依開頭判斷卡別；用 Luhn 演算法檢查卡號。",
+a11y:"每個欄位都有完整標籤；卡別圖示要有文字；錯誤訊息說明哪一欄、怎麼修正。",
+snip:'<label for="cc">卡號</label>\n<input id="cc" inputmode="numeric" autocomplete="cc-number">\n<label for="exp">有效期限（月／年）</label>\n<input id="exp" inputmode="numeric" autocomplete="cc-exp"\n       placeholder="MM/YY">',
+h:`<div class="fc"><label class="l" for="cc{n}">信用卡號 <span class="brand" data-br>卡別</span></label><input class="in" id="cc{n}" inputmode="numeric" placeholder="4242 4242 4242 4242（測試卡號）" maxlength="19" autocomplete="off" style="font-family:var(--f-mono)"><div class="ccrow"><label class="l">有效期限<input class="in" data-x inputmode="numeric" placeholder="MM/YY" maxlength="5" style="margin-top:4px;font-family:var(--f-mono)"></label><label class="l">背面末三碼<input class="in" inputmode="numeric" placeholder="123" maxlength="4" style="margin-top:4px;font-family:var(--f-mono)"></label></div><span class="hint" data-h aria-live="polite">示範用，請勿輸入真實卡號</span></div>`,
+js(r){const c=q1(r,"#"+q1(r,"input").id),x=q1(r,"[data-x]"),br=q1(r,"[data-br]"),h=q1(r,"[data-h]");const luhn=s=>{let t=0;[...s].reverse().forEach((d,k)=>{let n=+d;if(k%2){n*=2;if(n>9)n-=9}t+=n});return t%10===0};
+c.addEventListener("input",()=>{const d=c.value.replace(/\D/g,"").slice(0,16);c.value=d.replace(/(\d{4})(?=\d)/g,"$1 ");br.textContent=/^4/.test(d)?"VISA":/^5[1-5]/.test(d)?"MASTER":/^35/.test(d)?"JCB":"卡別";
+if(d.length===16){const ok=luhn(d);c.className="in "+(ok?"good":"bad");h.className=ok?"ok":"err";h.textContent=ok?"卡號格式正確（示範）":"卡號有誤，請檢查是否輸入錯誤"}else{c.className="in";h.className="hint";h.textContent="示範用，請勿輸入真實卡號"}});
+x.addEventListener("input",()=>{const d=x.value.replace(/\D/g,"").slice(0,4);x.value=d.length>2?d.slice(0,2)+"/"+d.slice(2):d})}},
+
+{id:"F39",src:"custom",cat:"adv",st:["survey"],zh:"排序題",code:'drag to reorder',
+desc:"拖曳或用上下按鈕調整項目順序，用來了解使用者心中的優先順序。",
+use:"「請依重要程度排序」這類問卷題、待辦優先順序。",avoid:"項目超過 7 個時排序很吃力，改成「選出最重要的 3 個」。",
+how:"桌機用 HTML5 拖放，手機與鍵盤使用者用上下按鈕；拖曳時顯示放置位置；送出時以陣列記錄順序。",
+a11y:"每個項目的上移／下移按鈕要包含項目名稱（「上移 簡報製作」）；移動後用 aria-live 播報新位置。",
+snip:'<ol aria-label="依重要程度排序">\n  <li draggable="true">簡報製作\n    <button aria-label="上移 簡報製作">↑</button>\n    <button aria-label="下移 簡報製作">↓</button>\n  </li>\n</ol>',
+h:`<div class="fc"><span class="l">最想學的主題，依重要程度排序</span><ol class="rank" data-l></ol><span class="hint" data-h aria-live="polite">拖曳項目，或用 ↑ ↓ 調整</span></div>`,
+js(r){let L=["簡報製作","影片字幕","資料分析","LINE 自動回覆"];const l=q1(r,"[data-l]"),h=q1(r,"[data-h]");let drag=-1;
+const draw=()=>{l.innerHTML=L.map((t,k)=>`<li draggable="true" data-k="${k}"><span>${t}</span><button type="button" data-m="-1" aria-label="上移 ${t}"${k===0?" disabled":""}>↑</button><button type="button" data-m="1" aria-label="下移 ${t}"${k===L.length-1?" disabled":""}>↓</button></li>`).join("")};
+const mv=(a,b)=>{const[x]=L.splice(a,1);L.splice(b,0,x);draw();h.textContent=`「${x}」移到第 ${b+1} 位`};
+l.addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(!b)return;const k=+b.closest("li").dataset.k,t=k+ +b.dataset.m;mv(k,t);const nb=l.children[t].querySelector(`[data-m="${b.dataset.m}"]`);(nb&&!nb.disabled?nb:l.children[t].querySelector("button:not(:disabled)")).focus()});
+l.addEventListener("dragstart",e=>{const li=e.target.closest("li");drag=+li.dataset.k;li.classList.add("drag");e.dataTransfer.effectAllowed="move";try{e.dataTransfer.setData("text/plain",drag)}catch(x){}});
+l.addEventListener("dragover",e=>e.preventDefault());l.addEventListener("drop",e=>{e.preventDefault();const li=e.target.closest("li");if(li&&drag>=0)mv(drag,+li.dataset.k);drag=-1});l.addEventListener("dragend",()=>{drag=-1;qa(l,"li").forEach(x=>x.classList.remove("drag"))});draw()}},
+
+{id:"F40",src:"native",cat:"adv",st:["survey"],zh:"矩陣題",code:'Likert matrix',
+desc:"多個題目共用同一組量表，排成表格一次作答，常見於滿意度問卷。",
+use:"3 到 6 個題目使用同樣的同意程度量表。",avoid:"手機上表格太寬時，改成每題一個獨立的單選題。",
+how:"用 <table>，每一列是一組 radio（同一列 name 相同）；表頭寫量表文字；窄螢幕改為每題獨立排列。",
+a11y:"每個 radio 的 aria-label 要包含題目與選項（「講師表達清楚：同意」）；表格有 <caption>。",
+snip:'<table>\n  <caption>課程評價</caption>\n  <tr><th>題目</th><th>不同意</th><th>普通</th><th>同意</th></tr>\n  <tr><th>講師表達清楚</th>\n    <td><input type="radio" name="q1" aria-label="講師表達清楚：不同意"></td>…</tr>\n</table>',
+h:`<div class="fc"><table class="lk"><caption class="l" style="text-align:left;margin-bottom:4px">課程評價</caption><thead><tr><th></th><th>不同意</th><th>普通</th><th>同意</th><th>非常<br>同意</th></tr></thead><tbody></tbody></table><span class="hint" data-h aria-live="polite">已完成 0 ／ 3 題</span></div>`,
+js(r){const Q=["講師表達清楚","教材實用","時間安排恰當"],O=["不同意","普通","同意","非常同意"];const tb=q1(r,"tbody"),h=q1(r,"[data-h]");const u=Math.random().toString(36).slice(2,7);
+tb.innerHTML=Q.map((t,k)=>`<tr><td>${t}</td>${O.map(o=>`<td><input type="radio" name="lk${u}${k}" aria-label="${t}：${o}"></td>`).join("")}</tr>`).join("");
+tb.addEventListener("change",()=>{h.textContent=`已完成 ${Q.filter((_,k)=>q1(tb,`input[name=lk${u}${k}]:checked`)).length} ／ 3 題`})}},
+
+{id:"F41",src:"enh",cat:"adv",st:["signup","survey","pay"],zh:"錯誤摘要",code:'error summary',
+desc:"送出時把所有錯誤集中列在表單上方，點一下就跳到該欄位修正。",
+use:"欄位較多的表單，送出時一次告知所有問題。",avoid:"只有一兩個欄位的表單，直接在欄位下方提示即可。",
+how:"送出時驗證全部欄位；有錯誤就在頂部顯示摘要並把焦點移過去；每個錯誤是連到欄位的連結；欄位本身也同步顯示錯誤。",
+a11y:"摘要區 role=\"alert\" 或送出後把焦點移到摘要標題；連結文字直接寫錯誤內容（「請填寫 Email」）。",
+snip:'<div role="alert" tabindex="-1" id="errs">\n  <h2>有 2 個欄位需要修正</h2>\n  <ul>\n    <li><a href="#email">請填寫 Email</a></li>\n  </ul>\n</div>',
+h:`<div class="fc"><div class="sum" data-s hidden tabindex="-1" role="alert"></div><label class="l">姓名<span class="req">*</span><input class="in" data-f="姓名" style="margin-top:4px"></label><label class="l">Email<span class="req">*</span><input class="in" data-f="Email" type="email" style="margin-top:4px"></label><button class="b p" type="button" data-go>送出</button></div>`,
+js(r){const s=q1(r,"[data-s]"),F=qa(r,"[data-f]");q1(r,"[data-go]").addEventListener("click",()=>{const E=[];F.forEach(f=>{const v=f.value.trim();let m="";if(!v)m=`請填寫${f.dataset.f}`;else if(f.type==="email"&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v))m="Email 格式不正確";f.classList.toggle("bad",!!m);if(m)E.push([f,m])});
+if(!E.length){s.hidden=false;s.style.cssText="background:#EEF8F1;border-color:#A7D7B8;color:#1F8A4C";s.textContent="送出成功";return}s.style.cssText="";s.hidden=false;s.innerHTML=`<b>有 ${E.length} 個欄位需要修正</b><ul>${E.map(([f,m],k)=>`<li><a href="#" data-k="${k}">${m}</a></li>`).join("")}</ul>`;
+qa(s,"a").forEach(a=>a.onclick=e=>{e.preventDefault();E[+a.dataset.k][0].focus()});s.focus()})}},
+
+{id:"F42",src:"enh",cat:"adv",st:["survey","signup"],zh:"完成度進度條",code:'<progress>',
+desc:"依必填欄位的完成數量顯示進度，讓使用者知道還剩多少，降低中途放棄。",
+use:"題目較多的問卷、報名表。",avoid:"只有幾個欄位時不需要進度條。",
+how:"計算必填欄位中已填的比例，用 <progress> 或自訂色條顯示；文字同時顯示「3 ／ 4 題」。",
+a11y:"原生 <progress> 有 value 與 max，螢幕報讀會讀出百分比；外加文字說明。",
+snip:'<label for="p">填答進度</label>\n<progress id="p" max="4" value="3">3 / 4</progress>\n<p aria-live="polite">已完成 3 ／ 4 題</p>',
+h:`<div class="fc"><div class="row" style="justify-content:space-between"><span class="l">課後問卷</span><span class="hint" data-h aria-live="polite">已完成 0 ／ 3 題</span></div><div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0" aria-label="填答進度"><i data-b style="width:0"></i></div><label class="l">最有收穫的單元<select class="in" data-q style="margin-top:4px"><option value="">請選擇</option><option>簡報</option><option>影片</option><option>自動化</option></select></label><label class="l">會推薦給同事嗎？<select class="in" data-q style="margin-top:4px"><option value="">請選擇</option><option>會</option><option>可能</option><option>不會</option></select></label><label class="l xo">其他建議<input class="in" data-q placeholder="一句話就好" style="margin-top:4px"></label></div>`,
+js(r){const Q=qa(r,"[data-q]").filter(x=>getComputedStyle(x.closest("label")).display!=="none"),b=q1(r,"[data-b]"),h=q1(r,"[data-h]"),p=q1(r,".prog"),T=Q.length;p.setAttribute("aria-valuemax",T);
+const f=()=>{const n=Q.filter(x=>x.value.trim()).length;b.style.width=n/T*100+"%";p.setAttribute("aria-valuenow",n);h.textContent=n===T?"全部完成，可以送出":`已完成 ${n} ／ ${T} 題`};Q.forEach(x=>{x.addEventListener("input",f);x.addEventListener("change",f)});f()}}
+];
+
+/* ================= 目錄邏輯（與動態技法圖鑑相同） ================= */
+const S={cat:"all",st:"all",src:"all",q:"",sel:new Set(store.get("sel",[]).filter(id=>E.some(e=>e.id===id))),open:null,fmt:store.get("fmt","html")};
+const $=id=>document.getElementById(id);
+const byId=id=>E.find(e=>e.id===id);
+$("topic").value=store.get("topic","");
+let uid=0;
+function mount(el,e){el.innerHTML=`<div class="fs">${e.h.replace(/\{n\}/g,"_"+(++uid))}</div>`;if(e.js){try{e.js(el.firstElementChild)}catch(x){console.warn(e.id,x)}}}
+
+function topic(){return $("topic").value.trim()||"【請填入表單用途】"}
+function promptOf(e){
+  return `請在「${topic()}」中製作「${e.zh}」元件（${e.id}｜${e.code}）。
+製作方式：${FMT[S.fmt]}。
+
+【用途】${e.desc}
+【適合使用】${e.use}
+【避免使用】${e.avoid}
+【實作要點】${e.how}
+【無障礙重點】${e.a11y}
+【使用規則】${SRC[e.src].rule}
+【參考結構】
+${e.snip}
+
+請產出可直接執行的完整程式碼，並符合：
+1. 欄位標籤、說明文字與錯誤訊息使用繁體中文
+2. 包含預設、聚焦、填寫完成、錯誤、停用五種狀態
+3. 手機寬度可正常操作，觸控區至少 44×44 px
+4. 只用鍵盤也能完成操作
+最後用三點說明我要如何把它放進現有的表單。`;
+}
+function comboPrompt(){
+  const list=E.filter(e=>S.sel.has(e.id));
+  return `請製作「${topic()}」這張表單，製作方式：${FMT[S.fmt]}。使用以下 ${list.length} 個元件：
+
+${list.map((e,i)=>`${i+1}. ${e.zh}（${e.id}｜${e.code}）：${e.desc} 實作要點：${e.how}`).join("\n")}
+
+表單規劃規則：
+1. 欄位順序由簡單到複雜：先基本資料，再選擇題，最後開放式問題與同意條款
+2. 單欄排列；相關欄位用 <fieldset> 分組，每組有標題
+3. 必填欄位標示「*」並在表單開頭說明；選填欄位盡量少
+4. 錯誤訊息放在欄位正下方，送出時在頂部列出錯誤摘要
+5. 送出按鈕寫出具體動作（例如「送出報名」），送出時顯示處理中並避免重複送出
+6. 欄位超過 10 個時拆成多個步驟並顯示進度
+
+請先列出表單的欄位清單（欄位名稱、元件、是否必填、驗證規則），再產出完整程式碼。`;
+}
+
+function match(e,skip){
+  if(skip!=="cat"&&S.cat!=="all"&&e.cat!==S.cat)return false;
+  if(skip!=="st"&&S.st!=="all"&&!e.st.includes(S.st))return false;
+  if(skip!=="src"&&S.src!=="all"&&e.src!==S.src)return false;
+  if(S.q){const q=S.q.toLowerCase();return [e.id,e.zh,e.code,e.desc,e.use,e.how,CATS[e.cat],SRC[e.src].name,e.st.map(k=>STATES[k]).join(" ")].join(" ").toLowerCase().includes(q)}
+  return true;
+}
+function chips(el,label,key,dict){
+  const pool=E.filter(e=>match(e,key));
+  const n=k=>k==="all"?pool.length:pool.filter(e=>key==="st"?e.st.includes(k):e[key]===k).length;
+  $(el).innerHTML=`<span class="lbl">${label}</span>`+[["all","全部"],...Object.entries(dict).map(([k,v])=>[k,typeof v==="string"?v:v.name])].map(([k,v])=>`<button class="chip" type="button" data-k="${key}" data-v="${k}" aria-pressed="${S[key]===k}">${v}<small>${n(k)}</small></button>`).join("");
+}
+const tagsOf=e=>`<span class="tag src">${SRC[e.src].name}</span><span class="tag">${CATS[e.cat]}</span>${e.st.slice(0,3).map(k=>`<span class="tag">${STATES[k]}</span>`).join("")}`;
+function card(e){
+  const on=S.sel.has(e.id);
+  return `<article class="card${on?" is-picked":""}" data-id="${e.id}">
+  <div class="pv" data-mount="${e.id}"></div>
+  <div class="meta">
+    <div class="row1"><span class="no">${e.id}</span></div>
+    <h3><button type="button" data-open="${e.id}">${e.zh}</button></h3><p class="code">${e.code.replace(/</g,"&lt;")}</p>
+    <p class="desc">${e.desc}</p>
+    <div class="tags">${tagsOf(e)}</div>
+    <div class="acts"><label class="pick"><input type="checkbox" data-pick="${e.id}"${on?" checked":""}> 加入表單</label><span class="r"><button class="btn" type="button" data-open="${e.id}">做法</button><button class="btn primary" type="button" data-copy="${e.id}">複製提示詞</button></span></div>
+  </div></article>`;
+}
+function render(){
+  chips("fCat","類別","cat",CATS);chips("fSt","使用情境","st",STATES);chips("fSrc","實作方式","src",SRC);
+  const list=E.filter(e=>match(e));
+  $("grid").innerHTML=list.map(card).join("");
+  document.querySelectorAll("#grid [data-mount]").forEach(el=>mount(el,byId(el.dataset.mount)));
+  $("empty").hidden=list.length>0;
+  $("count").textContent=`${list.length} ／ ${E.length} 種`;
+  tray();
+}
+function tray(){
+  const n=S.sel.size;$("tray").hidden=n===0;
+  $("trayCount").textContent=`已選 ${n} 個元件`;
+  $("trayNames").textContent=E.filter(e=>S.sel.has(e.id)).map(e=>e.zh).join("、");
+  store.set("sel",[...S.sel]);
+}
+function pick(id,on){
+  on?S.sel.add(id):S.sel.delete(id);
+  document.querySelectorAll(`[data-pick="${id}"]`).forEach(x=>x.checked=on);
+  const c=document.querySelector(`.card[data-id="${id}"]`);if(c)c.classList.toggle("is-picked",on);
+  if(S.open===id)$("dPick").checked=on;
+  tray();
+}
+
+/* ---------------- Detail ---------------- */
+function openD(id,fromHash){
+  const e=byId(id);if(!e)return;S.open=id;
+  mount($("dPv"),e);
+  $("dNo").textContent=e.id;$("dTitle").textContent=e.zh;$("dCode").textContent=e.code;
+  $("dTags").innerHTML=tagsOf(e);
+  $("dDesc").textContent=e.desc;$("dUse").textContent=e.use;$("dAvoid").textContent=e.avoid;
+  $("dHow").textContent=e.how;$("dA11y").textContent=e.a11y;$("dCmd").textContent=e.snip;
+  $("dRule").textContent=SRC[e.src].rule;$("dSrcFull").textContent=SRC[e.src].full;
+  $("dPrompt").textContent=promptOf(e);$("dPick").checked=S.sel.has(id);
+  $("detail").hidden=false;document.documentElement.style.overflow="hidden";
+  if(!fromHash){try{history.replaceState(null,"","#"+id)}catch(x){}}
+  $("dClose").focus({preventScroll:true});
+}
+function closeD(){
+  const id=S.open;S.open=null;$("detail").hidden=true;$("dPv").innerHTML="";document.documentElement.style.overflow="";
+  try{history.replaceState(null,"",location.pathname+location.search)}catch(x){}
+  const b=document.querySelector(`.card[data-id="${id}"] h3 button`);if(b)b.focus({preventScroll:true});
+}
+function step(d){const l=E.filter(e=>match(e));const arr=l.length?l:E;const i=arr.findIndex(e=>e.id===S.open);openD(arr[(i+d+arr.length)%arr.length].id)}
+
+/* ---------------- Copy ---------------- */
+let tt;function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,1800)}
+function copy(txt,msg){
+  const fb=()=>{$("fbText").value=txt;$("fallback").hidden=false;$("fbText").focus();$("fbText").select()};
+  try{if(!navigator.clipboard||!navigator.clipboard.writeText){fb();return}navigator.clipboard.writeText(txt).then(()=>toast(msg),fb)}catch(x){fb()}
+}
+
+/* ---------------- Events ---------------- */
+function setFmt(f){S.fmt=f;store.set("fmt",f);document.querySelectorAll("[data-fmt]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.fmt===f));if(S.open)$("dPrompt").textContent=promptOf(byId(S.open))}
+document.querySelectorAll("[data-fmt]").forEach(b=>b.addEventListener("click",()=>setFmt(b.dataset.fmt)));
+$("topic").addEventListener("input",e=>{store.set("topic",e.target.value);if(S.open)$("dPrompt").textContent=promptOf(byId(S.open))});
+document.querySelector(".bar").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;S[b.dataset.k]=b.dataset.v;render()});
+$("q").addEventListener("input",e=>{S.q=e.target.value.trim();render()});
+$("reset").addEventListener("click",()=>{S.cat=S.st=S.src="all";S.q="";$("q").value="";render()});
+$("grid").addEventListener("click",e=>{
+  const c=e.target.closest("[data-copy]");if(c){const x=byId(c.dataset.copy);copy(promptOf(x),`已複製「${x.zh}」提示詞`);return}
+  const o=e.target.closest("[data-open]");if(o)openD(o.dataset.open);
+});
+$("grid").addEventListener("change",e=>{const p=e.target.closest("[data-pick]");if(p)pick(p.dataset.pick,p.checked)});
+$("dClose").addEventListener("click",closeD);$("dPrev").addEventListener("click",()=>step(-1));$("dNext").addEventListener("click",()=>step(1));
+$("dCopy").addEventListener("click",()=>copy(promptOf(byId(S.open)),"已複製提示詞"));
+$("dPick").addEventListener("change",e=>pick(S.open,e.target.checked));
+$("detail").addEventListener("click",e=>{if(e.target===$("detail"))closeD()});
+$("trayClear").addEventListener("click",()=>[...S.sel].forEach(id=>pick(id,false)));
+$("trayCopy").addEventListener("click",()=>copy(comboPrompt(),`已複製 ${S.sel.size} 個元件的整張表單提示詞`));
+$("fbClose").addEventListener("click",()=>$("fallback").hidden=true);
+$("fallback").addEventListener("click",e=>{if(e.target===$("fallback"))$("fallback").hidden=true});
+document.addEventListener("keydown",e=>{
+  if(!$("fallback").hidden&&e.key==="Escape"){$("fallback").hidden=true;return}
+  if($("detail").hidden)return;
+  const inField=e.target.closest&&e.target.closest("#dPv input,#dPv textarea,#dPv select,#dPv [contenteditable],#dPv [role=radiogroup],#dPv .rank,#dPv .otp");
+  if(e.key==="Escape")closeD();else if(!inField&&e.key==="ArrowRight")step(1);else if(!inField&&e.key==="ArrowLeft")step(-1);
+});
+function fromHash(){const m=location.hash.match(/^#(F\d{2})$/);if(m&&byId(m[1]))openD(m[1],true);else if(S.open)closeD()}
+window.addEventListener("hashchange",fromHash);
+
+/* ---------------- Init ---------------- */
+$("stats").innerHTML=`<span><b>${E.length}</b>表單元件</span><span><b>${Object.keys(CATS).length}</b>大類別</span><span><b>${Object.keys(STATES).length}</b>種使用情境</span>`;
+setFmt(S.fmt);render();fromHash();
+</script>
+
+<footer class="j3m-foot">
+  <div class="j3m-in">
+    <b>J3M 教學資源站</b>
+    <a href="../topic/vibe/">← 回到「Vibe Coding」主題頁</a>
+    <a href="../">教學資源站首頁</a>
+    <a href="../aboutme/">關於 J3M</a>
+    <span class="j3m-sp" style="flex:1"></span>
+    <a class="j3m-book" href="mailto:trj3mmm@gmail.com?subject=%E6%8E%88%E8%AA%B2%E9%82%80%E7%B4%84">寫信邀課</a>
+  </div>
+</footer>
+<!-- 放在最後，確保蓋過教材頁原本的色票（有些頁面把樣式寫在 body 裡） -->
+<style id="j3m-tokens">
+:root{--bg:#F2EFE7;--surface:#FFFFFF;--ink:#14171C;--muted:#5C6675;--line:#DDD7CA;--chip:#E9E5DB;--accent-text:#7A5800;--f-disp:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0A0C10;--surface:#14171E;--ink:#EEF0F4;--muted:#8A93A2;--line:#262B35;--chip:#1B1F28;--accent-text:#F5B800;--f-disp:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0A0C10;--surface:#14171E;--ink:#EEF0F4;--muted:#8A93A2;--line:#262B35;--chip:#1B1F28;--accent-text:#F5B800;--f-disp:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;color-scheme:dark}
+:root[data-theme="light"]{--bg:#F2EFE7;--surface:#FFFFFF;--ink:#14171C;--muted:#5C6675;--line:#DDD7CA;--chip:#E9E5DB;--accent-text:#7A5800;--f-disp:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;color-scheme:light}
+</style>
+</body>
+</html>
