@@ -164,3 +164,16 @@ footer nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 /* WebGL 不可用時的靜態背景 */
 .no-3d #stage{display:none}
 .no-3d .aura{background:radial-gradient(50vw 50vw at 75% 35%,rgba(245,184,0,.18),transparent 60%),radial-gradient(40vw 40vw at 10% 90%,rgba(91,75,138,.18),transparent 60%)}
+
+/* FAQ（主題頁與首頁共用） */
+.faq{max-width:860px}
+.faq details{border-top:1px solid var(--glass-line);padding:16px 0}
+.faq details:last-child{border-bottom:1px solid var(--glass-line)}
+.faq summary{font-weight:700;font-size:17px;cursor:pointer;line-height:1.5}
+.faq details p{margin:10px 0 0;color:var(--ink-2);font-size:15px;line-height:1.7}
+
+/* 收錄課程列表（主題頁共用） */
+.course-list{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.course-list li{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px;padding:14px 18px;border-radius:14px;background:var(--glass-line)}
+.course-list strong{font-size:16px}
+.course-list span{color:var(--muted);font-size:14px;white-space:nowrap}
